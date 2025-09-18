@@ -1,88 +1,79 @@
-/* ================================
-   AOL LOGISTICS Custom Styles
-   ================================ */
-
-/* General Reset */
+/* Reset and Base */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Body */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #ffffff;
-  color: #333333;
   line-height: 1.6;
+  color: #333;
+  background-color: #f9fafb;
+  overflow-x: hidden;
 }
 
 /* Navbar */
+header {
+  transition: all 0.3s ease;
+}
+
 header nav a {
   transition: color 0.3s ease;
 }
 
-header nav a:hover {
-  color: #facc15; /* Tailwind yellow-400 */
-}
-
 /* Hero Section */
 .hero-title {
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+  animation: fadeInDown 1.5s ease;
 }
 
 .hero-btn {
-  transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease;
 }
 
 .hero-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+  transform: scale(1.05);
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* Animated Background Image */
-section.relative img {
-  animation: slowZoom 20s ease-in-out infinite alternate;
-}
-
+/* Hero Background Animation */
 @keyframes slowZoom {
-  from {
-    transform: scale(1);
-  }
-  to {
-    transform: scale(1.1);
-  }
+  0% { transform: scale(1); }
+  100% { transform: scale(1.1); }
 }
 
-/* Service Cards */
+.hero-bg {
+  animation: slowZoom 20s infinite alternate;
+}
+
+/* Services */
 .service-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
 
 .service-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  background-color: #fef9c3; /* subtle yellow highlight */
+  transform: translateY(-10px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
 }
 
-/* About Section Image */
+/* About Section */
 .about-img {
-  border-radius: 16px;
-  transition: transform 0.4s ease;
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+  border-radius: 12px;
 }
 
 .about-img:hover {
-  transform: scale(1.03);
+  transform: scale(1.05);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
 }
 
 /* Global Reach Logos */
-section img.mx-auto {
-  transition: transform 0.3s ease, filter 0.3s ease;
+.global-reach img {
+  transition: transform 0.6s ease;
 }
 
-section img.mx-auto:hover {
+.global-reach img:hover {
   transform: scale(1.1) rotate(3deg);
-  filter: drop-shadow(0px 6px 8px rgba(0, 0, 0, 0.2));
 }
 
 /* Footer */
@@ -90,6 +81,24 @@ footer a {
   transition: color 0.3s ease;
 }
 
-footer a:hover {
-  color: #facc15; /* yellow highlight */
+/* AOS Animations Enhancement */
+[data-aos] {
+  transition-property: transform, opacity !important;
+  transition-timing-function: ease-out !important;
+}
+
+[data-aos][data-aos][data-aos-duration="1200"] {
+  transition-duration: 1.2s !important;
+}
+
+/* Keyframes for Hero Title */
+@keyframes fadeInDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
