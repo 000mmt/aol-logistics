@@ -22,7 +22,7 @@ header nav a {
   transition: color 0.3s ease;
 }
 
-/* Hero Section */
+/* Hero */
 .hero-title {
   animation: fadeInDown 1.5s ease;
 }
@@ -41,27 +41,24 @@ header nav a {
   0% { transform: scale(1); }
   100% { transform: scale(1.1); }
 }
-
-.hero-bg {
+.hero-bg img {
   animation: slowZoom 20s infinite alternate;
 }
 
-/* Services */
+/* Service Cards */
 .service-card {
   transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
-
 .service-card:hover {
   transform: translateY(-10px);
   box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
 }
 
-/* About Section */
+/* About Image */
 .about-img {
   transition: transform 0.5s ease, box-shadow 0.5s ease;
   border-radius: 12px;
 }
-
 .about-img:hover {
   transform: scale(1.05);
   box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
@@ -71,7 +68,6 @@ header nav a {
 .global-reach img {
   transition: transform 0.6s ease;
 }
-
 .global-reach img:hover {
   transform: scale(1.1) rotate(3deg);
 }
@@ -81,17 +77,13 @@ footer a {
   transition: color 0.3s ease;
 }
 
-/* AOS Animations Enhancement */
+/* AOS Enhancements */
 [data-aos] {
   transition-property: transform, opacity !important;
   transition-timing-function: ease-out !important;
 }
 
-[data-aos][data-aos][data-aos-duration="1200"] {
-  transition-duration: 1.2s !important;
-}
-
-/* Keyframes for Hero Title */
+/* Keyframes */
 @keyframes fadeInDown {
   0% {
     opacity: 0;
