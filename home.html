@@ -6,8 +6,7 @@
   <title>AOL LOGISTICS - Moving Cargo, Connecting Continents</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/style.css">
-
-  <!-- AOS Library -->
+  <!-- AOS CSS -->
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -17,48 +16,50 @@
     <div class="container mx-auto flex items-center justify-between px-6 py-4">
       <h1 class="text-2xl font-bold text-yellow-500">AOL LOGISTICS</h1>
       <nav class="hidden md:flex space-x-6">
-        <a href="#" class="hover:text-yellow-500">Home</a>
-        <a href="#" class="hover:text-yellow-500">About Us</a>
-        <a href="#" class="hover:text-yellow-500">Services</a>
-        <a href="#" class="hover:text-yellow-500">Global Reach</a>
-        <a href="#" class="hover:text-yellow-500">Contact</a>
+        <a href="#home" class="hover:text-yellow-500">Home</a>
+        <a href="#about" class="hover:text-yellow-500">About Us</a>
+        <a href="#services" class="hover:text-yellow-500">Services</a>
+        <a href="#reach" class="hover:text-yellow-500">Global Reach</a>
+        <a href="#why" class="hover:text-yellow-500">Why Us</a>
+        <a href="#testimonials" class="hover:text-yellow-500">Testimonials</a>
+        <a href="#contact" class="hover:text-yellow-500">Contact</a>
       </nav>
       <button class="md:hidden bg-yellow-500 text-white px-4 py-2 rounded">Menu</button>
     </div>
   </header>
 
   <!-- Hero Section -->
-  <section class="relative bg-gray-900 text-white pt-28 pb-32 overflow-hidden">
-    <div class="absolute inset-0">
-      <img src="https://i.ibb.co/7NNb6k7/container-ship.jpg" alt="Cargo Ship" class="w-full h-full object-cover opacity-30 animate-pulse">
+  <section id="home" class="relative bg-gray-900 text-white pt-28 pb-32 overflow-hidden">
+    <div class="absolute inset-0 hero-bg">
+      <img src="your-hero-image.jpg" alt="Cargo Ship" class="w-full h-full object-cover opacity-40">
     </div>
-    <div class="container mx-auto relative z-10 text-center" data-aos="fade-up">
+    <div class="container mx-auto relative z-10 text-center">
       <h2 class="text-5xl md:text-6xl font-bold mb-6 hero-title">Moving Cargo. Connecting Continents.</h2>
-      <p class="text-lg md:text-xl mb-8">We deliver worldwide — safe, reliable, and fast logistics solutions.</p>
+      <p class="text-lg md:text-xl mb-8">Reliable logistics solutions that deliver across the globe.</p>
       <div class="space-x-4">
-        <a href="#" class="bg-yellow-500 px-6 py-3 rounded-lg font-semibold hero-btn">Track Shipment</a>
-        <a href="#" class="bg-white text-yellow-600 px-6 py-3 rounded-lg font-semibold hero-btn">Request Quote</a>
+        <a href="#track" class="bg-yellow-500 px-6 py-3 rounded-lg font-semibold hero-btn">Track Shipment</a>
+        <a href="#quote" class="bg-white text-yellow-600 px-6 py-3 rounded-lg font-semibold hero-btn">Request Quote</a>
       </div>
     </div>
   </section>
 
   <!-- Services -->
-  <section class="py-16 bg-white">
-    <div class="container mx-auto text-center">
+  <section id="services" class="py-20 bg-white">
+    <div class="container mx-auto px-6 text-center">
       <h3 class="text-3xl font-bold mb-12" data-aos="fade-up">Our Services</h3>
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="p-6 bg-gray-100 rounded-lg shadow service-card" data-aos="zoom-in" data-aos-delay="100">
-          <img src="https://i.ibb.co/w6tgcJp/container.png" alt="Container Shipping" class="mx-auto mb-4 w-20">
+      <div class="grid md:grid-cols-3 gap-10">
+        <div class="p-6 bg-gray-100 rounded-lg shadow service-card" data-aos="fade-up" data-aos-delay="100">
+          <img src="your-container-image.png" alt="Container Shipping" class="mx-auto mb-4 w-20">
           <h4 class="text-xl font-semibold mb-2">Container Shipping</h4>
           <p>Secure and efficient container transport across global trade routes.</p>
         </div>
-        <div class="p-6 bg-gray-100 rounded-lg shadow service-card" data-aos="zoom-in" data-aos-delay="200">
-          <img src="https://i.ibb.co/zQKH7hS/roro.png" alt="RoRo" class="mx-auto mb-4 w-20">
+        <div class="p-6 bg-gray-100 rounded-lg shadow service-card" data-aos="fade-up" data-aos-delay="200">
+          <img src="your-roro-image.png" alt="RORO" class="mx-auto mb-4 w-20">
           <h4 class="text-xl font-semibold mb-2">RoRo (Roll-on/Roll-off)</h4>
           <p>Seamless shipping for vehicles and heavy machinery worldwide.</p>
         </div>
-        <div class="p-6 bg-gray-100 rounded-lg shadow service-card" data-aos="zoom-in" data-aos-delay="300">
-          <img src="https://i.ibb.co/jZDb3Q1/special.png" alt="Special Cargo" class="mx-auto mb-4 w-20">
+        <div class="p-6 bg-gray-100 rounded-lg shadow service-card" data-aos="fade-up" data-aos-delay="300">
+          <img src="your-special-cargo.png" alt="Special Cargo" class="mx-auto mb-4 w-20">
           <h4 class="text-xl font-semibold mb-2">Special Cargo</h4>
           <p>Custom solutions for oversized and time-sensitive cargo shipments.</p>
         </div>
@@ -67,65 +68,98 @@
   </section>
 
   <!-- Global Reach -->
-  <section class="py-16 bg-gray-50">
-    <div class="container mx-auto text-center">
+  <section id="reach" class="py-20 bg-gray-50">
+    <div class="container mx-auto text-center px-6">
       <h3 class="text-3xl font-bold mb-12" data-aos="fade-up">Our Global Reach</h3>
-      <p class="mb-10 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">
-        From North America to Africa, Europe to South America, we deliver logistics solutions that connect continents and empower global trade.
-      </p>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-10">
-        <div data-aos="flip-left" data-aos-delay="100">
-          <img src="https://i.ibb.co/fHG0p7C/north-america.png" alt="North America" class="mx-auto w-28">
-          <p class="mt-3 font-semibold">North America</p>
-        </div>
-        <div data-aos="flip-left" data-aos-delay="200">
-          <img src="https://i.ibb.co/kJkqfMh/south-america.png" alt="South America" class="mx-auto w-28">
-          <p class="mt-3 font-semibold">South America</p>
-        </div>
-        <div data-aos="flip-left" data-aos-delay="300">
-          <img src="https://i.ibb.co/vjKskHz/europe.png" alt="Europe" class="mx-auto w-28">
-          <p class="mt-3 font-semibold">Europe</p>
-        </div>
-        <div data-aos="flip-left" data-aos-delay="400">
-          <img src="https://i.ibb.co/Sd9nZ7L/africa.png" alt="Africa" class="mx-auto w-28">
-          <p class="mt-3 font-semibold">Africa</p>
-        </div>
+      <p class="mb-10 max-w-2xl mx-auto text-gray-600">From North America to Africa, Europe to South America, we deliver logistics solutions that connect continents and empower global trade.</p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-10 global-reach">
+        <div data-aos="zoom-in"><img src="your-north-america.png" alt="North America" class="mx-auto w-28"><p class="mt-3 font-semibold">North America</p></div>
+        <div data-aos="zoom-in" data-aos-delay="100"><img src="your-south-america.png" alt="South America" class="mx-auto w-28"><p class="mt-3 font-semibold">South America</p></div>
+        <div data-aos="zoom-in" data-aos-delay="200"><img src="your-europe.png" alt="Europe" class="mx-auto w-28"><p class="mt-3 font-semibold">Europe</p></div>
+        <div data-aos="zoom-in" data-aos-delay="300"><img src="your-africa.png" alt="Africa" class="mx-auto w-28"><p class="mt-3 font-semibold">Africa</p></div>
       </div>
     </div>
   </section>
 
   <!-- About -->
-  <section class="py-16 bg-white">
-    <div class="container mx-auto grid md:grid-cols-2 gap-12 items-center">
+  <section id="about" class="py-20 bg-white">
+    <div class="container mx-auto grid md:grid-cols-2 gap-12 items-center px-6">
       <div data-aos="fade-right">
         <h3 class="text-3xl font-bold mb-6">About Us</h3>
         <p class="mb-4">AOL LOGISTICS is a trusted name in global shipping and logistics. With decades of experience, we ensure smooth, reliable, and cost-effective transportation of goods worldwide.</p>
         <p>Our mission is to connect businesses across continents and make international trade seamless.</p>
       </div>
       <div data-aos="fade-left">
-        <img src="https://i.ibb.co/Sf3C6z8/logistics-team.jpg" alt="About AOL" class="about-img shadow-lg w-full">
+        <img src="your-about-image.jpg" alt="About AOL" class="about-img shadow-lg w-full">
       </div>
     </div>
   </section>
 
+  <!-- Why Choose Us -->
+  <section id="why" class="py-20 bg-gray-50">
+    <div class="container mx-auto px-6 text-center">
+      <h3 class="text-3xl font-bold mb-12" data-aos="fade-up">Why Choose Us</h3>
+      <div class="grid md:grid-cols-3 gap-10">
+        <div class="p-6 bg-white shadow rounded" data-aos="flip-left">
+          <h4 class="text-xl font-semibold mb-2">Experience</h4>
+          <p>Decades of global logistics expertise across industries.</p>
+        </div>
+        <div class="p-6 bg-white shadow rounded" data-aos="flip-left" data-aos-delay="100">
+          <h4 class="text-xl font-semibold mb-2">Global Network</h4>
+          <p>Strong connections with ports, carriers and warehouses worldwide.</p>
+        </div>
+        <div class="p-6 bg-white shadow rounded" data-aos="flip-left" data-aos-delay="200">
+          <h4 class="text-xl font-semibold mb-2">Customer Focus</h4>
+          <p>Personalized solutions, transparent tracking and 24/7 support.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section id="testimonials" class="py-20 bg-white">
+    <div class="container mx-auto px-6 text-center">
+      <h3 class="text-3xl font-bold mb-12" data-aos="fade-up">What Our Clients Say</h3>
+      <div class="grid md:grid-cols-2 gap-10">
+        <div class="p-6 bg-gray-100 rounded shadow" data-aos="fade-right">
+          <p>"AOL Logistics handled our cargo with professionalism and speed. Highly recommended!"</p>
+          <h4 class="mt-4 font-semibold">- Sarah Johnson, USA</h4>
+        </div>
+        <div class="p-6 bg-gray-100 rounded shadow" data-aos="fade-left">
+          <p>"Their global reach and customer support are unmatched. We trust them with all our shipments."</p>
+          <h4 class="mt-4 font-semibold">- Carlos Mendes, Brazil</h4>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section id="quote" class="py-20 bg-yellow-500 text-white text-center">
+    <div class="container mx-auto px-6" data-aos="zoom-in">
+      <h3 class="text-3xl font-bold mb-6">Ready to Ship With Us?</h3>
+      <p class="mb-6">Get a free quote today and experience world-class logistics service.</p>
+      <a href="#contact" class="bg-white text-yellow-600 px-6 py-3 rounded-lg font-semibold">Request Quote</a>
+    </div>
+  </section>
+
   <!-- Footer -->
-  <footer class="bg-gray-900 text-white py-12">
-    <div class="container mx-auto grid md:grid-cols-3 gap-8 text-center md:text-left">
-      <div data-aos="fade-up">
+  <footer id="contact" class="bg-gray-900 text-white py-12">
+    <div class="container mx-auto grid md:grid-cols-3 gap-8 text-center md:text-left px-6">
+      <div>
         <h4 class="text-xl font-bold mb-4">AOL LOGISTICS</h4>
         <p>Connecting continents with reliable shipping and logistics solutions.</p>
       </div>
-      <div data-aos="fade-up" data-aos-delay="100">
+      <div>
         <h4 class="text-xl font-bold mb-4">Quick Links</h4>
         <ul>
-          <li><a href="#" class="hover:text-yellow-500">Home</a></li>
-          <li><a href="#" class="hover:text-yellow-500">About</a></li>
-          <li><a href="#" class="hover:text-yellow-500">Services</a></li>
-          <li><a href="#" class="hover:text-yellow-500">Global Reach</a></li>
-          <li><a href="#" class="hover:text-yellow-500">Contact</a></li>
+          <li><a href="#home" class="hover:text-yellow-500">Home</a></li>
+          <li><a href="#about" class="hover:text-yellow-500">About</a></li>
+          <li><a href="#services" class="hover:text-yellow-500">Services</a></li>
+          <li><a href="#reach" class="hover:text-yellow-500">Global Reach</a></li>
+          <li><a href="#contact" class="hover:text-yellow-500">Contact</a></li>
         </ul>
       </div>
-      <div data-aos="fade-up" data-aos-delay="200">
+      <div>
         <h4 class="text-xl font-bold mb-4">Contact</h4>
         <p>Email: info@aollogistics.com</p>
         <p>Phone: +1 (555) 123-4567</p>
@@ -137,7 +171,7 @@
     </div>
   </footer>
 
-  <!-- AOS Script -->
+  <!-- AOS JS -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
     AOS.init({
@@ -145,6 +179,5 @@
       once: true
     });
   </script>
-
 </body>
 </html>
