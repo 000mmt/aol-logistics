@@ -1,0 +1,75 @@
+/* ================================
+   AOL LOGISTICS Custom Styles
+   ================================ */
+
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #ffffff;
+  color: #333333;
+  line-height: 1.6;
+}
+
+/* Navbar */
+header nav a {
+  transition: color 0.3s ease;
+}
+
+header nav a:hover {
+  color: #facc15; /* Tailwind yellow-400 */
+}
+
+/* Hero Section */
+.hero-title {
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.hero-btn {
+  transition: all 0.3s ease-in-out;
+}
+
+.hero-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Service Cards */
+.service-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* About Section Image */
+.about-img {
+  border-radius: 20px;
+  transition: transform 0.4s ease;
+}
+
+.about-img:hover {
+  transform: scale(1.03);
+}
+
+/* Footer */
+footer a {
+  transition: color 0.3s ease;
+}
+
+footer a:hover {
+  color: #facc15; /* yellow highlight */
+}
+
+/* Mobile Menu Placeholder (you can add JS later) */
+.mobile-menu {
+  display: none;
+}
