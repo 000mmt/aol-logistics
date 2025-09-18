@@ -6,6 +6,9 @@
   <title>AOL LOGISTICS - Moving Cargo, Connecting Continents</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/style.css">
+
+  <!-- AOS Library -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
 <body class="bg-gray-50 text-gray-800">
 
@@ -24,13 +27,12 @@
     </div>
   </header>
 
-  <!-- Hero Section with Animated Background -->
+  <!-- Hero Section -->
   <section class="relative bg-gray-900 text-white pt-28 pb-32 overflow-hidden">
-    <!-- Background Animation -->
     <div class="absolute inset-0">
       <img src="https://i.ibb.co/7NNb6k7/container-ship.jpg" alt="Cargo Ship" class="w-full h-full object-cover opacity-30 animate-pulse">
     </div>
-    <div class="container mx-auto relative z-10 text-center">
+    <div class="container mx-auto relative z-10 text-center" data-aos="fade-up">
       <h2 class="text-5xl md:text-6xl font-bold mb-6 hero-title">Moving Cargo. Connecting Continents.</h2>
       <p class="text-lg md:text-xl mb-8">We deliver worldwide — safe, reliable, and fast logistics solutions.</p>
       <div class="space-x-4">
@@ -43,19 +45,19 @@
   <!-- Services -->
   <section class="py-16 bg-white">
     <div class="container mx-auto text-center">
-      <h3 class="text-3xl font-bold mb-12">Our Services</h3>
+      <h3 class="text-3xl font-bold mb-12" data-aos="fade-up">Our Services</h3>
       <div class="grid md:grid-cols-3 gap-8">
-        <div class="p-6 bg-gray-100 rounded-lg shadow service-card">
+        <div class="p-6 bg-gray-100 rounded-lg shadow service-card" data-aos="zoom-in" data-aos-delay="100">
           <img src="https://i.ibb.co/w6tgcJp/container.png" alt="Container Shipping" class="mx-auto mb-4 w-20">
           <h4 class="text-xl font-semibold mb-2">Container Shipping</h4>
           <p>Secure and efficient container transport across global trade routes.</p>
         </div>
-        <div class="p-6 bg-gray-100 rounded-lg shadow service-card">
+        <div class="p-6 bg-gray-100 rounded-lg shadow service-card" data-aos="zoom-in" data-aos-delay="200">
           <img src="https://i.ibb.co/zQKH7hS/roro.png" alt="RoRo" class="mx-auto mb-4 w-20">
           <h4 class="text-xl font-semibold mb-2">RoRo (Roll-on/Roll-off)</h4>
           <p>Seamless shipping for vehicles and heavy machinery worldwide.</p>
         </div>
-        <div class="p-6 bg-gray-100 rounded-lg shadow service-card">
+        <div class="p-6 bg-gray-100 rounded-lg shadow service-card" data-aos="zoom-in" data-aos-delay="300">
           <img src="https://i.ibb.co/jZDb3Q1/special.png" alt="Special Cargo" class="mx-auto mb-4 w-20">
           <h4 class="text-xl font-semibold mb-2">Special Cargo</h4>
           <p>Custom solutions for oversized and time-sensitive cargo shipments.</p>
@@ -67,22 +69,24 @@
   <!-- Global Reach -->
   <section class="py-16 bg-gray-50">
     <div class="container mx-auto text-center">
-      <h3 class="text-3xl font-bold mb-12">Our Global Reach</h3>
-      <p class="mb-10 max-w-2xl mx-auto">From North America to Africa, Europe to South America, we deliver logistics solutions that connect continents and empower global trade.</p>
+      <h3 class="text-3xl font-bold mb-12" data-aos="fade-up">Our Global Reach</h3>
+      <p class="mb-10 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+        From North America to Africa, Europe to South America, we deliver logistics solutions that connect continents and empower global trade.
+      </p>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-10">
-        <div>
+        <div data-aos="flip-left" data-aos-delay="100">
           <img src="https://i.ibb.co/fHG0p7C/north-america.png" alt="North America" class="mx-auto w-28">
           <p class="mt-3 font-semibold">North America</p>
         </div>
-        <div>
+        <div data-aos="flip-left" data-aos-delay="200">
           <img src="https://i.ibb.co/kJkqfMh/south-america.png" alt="South America" class="mx-auto w-28">
           <p class="mt-3 font-semibold">South America</p>
         </div>
-        <div>
+        <div data-aos="flip-left" data-aos-delay="300">
           <img src="https://i.ibb.co/vjKskHz/europe.png" alt="Europe" class="mx-auto w-28">
           <p class="mt-3 font-semibold">Europe</p>
         </div>
-        <div>
+        <div data-aos="flip-left" data-aos-delay="400">
           <img src="https://i.ibb.co/Sd9nZ7L/africa.png" alt="Africa" class="mx-auto w-28">
           <p class="mt-3 font-semibold">Africa</p>
         </div>
@@ -93,12 +97,12 @@
   <!-- About -->
   <section class="py-16 bg-white">
     <div class="container mx-auto grid md:grid-cols-2 gap-12 items-center">
-      <div>
+      <div data-aos="fade-right">
         <h3 class="text-3xl font-bold mb-6">About Us</h3>
         <p class="mb-4">AOL LOGISTICS is a trusted name in global shipping and logistics. With decades of experience, we ensure smooth, reliable, and cost-effective transportation of goods worldwide.</p>
         <p>Our mission is to connect businesses across continents and make international trade seamless.</p>
       </div>
-      <div>
+      <div data-aos="fade-left">
         <img src="https://i.ibb.co/Sf3C6z8/logistics-team.jpg" alt="About AOL" class="about-img shadow-lg w-full">
       </div>
     </div>
@@ -107,11 +111,11 @@
   <!-- Footer -->
   <footer class="bg-gray-900 text-white py-12">
     <div class="container mx-auto grid md:grid-cols-3 gap-8 text-center md:text-left">
-      <div>
+      <div data-aos="fade-up">
         <h4 class="text-xl font-bold mb-4">AOL LOGISTICS</h4>
         <p>Connecting continents with reliable shipping and logistics solutions.</p>
       </div>
-      <div>
+      <div data-aos="fade-up" data-aos-delay="100">
         <h4 class="text-xl font-bold mb-4">Quick Links</h4>
         <ul>
           <li><a href="#" class="hover:text-yellow-500">Home</a></li>
@@ -121,7 +125,7 @@
           <li><a href="#" class="hover:text-yellow-500">Contact</a></li>
         </ul>
       </div>
-      <div>
+      <div data-aos="fade-up" data-aos-delay="200">
         <h4 class="text-xl font-bold mb-4">Contact</h4>
         <p>Email: info@aollogistics.com</p>
         <p>Phone: +1 (555) 123-4567</p>
@@ -132,6 +136,15 @@
       © 2025 AOL LOGISTICS. All rights reserved.
     </div>
   </footer>
+
+  <!-- AOS Script -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 1200,
+      once: true
+    });
+  </script>
 
 </body>
 </html>
