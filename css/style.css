@@ -37,7 +37,21 @@ header nav a:hover {
 
 .hero-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+}
+
+/* Animated Background Image */
+section.relative img {
+  animation: slowZoom 20s ease-in-out infinite alternate;
+}
+
+@keyframes slowZoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.1);
+  }
 }
 
 /* Service Cards */
@@ -46,18 +60,29 @@ header nav a:hover {
 }
 
 .service-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-8px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  background-color: #fef9c3; /* subtle yellow highlight */
 }
 
 /* About Section Image */
 .about-img {
-  border-radius: 20px;
+  border-radius: 16px;
   transition: transform 0.4s ease;
 }
 
 .about-img:hover {
   transform: scale(1.03);
+}
+
+/* Global Reach Logos */
+section img.mx-auto {
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+section img.mx-auto:hover {
+  transform: scale(1.1) rotate(3deg);
+  filter: drop-shadow(0px 6px 8px rgba(0, 0, 0, 0.2));
 }
 
 /* Footer */
@@ -67,9 +92,4 @@ footer a {
 
 footer a:hover {
   color: #facc15; /* yellow highlight */
-}
-
-/* Mobile Menu Placeholder (you can add JS later) */
-.mobile-menu {
-  display: none;
 }
