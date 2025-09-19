@@ -3,69 +3,111 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Shipment - AOL LOGISTICS</title>
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <title>Shipment Form - AOL LOGISTICS</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom CSS -->
   <link rel="stylesheet" href="css/style.css">
+  <!-- Supabase -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
-<body>
-  <div class="container">
-    <h2>Create New Shipment</h2>
-    <form id="shipmentForm">
-      <label>Customer Name:</label>
-      <input type="text" id="customer_name" required>
+<body class="bg-gray-50 text-gray-800">
 
-      <label>Email:</label>
-      <input type="email" id="email" required>
+  <!-- Navbar -->
+  <header class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
+    <div class="container mx-auto flex items-center justify-between px-6 py-4">
+      <h1 class="text-2xl font-bold text-yellow-500">AOL LOGISTICS</h1>
+      <nav class="hidden md:flex space-x-6">
+        <a href="home.html" class="hover:text-yellow-500">Home</a>
+        <a href="form.html" class="hover:text-yellow-500">Create Shipment</a>
+        <a href="tracking.html" class="hover:text-yellow-500">Track Shipment</a>
+      </nav>
+    </div>
+  </header>
 
-      <label>Phone:</label>
-      <input type="text" id="phone">
+  <!-- Shipment Form -->
+  <section class="pt-32 pb-20">
+    <div class="container mx-auto px-6">
+      <h2 class="text-3xl font-bold text-center mb-8">Create a New Shipment</h2>
 
-      <label>Origin:</label>
-      <input type="text" id="origin" required>
+      <form id="shipmentForm" class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-8 space-y-6">
+        <div>
+          <label class="block font-semibold">Customer Name</label>
+          <input type="text" id="customer_name" class="w-full mt-2 p-3 border rounded" required>
+        </div>
 
-      <label>Destination:</label>
-      <input type="text" id="destination" required>
+        <div>
+          <label class="block font-semibold">Email</label>
+          <input type="email" id="email" class="w-full mt-2 p-3 border rounded" required>
+        </div>
 
-      <label>Weight (kg):</label>
-      <input type="number" step="0.01" id="weight">
+        <div>
+          <label class="block font-semibold">Phone</label>
+          <input type="text" id="phone" class="w-full mt-2 p-3 border rounded">
+        </div>
 
-      <label>Description:</label>
-      <textarea id="description"></textarea>
+        <div>
+          <label class="block font-semibold">Address</label>
+          <textarea id="address" class="w-full mt-2 p-3 border rounded" required></textarea>
+        </div>
 
-      <button type="submit">Submit</button>
-    </form>
-    <p id="message"></p>
-  </div>
+        <div>
+          <label class="block font-semibold">Origin</label>
+          <input type="text" id="origin" class="w-full mt-2 p-3 border rounded" required>
+        </div>
 
+        <div>
+          <label class="block font-semibold">Destination</label>
+          <input type="text" id="destination" class="w-full mt-2 p-3 border rounded" required>
+        </div>
+
+        <div>
+          <label class="block font-semibold">Weight (kg)</label>
+          <input type="number" id="weight" class="w-full mt-2 p-3 border rounded">
+        </div>
+
+        <div>
+          <label class="block font-semibold">Description</label>
+          <textarea id="description" class="w-full mt-2 p-3 border rounded"></textarea>
+        </div>
+
+        <button type="submit" class="w-full bg-yellow-500 text-white py-3 rounded-lg font-semibold hover:bg-yellow-600">
+          Submit Shipment
+        </button>
+      </form>
+
+      <div id="message" class="mt-6 text-center"></div>
+    </div>
+  </section>
+
+  <!-- Supabase Script -->
   <script>
-    // 1. Initialize Supabase client
-    const SUPABASE_URL = "https://YOUR_PROJECT.supabase.co"; 
-    const SUPABASE_KEY = "YOUR_ANON_KEY"; 
+    const SUPABASE_URL = "https://YOUR_PROJECT.supabase.co";
+    const SUPABASE_KEY = "YOUR_ANON_KEY";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // 2. Handle form submission
     document.getElementById("shipmentForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const customer_name = document.getElementById("customer_name").value;
-      const email = document.getElementById("email").value;
-      const phone = document.getElementById("phone").value;
-      const origin = document.getElementById("origin").value;
-      const destination = document.getElementById("destination").value;
-      const weight = document.getElementById("weight").value;
-      const description = document.getElementById("description").value;
+      const shipment = {
+        customer_name: document.getElementById("customer_name").value,
+        email: document.getElementById("email").value,
+        phone: document.getElementById("phone").value,
+        address: document.getElementById("address").value,
+        origin: document.getElementById("origin").value,
+        destination: document.getElementById("destination").value,
+        weight: document.getElementById("weight").value,
+        description: document.getElementById("description").value,
+        status: "Pending"
+      };
 
-      // Insert into Supabase
-      const { data, error } = await supabase
-        .from("shipments")
-        .insert([
-          { customer_name, email, phone, origin, destination, weight, description }
-        ]);
+      const { data, error } = await supabase.from("shipments").insert([shipment]);
 
+      const messageDiv = document.getElementById("message");
       if (error) {
-        document.getElementById("message").textContent = "❌ Error: " + error.message;
+        messageDiv.innerHTML = `<p class="text-red-600 font-semibold">❌ Error: ${error.message}</p>`;
       } else {
-        document.getElementById("message").textContent = "✅ Shipment created successfully!";
+        messageDiv.innerHTML = `<p class="text-green-600 font-semibold">✅ Shipment created successfully!</p>`;
         document.getElementById("shipmentForm").reset();
       }
     });
