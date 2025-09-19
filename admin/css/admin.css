@@ -1,0 +1,95 @@
+/* ===============================
+   ADMIN DASHBOARD CUSTOM STYLES
+   =============================== */
+
+/* General Layout */
+body {
+  font-family: 'Inter', Arial, sans-serif;
+  background: #f9fafb;
+  color: #1f2937;
+}
+
+/* Sidebar */
+aside {
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+}
+
+aside h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #f59e0b; /* yellow-500 */
+  margin-bottom: 1rem;
+}
+
+aside nav a {
+  display: block;
+  padding: 0.5rem 0;
+  color: #374151;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+aside nav a:hover {
+  color: #f59e0b;
+}
+
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #f59e0b; /* yellow-500 */
+  color: #ffffff;
+}
+
+thead th {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 0.75rem;
+}
+
+tbody td {
+  padding: 0.75rem;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+tbody tr:hover {
+  background: #fef3c7; /* light yellow hover */
+}
+
+/* Buttons */
+button {
+  transition: background 0.2s, transform 0.1s;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+/* Print Styles (for receipts) */
+@media print {
+  body {
+    background: #ffffff;
+    font-size: 12pt;
+  }
+  aside,
+  #logoutBtn,
+  .actions {
+    display: none !important;
+  }
+  main {
+    padding: 0;
+  }
+  table {
+    border: 1px solid #000;
+  }
+  td, th {
+    border: 1px solid #000;
+    padding: 6px;
+  }
+}
