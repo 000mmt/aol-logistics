@@ -1,362 +1,149 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>AOL Logistics — Shipment Receipt</title>
-<style>
-  :root{
-    --blue:#0b63b3;
-    --yellow:#f5a623;
-    --text:#13304a;
-    --muted:#6b7280;
-    --border:#1f4b72;
-    --box-bg:#fff;
-  }
-  html,body{height:100%;margin:0;padding:0;font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;color:var(--text);background:#f3f6f9;}
-  .page{
-    width:100%;
-    max-width:1100px;
-    margin:24px auto;
-    background:white;
-    box-shadow:0 6px 18px rgba(10,20,30,.08);
-    padding:20px;
-    box-sizing:border-box;
-    position:relative;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shipment Receipt</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      padding: 20px;
+    }
+    .receipt {
+      background: #fff;
+      max-width: 1000px;
+      margin: auto;
+      border: 2px solid #0074c7;
+      padding: 20px;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      border-bottom: 2px solid #0074c7;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    .header img {
+      width: 80px;
+      margin-right: 15px;
+    }
+    .header h1 {
+      color: #0074c7;
+      margin: 0;
+      font-size: 28px;
+    }
+    .header p {
+      margin: 0;
+      font-size: 12px;
+      color: #555;
+    }
 
-  /* Header */
-  .header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:16px;
-    margin-bottom:12px;
-  }
-  .brand{
-    display:flex;
-    align-items:center;
-    gap:14px;
-  }
-  .brand img{height:72px; width:auto;}
-  .brand h1{
-    margin:0;
-    font-size:26px;
-    color:var(--blue);
-    letter-spacing:1px;
-  }
-  .brand p{margin:0;font-size:12px;color:var(--muted);}
+    .info-section {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .sender-info {
+      width: 35%; /* Reduced */
+      border: 1px solid #0074c7;
+      padding: 10px;
+      font-size: 14px;
+    }
+    .delivery-info {
+      width: 63%; /* Increased */
+      border: 1px solid #0074c7;
+      padding: 10px;
+      font-size: 14px;
+    }
 
-  /* Main grid: two columns top */
-  .top-grid{
-    display:grid;
-    grid-template-columns: 1fr 420px;
-    gap:18px;
-    margin-top:8px;
-  }
+    .receiver-info, .package-info {
+      border: 1px solid #0074c7;
+      padding: 10px;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
 
-  .box{
-    border:2px solid var(--border);
-    background:var(--box-bg);
-    padding:14px;
-    box-sizing:border-box;
-    position:relative;
-    min-height:160px;
-  }
+    h3 {
+      background: #0074c7;
+      color: #fff;
+      margin: -10px -10px 10px -10px;
+      padding: 5px;
+      font-size: 16px;
+    }
 
-  .sender .title, .delivery .title, .receiver .title, .package .title, .charges .title{
-    font-weight:700;
-    margin:0 0 8px 0;
-    letter-spacing:0.6px;
-    color:var(--blue);
-  }
-
-  /* sender (left) layout like form lines */
-  .sender .field {
-    border-top:1px solid var(--border);
-    padding:10px 8px;
-    display:flex;
-    align-items:center;
-    gap:10px;
-  }
-  .label {width:130px; color:var(--muted); font-size:12px; font-weight:600;}
-  .value {flex:1; font-size:13px; padding-left:6px; color:#10212f;}
-
-  .sender .field:first-of-type{border-top:0;padding-top:4px;}
-
-  /* delivery (right) styled box with small subboxes */
-  .delivery-grid{
-    display:grid;
-    grid-template-columns:1fr;
-    gap:8px;
-  }
-  .delivery .row { display:flex; gap:8px; align-items:flex-start; }
-  .delivery .col { flex:1; }
-  .delivery .badge { border:1px solid var(--border); padding:6px; font-size:12px; font-weight:700; text-align:center; }
-
-  .watermark{
-    position:absolute;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-40%);
-    opacity:0.08;
-    z-index:0;
-    pointer-events:none;
-  }
-  .watermark img{height:220px; width:auto;}
-
-  /* receiver full width under top */
-  .bottom-grid{
-    display:grid;
-    grid-template-columns: 1fr 420px;
-    gap:18px;
-    margin-top:18px;
-  }
-
-  .receiver .row-group{
-    border-top:1px solid var(--border);
-    padding:10px 8px;
-  }
-  .receiver .row-group:first-child{border-top:0;padding-top:6px;}
-
-  /* package / transport charges style */
-  .package .grid{
-    display:grid;
-    grid-template-columns:1fr;
-    gap:8px;
-  }
-  .package .entry{border-top:1px dashed var(--border); padding:8px 6px;}
-  .charges .block{
-    border:1px solid var(--border);
-    padding:10px;
-    margin-bottom:8px;
-    min-height:46px;
-  }
-  .charges .row{display:flex; justify-content:space-between; gap:8px; margin-bottom:6px;}
-  .charges .total{font-weight:800; font-size:18px; color:var(--blue);}
-
-  /* small utility */
-  .muted{color:var(--muted); font-size:12px;}
-  .strong{font-weight:700; color:#0b3f66;}
-  .align-right{text-align:right;}
-
-  /* print */
-  @media print{
-    body{background:white;}
-    .page{box-shadow:none; margin:0; max-width:100%; padding:12px;}
-    .watermark{display:none;}
-    .brand img{height:60px;}
-  }
-
-  /* responsive */
-  @media (max-width:980px){
-    .top-grid, .bottom-grid{grid-template-columns:1fr;}
-    .page{padding:12px;}
-    .brand h1{font-size:20px;}
-    .brand img{height:56px;}
-  }
-
-  /* small table style inside boxes */
-  table.small { width:100%; border-collapse:collapse; font-size:13px; }
-  table.small td{ padding:6px; border-bottom:1px solid #e6eef8; vertical-align:top; }
-  .right-cell{ text-align:right; }
-</style>
+    .footer {
+      font-size: 12px;
+      text-align: right;
+      color: #333;
+      border-top: 2px solid #0074c7;
+      padding-top: 10px;
+    }
+  </style>
 </head>
 <body>
-  <div class="page" role="main">
-    <!-- watermark logo centered -->
-    <div class="watermark" aria-hidden="true">
-      <!-- replace src with your ship logo path if available -->
-      <img src="images/ACL-Port-Scene.jpg" alt="" />
+  <div class="receipt">
+    <!-- Header -->
+    <div class="header">
+      <img src="logo.png" alt="Logo">
+      <div>
+        <h1>AOL LOGISTICS</h1>
+        <p>DELIVERY SERVICE AT ITS FINEST</p>
+      </div>
     </div>
 
-    <!-- Header -->
-    <header class="header" aria-label="Document header">
-      <div class="brand">
-        <!-- put your logo image here -->
-        <img src="images/logo_aol.png" alt="AOL LOGISTICS Logo" onerror="this.style.display='none'">
-        <div>
-          <h1>AOL LOGISTICS</h1>
-          <p>DELIVERY SERVICE AT ITS FINEST</p>
-        </div>
-      </div>
-      <div style="text-align:right;">
-        <div style="font-weight:700; font-size:14px; color:var(--muted);">DELIVERY INFORMATION</div>
-        <div style="margin-top:6px; font-size:14px;">
-          <span class="strong">DNY 2-18C 999 21</span><br>
-          <span class="muted">Quote this Shipment number in an enquiry</span>
-        </div>
-      </div>
-    </header>
-
-    <!-- top: sender (left) and delivery (right) -->
-    <section class="top-grid" aria-label="Top information">
-      <div class="box sender" style="z-index:2;">
-        <div class="title">SENDER'S INFO</div>
-
-        <div class="field">
-          <div class="label">FULL NAME:</div>
-          <div class="value strong">MRS SONIA LUGARD</div>
-        </div>
-
-        <div class="field">
-          <div class="label">ADDRESS:</div>
-          <div class="value">
-            Street: Golovka 1 Prov., bld. 7/A, apt 2<br>
-            Oongnae-gu, Busan, 305-1603 (Raemian Forestige)
-          </div>
-        </div>
-
-        <div class="field">
-          <div class="label">REFERENCE ND:</div>
-          <div class="value">DS:0967</div>
-        </div>
+    <!-- Sender + Delivery Info -->
+    <div class="info-section">
+      <div class="sender-info">
+        <h3>Sender’s Info</h3>
+        <p><strong>Full Name:</strong> MRS SONIA LUGARD</p>
+        <p><strong>Address:</strong> Street: Golovka 1 Prov., bld. 7/A, apot 2, Oongnae-gu, Busan, 305-1603 \Raemian Forestige</p>
+        <p><strong>Reference No:</strong> DS:0967</p>
       </div>
 
-      <div class="box delivery" style="z-index:2;">
-        <div class="title">DELIVERY INFORMATION</div>
-
-        <div class="delivery-grid">
-          <div class="row" style="justify-content:space-between;">
-            <div class="col muted">
-              <div style="font-size:13px;"><strong>FROM</strong></div>
-              <div>Kiba<br>LIKKAINE</div>
-            </div>
-            <div class="col muted">
-              <div style="font-size:13px;"><strong>TO</strong></div>
-              <div>Osaka<br>Japan</div>
-            </div>
-          </div>
-
-          <div class="row" style="margin-top:8px;">
-            <div class="col">
-              <table class="small" aria-hidden="true">
-                <tr><td style="width:50%"><b>Departure Time:</b></td><td>07.00.00AM</td></tr>
-                <tr><td><b>Departure Date:</b></td><td>—</td></tr>
-                <tr><td><b>Asalu No.:</b></td><td>027835</td></tr>
-                <tr><td><b>Delivery Code:</b></td><td>Ds/23239</td></tr>
-              </table>
-            </div>
-          </div>
-
-          <div class="row" style="margin-top:8px;">
-            <div style="border:1px solid var(--border); padding:10px;">
-              <div style="font-weight:700; font-size:15px;">Item No.: <span class="strong">RPH860</span></div>
-              <div style="margin-top:6px;">Delivery method: <strong>EXPRESS</strong></div>
-              <div style="margin-top:6px;">G.W.: <strong>44kgs</strong> &nbsp;&nbsp; N.W.: <strong>39.5kgs</strong></div>
-              <div style="margin-top:8px; text-transform:uppercase; font-weight:800; color:#0b3f66;">PACKAGE VOLUME: <span style="color:#0b63b3">HEAVY</span></div>
-            </div>
-          </div>
-
-        </div>
+      <div class="delivery-info">
+        <h3>Delivery Information</h3>
+        <p><strong>From:</strong> Kiba Likkaine <strong>To:</strong> Osaka, Japan</p>
+        <p><strong>Departure Time:</strong> 07:00 AM</p>
+        <p><strong>Departure Date:</strong> --</p>
+        <p><strong>Delivery Code:</strong> Ds/23239</p>
+        <p><strong>Item No:</strong> RPH860</p>
+        <p><strong>G.W:</strong> 44kgs | <strong>N.W:</strong> 39.5kgs</p>
+        <p><strong>Method:</strong> EXPRESS</p>
+        <p><strong>Package Volume:</strong> HEAVY</p>
       </div>
-    </section>
+    </div>
 
-    <!-- bottom: receiver (left) and package/charges (right) -->
-    <section class="bottom-grid" aria-label="Receiver and package">
-      <div class="box receiver" style="z-index:2;">
-        <div class="title">RECEIVER INFO</div>
+    <!-- Receiver Info -->
+    <div class="receiver-info">
+      <h3>Receiver Info</h3>
+      <p><strong>Full Name:</strong> Kim Bo-hwan</p>
+      <p><strong>Address:</strong> 41 Geumgang-ro 131beon-gil, Dongnae-gu, Busan, 305-1003</p>
+      <p><strong>Country:</strong> Japan | <strong>Count:</strong> South Korea</p>
+      <p><strong>Contact:</strong> kim.bohwan85@gmail.com | 0100-5095-4620</p>
+    </div>
 
-        <div class="row-group">
-          <div class="label" style="width:auto; display:inline-block; margin-right:8px;">FULL NAME:</div>
-          <span class="strong">Kim Bo-hwan</span>
-        </div>
+    <!-- Package Info -->
+    <div class="package-info">
+      <h3>Package Information</h3>
+      <p><strong>Type:</strong> Worldwide Diplomatic Package</p>
+      <p><strong>Description:</strong> Single gray corlocal safe/box</p>
+      <p><strong>No. of Package:</strong> 1</p>
+      <p><strong>Weight:</strong> AUKG</p>
+      <p><strong>Transport Charges:</strong></p>
+      <ul>
+        <li>Registration Fee: $16,000 (Paid)</li>
+        <li>Delivery Fee: $36,000 (Not Paid)</li>
+        <li>Insurance Fee: Not Paid</li>
+        <li><strong>Total:</strong> $20,000 | <strong>Balance:</strong> $20,000</li>
+      </ul>
+    </div>
 
-        <div class="row-group">
-          <div class="label" style="width:auto; display:inline-block; margin-right:8px;">DELIVERY ADDRESS:</div>
-          <div style="display:inline-block; width: calc(100% - 140px); margin-top:6px;">
-            41 Geumgang-ro 131beon-gil, Dongnae-gu, Busian, 305-1003
-          </div>
-        </div>
-
-        <div class="row-group" style="display:flex; gap:12px; align-items:center;">
-          <div style="flex:1;">
-            <div class="muted">COUNTRY:</div>
-            <div class="strong">Japan</div>
-          </div>
-          <div style="flex:1;">
-            <div class="muted">COUNT.</div>
-            <div class="strong">South Korea</div>
-          </div>
-        </div>
-
-        <div class="row-group" style="display:flex; gap:12px; align-items:center;">
-          <div style="flex:2;">
-            <div class="muted">CONTACT PERSON:</div>
-            <div class="strong">kim.bohwan85@gmail.com</div>
-          </div>
-          <div style="flex:1;">
-            <div class="muted">PHONE:</div>
-            <div class="strong">0100-5095-4620</div>
-          </div>
-        </div>
-
-        <div style="margin-top:12px; font-size:12px; color:var(--muted);">
-          We agree to the AOL shipping terms and conditions.
-        </div>
-
-        <div style="display:flex; justify-content:space-between; margin-top:18px; font-size:12px;">
-          <div>
-            <div style="border-top:1px solid var(--border); width:220px; margin-top:6px; padding-top:6px;">
-              Signature
-            </div>
-          </div>
-          <div style="text-align:right;">
-            <div class="muted">departure date</div>
-            <div class="strong">11/06/2025</div>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div class="box package" style="margin-bottom:12px; z-index:2;">
-          <div class="title">PACKAGE INFORMATION</div>
-
-          <div class="grid">
-            <div class="entry">
-              <div style="font-weight:700;">PACKAGE DESCRIPTION</div>
-              <div class="muted" style="margin-top:6px;">Single gray colorcal safe/ box</div>
-            </div>
-
-            <div class="entry">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div><b>NO. OF PACKAGE:</b> One (1)</div>
-                <div><b>WEIGHT:</b> AUKG</div>
-              </div>
-            </div>
-
-            <div class="entry" style="display:flex; gap:8px; align-items:center; justify-content:space-between;">
-              <div>
-                <label style="font-weight:700;">Worldwide Diplomatic</label><br>
-                <span class="muted">□ Worldwide Diplomatic package &nbsp;&nbsp; □ Domestic package</span>
-              </div>
-              <div style="text-align:right;">
-                <div style="font-weight:800; color:#0b63b3; font-size:18px;">HEAVY</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="box charges" style="z-index:2;">
-          <div class="title">TRANSPORT CHARGES</div>
-
-          <div class="block">
-            <div class="row"><div>Registration fee</div><div class="align-right">$16,000</div></div>
-            <div class="row"><div>Delivery fee</div><div class="align-right">$36,000</div></div>
-            <div class="row"><div>Insurance fee</div><div class="align-right">paid</div></div>
-            <div class="row" style="border-top:1px solid #e6eef8; padding-top:8px;">
-              <div class="total">Total:</div><div class="total align-right">$20,000</div>
-            </div>
-            <div style="margin-top:6px; font-size:12px; color:var(--muted);">Balance total: cost $20,000</div>
-          </div>
-
-          <div style="font-size:11px; color:var(--muted); margin-top:8px;">
-            If the package insurance fee is important for a export delivery, this is optional.
-          </div>
-        </div>
-      </div>
-    </section>
-
+    <!-- Footer -->
+    <div class="footer">
+      <p>We agree to AOL shipping terms and conditions.</p>
+      <p>Signature: ___________ | Date: 12/06/2025</p>
+    </div>
   </div>
 </body>
 </html>
