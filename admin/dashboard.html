@@ -9,23 +9,6 @@
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 
-
-  <script>
-    // Initialize Supabase client
-    const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // ⚠️ replace with real key
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    // Session check at page load
-    (async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        window.location.replace("login.html");
-      }
-    })();
-  </script>
-
-
   
 </head>
 <body class="flex bg-gray-900">
@@ -49,6 +32,19 @@
     const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // ⚠️ Replace with your actual key
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+
+        // Session check at page load
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        window.location.replace("login.html");
+        return;
+      }
+      // If session exists → then load users
+      loadUsers();
+    })();
+    
 
     // Load users
     async function loadUsers() {
