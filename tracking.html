@@ -4,59 +4,69 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Track Shipment - AOL LOGISTICS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-  <div class="container">
-    <h2>Track Your Shipment</h2>
-    <form id="trackingForm">
-      <label>Enter Shipment Number:</label>
-      <input type="text" id="shipment_no" placeholder="e.g., SHP20250919001" required>
-      <button type="submit">Track</button>
-    </form>
+<body class="bg-gray-50 text-gray-800">
 
-    <div id="result" class="tracking-result"></div>
-  </div>
+  <!-- Navbar -->
+  <header class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
+    <div class="container mx-auto flex items-center justify-between px-6 py-4">
+      <h1 class="text-2xl font-bold text-yellow-500">AOL LOGISTICS</h1>
+      <nav class="hidden md:flex space-x-6">
+        <a href="home.html" class="hover:text-yellow-500">Home</a>
+        <a href="form.html" class="hover:text-yellow-500">Create Shipment</a>
+        <a href="tracking.html" class="hover:text-yellow-500">Track Shipment</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Tracking Result -->
+  <section class="pt-32 pb-20">
+    <div class="container mx-auto px-6">
+      <h2 class="text-3xl font-bold text-center mb-8">Shipment Tracking</h2>
+      <div id="result" class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-8 text-center"></div>
+    </div>
+  </section>
 
   <script>
-    // 1. Initialize Supabase client
-    const SUPABASE_URL = "https://YOUR_PROJECT.supabase.co"; 
-    const SUPABASE_KEY = "YOUR_ANON_KEY"; 
+    const SUPABASE_URL = "https://YOUR_PROJECT.supabase.co";
+    const SUPABASE_KEY = "YOUR_ANON_KEY";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // 2. Handle form submission
-    document.getElementById("trackingForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const shipment_no = document.getElementById("shipment_no").value.trim();
+    async function getShipment() {
+      const params = new URLSearchParams(window.location.search);
+      const trackingNo = params.get("tracking_no");
 
-      // Query Supabase
+      const resultDiv = document.getElementById("result");
+      if (!trackingNo) {
+        resultDiv.innerHTML = `<p class="text-red-600">❌ No tracking number provided.</p>`;
+        return;
+      }
+
+      // Fetch shipment by tracking number
       const { data, error } = await supabase
         .from("shipments")
         .select("*")
-        .eq("shipment_no", shipment_no)
+        .eq("id", trackingNo)   // 👈 replace with "tracking_no" if you create that column
         .single();
 
-      const resultDiv = document.getElementById("result");
-
       if (error || !data) {
-        resultDiv.innerHTML = `<p class="error">❌ Shipment not found. Please check your number.</p>`;
+        resultDiv.innerHTML = `<p class="text-red-600">❌ Shipment not found for <b>${trackingNo}</b></p>`;
       } else {
         resultDiv.innerHTML = `
-          <h3>Shipment Details</h3>
-          <p><strong>Shipment No:</strong> ${data.shipment_no}</p>
-          <p><strong>Customer:</strong> ${data.customer_name}</p>
-          <p><strong>Email:</strong> ${data.email}</p>
-          <p><strong>Phone:</strong> ${data.phone || 'N/A'}</p>
-          <p><strong>Origin:</strong> ${data.origin}</p>
-          <p><strong>Destination:</strong> ${data.destination}</p>
-          <p><strong>Weight:</strong> ${data.weight || 'N/A'} kg</p>
-          <p><strong>Description:</strong> ${data.description || 'N/A'}</p>
-          <p><strong>Status:</strong> <span class="status">${data.status}</span></p>
-          <p><strong>Created At:</strong> ${new Date(data.created_at).toLocaleString()}</p>
+          <h3 class="text-xl font-bold mb-4">Shipment Details</h3>
+          <p><b>Customer:</b> ${data.customer_name}</p>
+          <p><b>Email:</b> ${data.email}</p>
+          <p><b>Phone:</b> ${data.phone || "-"}</p>
+          <p><b>Address:</b> ${data.address}</p>
+          <p><b>Status:</b> <span class="text-yellow-600 font-semibold">${data.status}</span></p>
+          <p><b>Created At:</b> ${new Date(data.created_at).toLocaleString()}</p>
         `;
       }
-    });
+    }
+
+    getShipment();
   </script>
 </body>
 </html>
