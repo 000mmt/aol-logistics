@@ -43,7 +43,15 @@
   </main>
 
   <script>
-    const supabase = window.supabase.createClient("https://byvffsxsfehrybkyamyu.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"); // Use environment variables in production
+    const supabase = window.supabase.createClient("https://your-supabase-url", "your-supabase-key");
+
+    // Check for user authentication
+    async function checkAuth() {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (!user) {
+        window.location.href = "login.html"; // Redirect to login if not authenticated
+      }
+    }
 
     // Load shipments
     async function loadShipments() {
@@ -156,10 +164,11 @@
     // Logout
     document.getElementById("logoutBtn").addEventListener("click", async () => {
       await supabase.auth.signOut();
-      window.location.href = "login.html";
+      window.location.href = "login.html"; // Redirect to login after logout
     });
 
-    loadShipments();
+    // Execute authentication check and load shipments
+    checkAuth().then(loadShipments);
   </script>
 </body>
 </html>
