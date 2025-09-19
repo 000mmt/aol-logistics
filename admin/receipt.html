@@ -50,18 +50,18 @@
   /* Main grid: two columns top */
   .top-grid{
     display:grid;
-    grid-template-columns: 360px 1fr; /* sender narrower, delivery wider */
-    gap:16px;
+    grid-template-columns: 210px 420px; /* sender is half of delivery */
+    gap:18px;
     margin-top:8px;
   }
 
   .box{
     border:2px solid var(--border);
     background:var(--box-bg);
-    padding:12px;
+    padding:14px;
     box-sizing:border-box;
     position:relative;
-    min-height:150px;
+    min-height:120px; /* reduced height */
   }
 
   .sender .title, .delivery .title, .receiver .title, .package .title, .charges .title{
@@ -74,13 +74,13 @@
   /* sender (left) layout like form lines */
   .sender .field {
     border-top:1px solid var(--border);
-    padding:8px 6px;
+    padding:10px 8px;
     display:flex;
-    align-items:flex-start;
+    align-items:center;
     gap:10px;
   }
-  .label {width:110px; color:var(--muted); font-size:12px; font-weight:600;}
-  .value {flex:1; font-size:13px; padding-left:4px; color:#10212f;}
+  .label {width:130px; color:var(--muted); font-size:12px; font-weight:600;}
+  .value {flex:1; font-size:13px; padding-left:6px; color:#10212f;}
 
   .sender .field:first-of-type{border-top:0;padding-top:4px;}
 
@@ -103,22 +103,23 @@
     z-index:0;
     pointer-events:none;
   }
-  .watermark img{height:200px; width:auto;}
+  .watermark img{height:220px; width:auto;}
 
-  /* receiver + package */
+  /* receiver full width under top */
   .bottom-grid{
     display:grid;
-    grid-template-columns: 360px 1fr; /* keep same ratio */
-    gap:16px;
+    grid-template-columns: 210px 420px; /* receiver is half of package */
+    gap:18px;
     margin-top:18px;
   }
 
   .receiver .row-group{
     border-top:1px solid var(--border);
-    padding:8px 6px;
+    padding:10px 8px;
   }
   .receiver .row-group:first-child{border-top:0;padding-top:6px;}
 
+  /* package / transport charges style */
   .package .grid{
     display:grid;
     grid-template-columns:1fr;
@@ -134,7 +135,7 @@
   .charges .row{display:flex; justify-content:space-between; gap:8px; margin-bottom:6px;}
   .charges .total{font-weight:800; font-size:18px; color:var(--blue);}
 
-  /* utilities */
+  /* small utility */
   .muted{color:var(--muted); font-size:12px;}
   .strong{font-weight:700; color:#0b3f66;}
   .align-right{text-align:right;}
@@ -155,6 +156,7 @@
     .brand img{height:56px;}
   }
 
+  /* small table style inside boxes */
   table.small { width:100%; border-collapse:collapse; font-size:13px; }
   table.small td{ padding:6px; border-bottom:1px solid #e6eef8; vertical-align:top; }
   .right-cell{ text-align:right; }
@@ -164,14 +166,12 @@
   <div class="page" role="main">
     <!-- watermark logo centered -->
     <div class="watermark" aria-hidden="true">
-      <!-- replace src with your ship logo path if available -->
       <img src="images/ACL-Port-Scene.jpg" alt="" />
     </div>
 
     <!-- Header -->
     <header class="header" aria-label="Document header">
       <div class="brand">
-        <!-- put your logo image here -->
         <img src="images/logo_aol.png" alt="AOL LOGISTICS Logo" onerror="this.style.display='none'">
         <div>
           <h1>AOL LOGISTICS</h1>
@@ -213,7 +213,6 @@
 
       <div class="box delivery" style="z-index:2;">
         <div class="title">DELIVERY INFORMATION</div>
-
         <div class="delivery-grid">
           <div class="row" style="justify-content:space-between;">
             <div class="col muted">
@@ -225,7 +224,6 @@
               <div>Osaka<br>Japan</div>
             </div>
           </div>
-
           <div class="row" style="margin-top:8px;">
             <div class="col">
               <table class="small" aria-hidden="true">
@@ -236,7 +234,6 @@
               </table>
             </div>
           </div>
-
           <div class="row" style="margin-top:8px;">
             <div style="border:1px solid var(--border); padding:10px;">
               <div style="font-weight:700; font-size:15px;">Item No.: <span class="strong">RPH860</span></div>
@@ -245,7 +242,6 @@
               <div style="margin-top:8px; text-transform:uppercase; font-weight:800; color:#0b3f66;">PACKAGE VOLUME: <span style="color:#0b63b3">HEAVY</span></div>
             </div>
           </div>
-
         </div>
       </div>
     </section>
@@ -254,19 +250,16 @@
     <section class="bottom-grid" aria-label="Receiver and package">
       <div class="box receiver" style="z-index:2;">
         <div class="title">RECEIVER INFO</div>
-
         <div class="row-group">
           <div class="label" style="width:auto; display:inline-block; margin-right:8px;">FULL NAME:</div>
           <span class="strong">Kim Bo-hwan</span>
         </div>
-
         <div class="row-group">
           <div class="label" style="width:auto; display:inline-block; margin-right:8px;">DELIVERY ADDRESS:</div>
           <div style="display:inline-block; width: calc(100% - 140px); margin-top:6px;">
             41 Geumgang-ro 131beon-gil, Dongnae-gu, Busian, 305-1003
           </div>
         </div>
-
         <div class="row-group" style="display:flex; gap:12px; align-items:center;">
           <div style="flex:1;">
             <div class="muted">COUNTRY:</div>
@@ -277,7 +270,6 @@
             <div class="strong">South Korea</div>
           </div>
         </div>
-
         <div class="row-group" style="display:flex; gap:12px; align-items:center;">
           <div style="flex:2;">
             <div class="muted">CONTACT PERSON:</div>
@@ -288,11 +280,9 @@
             <div class="strong">0100-5095-4620</div>
           </div>
         </div>
-
         <div style="margin-top:12px; font-size:12px; color:var(--muted);">
           We agree to the AOL shipping terms and conditions.
         </div>
-
         <div style="display:flex; justify-content:space-between; margin-top:18px; font-size:12px;">
           <div>
             <div style="border-top:1px solid var(--border); width:220px; margin-top:6px; padding-top:6px;">
@@ -309,20 +299,17 @@
       <div>
         <div class="box package" style="margin-bottom:12px; z-index:2;">
           <div class="title">PACKAGE INFORMATION</div>
-
           <div class="grid">
             <div class="entry">
               <div style="font-weight:700;">PACKAGE DESCRIPTION</div>
               <div class="muted" style="margin-top:6px;">Single gray colorcal safe/ box</div>
             </div>
-
             <div class="entry">
               <div style="display:flex; justify-content:space-between; align-items:center;">
                 <div><b>NO. OF PACKAGE:</b> One (1)</div>
                 <div><b>WEIGHT:</b> AUKG</div>
               </div>
             </div>
-
             <div class="entry" style="display:flex; gap:8px; align-items:center; justify-content:space-between;">
               <div>
                 <label style="font-weight:700;">Worldwide Diplomatic</label><br>
@@ -337,7 +324,6 @@
 
         <div class="box charges" style="z-index:2;">
           <div class="title">TRANSPORT CHARGES</div>
-
           <div class="block">
             <div class="row"><div>Registration fee</div><div class="align-right">$16,000</div></div>
             <div class="row"><div>Delivery fee</div><div class="align-right">$36,000</div></div>
@@ -347,14 +333,12 @@
             </div>
             <div style="margin-top:6px; font-size:12px; color:var(--muted);">Balance total: cost $20,000</div>
           </div>
-
           <div style="font-size:11px; color:var(--muted); margin-top:8px;">
             If the package insurance fee is important for a export delivery, this is optional.
           </div>
         </div>
       </div>
     </section>
-
   </div>
 </body>
 </html>
