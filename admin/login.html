@@ -3,42 +3,68 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Login - AOL LOGISTICS</title>
+  <title>Admin Login - AOL Logistics</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
-<body class="flex items-center justify-center h-screen bg-gray-100">
-  <div class="bg-white shadow-lg rounded-lg p-8 w-96">
-    <h2 class="text-2xl font-bold mb-6 text-center text-yellow-500">Admin Login</h2>
-    <form id="loginForm" class="space-y-4">
-      <input type="email" id="email" placeholder="Email"
-             class="w-full p-3 border rounded-lg" required>
-      <input type="password" id="password" placeholder="Password"
-             class="w-full p-3 border rounded-lg" required>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+
+  <!-- Login Card -->
+  <div class="w-full max-w-md bg-white shadow-xl rounded-lg p-8">
+    <h1 class="text-2xl font-bold text-center text-yellow-500 mb-6">Admin Login</h1>
+
+    <!-- Login Form -->
+    <form id="adminLoginForm" class="space-y-4">
+      <div>
+        <label class="block font-semibold text-gray-700">Email</label>
+        <input type="email" id="email" value="admin@example.com"
+               class="w-full mt-2 p-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:outline-none" readonly>
+      </div>
+
+      <div>
+        <label class="block font-semibold text-gray-700">Password</label>
+        <input type="password" id="password" placeholder="Enter password"
+               class="w-full mt-2 p-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:outline-none" required>
+      </div>
+
       <button type="submit"
-              class="w-full bg-yellow-500 text-white py-3 rounded-lg font-semibold hover:bg-yellow-600">
+              class="w-full bg-yellow-500 text-white py-3 rounded-lg font-semibold hover:bg-yellow-600 transition">
         Login
       </button>
     </form>
-    <p id="message" class="text-center mt-4 text-red-600"></p>
+
+    <!-- Message -->
+    <div id="message" class="mt-4 text-center text-sm"></div>
   </div>
 
   <script>
-    const supabase = window.supabase.createClient(
-      "https://YOUR_PROJECT.supabase.co",
-      "YOUR_ANON_KEY"
-    );
+    const SUPABASE_URL = "https://YOUR_PROJECT.supabase.co";
+    const SUPABASE_KEY = "YOUR_ANON_KEY";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+    // Fixed admin email
+    const ADMIN_EMAIL = "admin@example.com";
+
+    document.getElementById("adminLoginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
 
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const messageDiv = document.getElementById("message");
+
+      // Authenticate with Supabase
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
       if (error) {
-        document.getElementById("message").innerText = error.message;
+        messageDiv.innerHTML = `<p class="text-red-600 font-semibold">❌ ${error.message}</p>`;
       } else {
-        window.location.href = "dashboard.html";
+        if (email === ADMIN_EMAIL) {
+          messageDiv.innerHTML = `<p class="text-green-600 font-semibold">✅ Login successful! Redirecting...</p>`;
+          setTimeout(() => window.location.href = "admin-dashboard.html", 1500);
+        } else {
+          messageDiv.innerHTML = `<p class="text-red-600 font-semibold">❌ Unauthorized email</p>`;
+          await supabase.auth.signOut();
+        }
       }
     });
   </script>
