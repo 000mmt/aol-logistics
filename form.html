@@ -48,6 +48,16 @@
           <input type="tel" id="phone" class="w-full mt-2 p-3 border rounded" required>
         </div>
 
+        <div>
+          <label for="address" class="block font-semibold">Address</label>
+          <textarea id="address" class="w-full mt-2 p-3 border rounded" required></textarea>
+        </div>
+
+        <div>
+          <label for="country" class="block font-semibold">Country</label>
+          <input type="text" id="country" class="w-full mt-2 p-3 border rounded" required>
+        </div>
+
         <button type="submit" class="w-full bg-yellow-500 text-white py-3 rounded-lg font-semibold hover:bg-yellow-600">
           Submit Shipment
         </button>
@@ -86,6 +96,8 @@
         customer_name: document.getElementById("customer_name").value,
         email: document.getElementById("email").value,
         phone: document.getElementById("phone").value,
+        address: document.getElementById("address").value,
+        country: document.getElementById("country").value,
         // Other fields can be filled manually later
       };
 
