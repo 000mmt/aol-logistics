@@ -64,20 +64,41 @@
           <!-- Tracking Section -->
           <div id="tracking-${user.id}" class="tab mt-4 hidden">
             <h3 class="font-semibold mb-2">Shipment Tracking</h3>
-            <label class="block mb-2">Progress</label>
-            <select onchange="updateUser('${user.id}', { progress: this.value })" class="border p-2 rounded">
-              <option value="Order Placed" ${user.progress==="Order Placed"?"selected":""}>Order Placed</option>
-              <option value="Preparing Shipment" ${user.progress==="Preparing Shipment"?"selected":""}>Preparing Shipment</option>
-              <option value="Shipped" ${user.progress==="Shipped"?"selected":""}>Shipped</option>
-              <option value="Delivered" ${user.progress==="Delivered"?"selected":""}>Delivered</option>
-            </select>
-            <p class="mt-3"><b>Status:</b> ${user.status || "Pending"}</p>
+            <p><b>Tracking No:</b> ${user.tracking_no}</p>
+            <p><b>Tracking Link:</b> <a href="${user.tracking_link}" class="text-blue-500" target="_blank">${user.tracking_link}</a></p>
+            <p><b>Customer:</b> ${user.customer_name}</p>
+            <p><b>Origin:</b> ${user.origin || 'N/A'}</p>
+            <p><b>Destination:</b> ${user.destination || 'N/A'}</p>
+            <p><b>Status:</b> ${user.status || "Pending"}</p>
+
+            <!-- Editable Form -->
+            <div class="mt-4">
+              <h4 class="font-semibold">Edit Tracking Info</h4>
+              <label class="block mb-1">Progress</label>
+              <select onchange="updateUser('${user.id}', { progress: this.value })" class="border p-2 rounded">
+                <option value="Order Placed" ${user.progress === "Order Placed" ? "selected" : ""}>Order Placed</option>
+                <option value="Preparing Shipment" ${user.progress === "Preparing Shipment" ? "selected" : ""}>Preparing Shipment</option>
+                <option value="Shipped" ${user.progress === "Shipped" ? "selected" : ""}>Shipped</option>
+                <option value="Delivered" ${user.progress === "Delivered" ? "selected" : ""}>Delivered</option>
+              </select>
+              <button onclick="updateUser('${user.id}', { status: 'Updated' })" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Save Tracking Info</button>
+            </div>
           </div>
 
           <!-- Details Info Section -->
           <div id="details-${user.id}" class="tab mt-4 hidden">
             <h3 class="font-semibold mb-2">Details Info</h3>
-            <div class="grid grid-cols-2 gap-4">
+            <p><b>Origin:</b> ${user.origin || 'N/A'}</p>
+            <p><b>Destination:</b> ${user.destination || 'N/A'}</p>
+            <p><b>Weight:</b> ${user.weight || 'N/A'}</p>
+            <p><b>Description:</b> ${user.description || 'N/A'}</p>
+            <p><b>Registration Fee:</b> ${user.registration_fee || 'N/A'}</p>
+            <p><b>Delivery Fee:</b> ${user.delivery_fee || 'N/A'}</p>
+            <p><b>Insurance Fee:</b> ${user.insurance_fee || 'N/A'}</p>
+
+            <!-- Editable Form -->
+            <div class="mt-4">
+              <h4 class="font-semibold">Edit Details Info</h4>
               <label>Origin
                 <input type="text" value="${user.origin || ''}" onchange="updateUser('${user.id}', { origin: this.value })" class="border p-2 w-full rounded">
               </label>
@@ -99,10 +120,7 @@
               <label>Insurance Fee
                 <input type="number" value="${user.insurance_fee || ''}" onchange="updateUser('${user.id}', { insurance_fee: this.value })" class="border p-2 w-full rounded">
               </label>
-            </div>
-            <div class="mt-4 flex justify-between">
-              <button onclick="printReceipt('${user.id}')" class="bg-blue-500 text-white px-4 py-2 rounded">Print Receipt</button>
-              <button onclick="deleteUser('${user.id}')" class="bg-red-500 text-white px-4 py-2 rounded">Delete</button>
+              <button onclick="updateUser('${user.id}')" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Save Details Info</button>
             </div>
           </div>
         </div>
@@ -110,9 +128,10 @@
     }
 
     // Update user
-    async function updateUser(id, updates) {
+    async function updateUser(id, updates = {}) {
       const { error } = await supabase.from("user_info").update(updates).eq("id", id);
       if (error) alert("Error updating: " + error.message);
+      else loadUsers(); // Reload users to reflect changes
     }
 
     // Delete user
