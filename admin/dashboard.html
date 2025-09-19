@@ -79,17 +79,45 @@
           <td class="p-3">${shipment.customer_name}</td>
           <td class="p-3">${shipment.email}</td>
           <td class="p-3">${shipment.phone || 'N/A'}</td>
-          <td class="p-3">${shipment.origin}</td>
-          <td class="p-3">${shipment.destination}</td>
-          <td class="p-3">${shipment.weight || 'N/A'} kg</td>
-          <td class="p-3">${shipment.description || 'N/A'}</td>
+
+          <!-- Editable Origin -->
           <td class="p-3">
-            <select onchange="updateStatus('${shipment.id}', this.value)" class="border p-2 rounded">
+            <input type="text" value="${shipment.origin || ''}" 
+                   onchange="updateShipment('${shipment.id}', { origin: this.value })" 
+                   class="border p-2 rounded w-32">
+          </td>
+
+          <!-- Editable Destination -->
+          <td class="p-3">
+            <input type="text" value="${shipment.destination || ''}" 
+                   onchange="updateShipment('${shipment.id}', { destination: this.value })" 
+                   class="border p-2 rounded w-32">
+          </td>
+
+          <!-- Editable Weight -->
+          <td class="p-3">
+            <input type="number" value="${shipment.weight || ''}" 
+                   onchange="updateShipment('${shipment.id}', { weight: this.value })" 
+                   class="border p-2 rounded w-20">
+          </td>
+
+          <!-- Editable Description -->
+          <td class="p-3">
+            <input type="text" value="${shipment.description || ''}" 
+                   onchange="updateShipment('${shipment.id}', { description: this.value })" 
+                   class="border p-2 rounded w-40">
+          </td>
+
+          <!-- Editable Status -->
+          <td class="p-3">
+            <select onchange="updateShipment('${shipment.id}', { status: this.value })" 
+                    class="border p-2 rounded">
               <option value="Pending" ${shipment.status === "Pending" ? "selected" : ""}>Pending</option>
               <option value="In Transit" ${shipment.status === "In Transit" ? "selected" : ""}>In Transit</option>
               <option value="Delivered" ${shipment.status === "Delivered" ? "selected" : ""}>Delivered</option>
             </select>
           </td>
+
           <td class="p-3 flex gap-2">
             <button onclick="openReceipt(${JSON.stringify(shipment)})" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">Receipt</button>
           </td>
@@ -97,10 +125,14 @@
       `).join('') || `<tr><td colspan="10" class="text-center p-3">No shipments found.</td></tr>`;
     }
 
-    // Update shipment status
-    async function updateStatus(id, status) {
-      await supabase.from("shipments").update({ status }).eq("id", id);
-      loadShipments();
+    // ✅ Update shipment field dynamically
+    async function updateShipment(id, updates) {
+      const { error } = await supabase.from("shipments").update(updates).eq("id", id);
+      if (error) {
+        alert("Error updating shipment: " + error.message);
+      } else {
+        console.log("✅ Shipment updated", updates);
+      }
     }
 
     // Open receipt in new page
