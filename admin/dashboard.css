@@ -36,7 +36,7 @@ main {
 }
 
 /* User Card */
-.bg-white {
+.bg-gray-800 {
     background-color: #1e1e1e; /* Dark card background */
     border-radius: 8px;
     padding: 20px;
@@ -54,7 +54,6 @@ button {
     border: none;
     border-radius: 5px;
     padding: 10px 15px;
-    cursor: pointer;
 }
 
 button:hover {
