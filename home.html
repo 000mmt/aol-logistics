@@ -1,36 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>AOL LOGISTICS - Moving Cargo, Connecting Continents</title>
+
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="css/style.css" />
-  <!-- AOS CSS -->
+
+  <!-- AOS -->
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+  <style>
+    /* HERO SLIDER */
+    .hero-slider {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      width: 300%;
+      height: 100%;
+      animation: slide 18s linear infinite;
+      animation-direction: reverse; /* plays the animation rightwards */
+    }
+    .hero-slide { flex: 1 0 100%; }
+    .hero-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.45;
+      display: block;
+    }
+
+    /* overlay to improve text contrast */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.35));
+      pointer-events: none;
+    }
+
+    @keyframes slide {
+      0% { transform: translateX(0%); }
+      30% { transform: translateX(0%); }
+      35% { transform: translateX(-100%); }
+      65% { transform: translateX(-100%); }
+      70% { transform: translateX(-200%); }
+      95% { transform: translateX(-200%); }
+      100% { transform: translateX(0%); }
+    }
+
+    /* Respect reduced motion preference */
+    @media (prefers-reduced-motion: reduce) {
+      .hero-slider { animation: none; }
+    }
+
+    /* Small adjustments for hero text on small screens */
+    @media (max-width: 640px) {
+      .hero-title { font-size: 1.8rem; }
+      .hero-btn { padding-left: 1rem; padding-right: 1rem; }
+    }
+  </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-  <!-- Navbar -->
+  <!-- NAVBAR -->
   <header class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
     <div class="container mx-auto flex items-center justify-between px-6 py-4">
-      <!-- Logo (clickable to home) -->
       <a href="home.html" class="text-2xl font-bold text-yellow-500">AOL LOGISTICS</a>
 
       <!-- Desktop Nav -->
       <nav class="hidden md:flex space-x-6">
+        <a href="#home" class="hover:text-yellow-500">Home</a>
         <a href="#about" class="hover:text-yellow-500">About Us</a>
+        <a href="#services" class="hover:text-yellow-500">Services</a>
+        <a href="tracking.html" class="hover:text-yellow-500">Track Shipment</a>
         <a href="form.html" class="hover:text-yellow-500">Create Shipment</a>
         <a href="#reach" class="hover:text-yellow-500">Global Reach</a>
         <a href="#why" class="hover:text-yellow-500">Why Us</a>
         <a href="#industries" class="hover:text-yellow-500">Industries</a>
         <a href="#news" class="hover:text-yellow-500">News</a>
+        <a href="#testimonials" class="hover:text-yellow-500">Testimonials</a>
         <a href="#contact" class="hover:text-yellow-500">Contact</a>
         <a href="admin/login.html" class="hover:text-yellow-500">Login</a>
       </nav>
 
       <!-- Mobile Menu Button -->
-      <button id="menuBtn" aria-label="Open menu" class="md:hidden bg-yellow-500 text-white px-4 py-2 rounded">
+      <button id="menuBtn" aria-expanded="false" aria-label="Open menu" class="md:hidden bg-yellow-500 text-white px-4 py-2 rounded">
         Menu
       </button>
     </div>
@@ -38,7 +93,10 @@
     <!-- Mobile Dropdown -->
     <div id="mobileMenu" class="hidden bg-white shadow-md md:hidden">
       <nav class="flex flex-col space-y-2 px-6 py-4">
+        <a href="home.html" class="hover:text-yellow-500 mobile-link">Home</a>
         <a href="#about" class="hover:text-yellow-500 mobile-link">About Us</a>
+        <a href="#services" class="hover:text-yellow-500 mobile-link">Services</a>
+        <a href="tracking.html" class="hover:text-yellow-500 mobile-link">Track Shipment</a>
         <a href="form.html" class="hover:text-yellow-500 mobile-link">Create Shipment</a>
         <a href="#reach" class="hover:text-yellow-500 mobile-link">Global Reach</a>
         <a href="#why" class="hover:text-yellow-500 mobile-link">Why Us</a>
@@ -51,54 +109,61 @@
     </div>
   </header>
 
-  <!-- Hero Section -->
+  <!-- HERO -->
   <section id="home" class="relative bg-gray-900 text-white pt-28 pb-32 min-h-screen flex items-center overflow-hidden">
-    <div class="absolute inset-0 hero-bg">
-      <img src="images/ACL-Port-Scene.jpg" alt="Cargo Ship" class="w-full h-full object-cover opacity-40">
+    <!-- Slider (3 images) -->
+    <div class="hero-slider">
+      <div class="hero-slide"><img src="images/ACL-Port-Scene.jpg" alt="Cargo Ship"></div>
+      <div class="hero-slide"><img src="images/hero2.jpg" alt="Container Port"></div>
+      <div class="hero-slide"><img src="images/hero3.jpg" alt="Logistics Truck"></div>
     </div>
-    <div class="container mx-auto relative z-10 text-center">
-      <h2 class="text-5xl md:text-6xl font-bold mb-6 hero-title">Moving Cargo. Connecting Continents.</h2>
-      <p class="text-lg md:text-xl mb-8">Reliable logistics solutions that deliver across the globe.</p>
+
+    <div class="hero-overlay" aria-hidden="true"></div>
+
+    <div class="container mx-auto relative z-10 text-center px-4">
+      <h1 class="hero-title text-5xl md:text-6xl font-bold mb-6">Moving Cargo. Connecting Continents.</h1>
+      <p class="text-lg md:text-xl mb-8 max-w-2xl mx-auto">Reliable logistics solutions that deliver across the globe.</p>
+
       <div class="space-x-4">
-        <a href="tracking.html" class="bg-yellow-500 px-6 py-3 rounded-lg font-semibold hero-btn">Track Shipment</a>
-        <a href="#quote" class="bg-white text-yellow-600 px-6 py-3 rounded-lg font-semibold hero-btn">Request Quote</a>
+        <a href="tracking.html" class="hero-btn inline-block bg-yellow-500 text-white px-6 py-3 rounded-lg font-semibold shadow">Track Shipment</a>
+        <a href="#quote" class="hero-btn inline-block bg-white text-yellow-600 px-6 py-3 rounded-lg font-semibold shadow">Request Quote</a>
       </div>
     </div>
   </section>
 
-  <!-- Tracking Form -->
+  <!-- TRACKING FORM -->
   <section class="py-16 bg-gray-50">
     <div class="container mx-auto px-6 text-center">
       <h2 class="text-2xl font-bold mb-6">Track Your Shipment</h2>
       <form id="trackingForm" class="max-w-md mx-auto flex gap-2">
-        <input type="text" id="tracking_no" name="tracking_no"
-               placeholder="Enter Tracking Number"
+        <input type="text" id="tracking_no" name="tracking_no" placeholder="Enter Tracking Number"
                class="flex-1 p-3 border rounded-lg" required>
-        <button type="submit"
-                class="bg-yellow-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-yellow-600">
+        <button type="submit" class="bg-yellow-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-yellow-600">
           Track
         </button>
       </form>
     </div>
   </section>
 
-  <!-- Services -->
+  <!-- SERVICES -->
   <section id="services" class="py-20 bg-white">
     <div class="container mx-auto px-6 text-center">
       <h3 class="text-3xl font-bold mb-12" data-aos="fade-up">Our Services</h3>
       <div class="grid md:grid-cols-3 gap-10">
-        <div class="p-6 bg-gray-100 rounded-lg shadow service-card" data-aos="fade-up" data-aos-delay="100">
-          <img src="images/aron-yigin-lNpAmLA_bvQ-unsplash.jpg" alt="Container Shipping" class="mx-auto mb-4 w-32 h-32 object-cover rounded">
+        <div class="p-6 bg-gray-100 rounded-lg shadow" data-aos="fade-up" data-aos-delay="100">
+          <img src="images/aron-yigin-lNpAmLA_bvQ-unsplash.jpg" alt="Container Shipping" class="w-full md:w-32 h-48 md:h-32 object-cover rounded mb-4 mx-auto">
           <h4 class="text-xl font-semibold mb-2">Container Shipping</h4>
           <p>Secure and efficient container transport across global trade routes.</p>
         </div>
-        <div class="p-6 bg-gray-100 rounded-lg shadow service-card" data-aos="fade-up" data-aos-delay="200">
-          <img src="images/bernd-dittrich-miHHRMLDDH8-unsplash.jpg" alt="RORO" class="mx-auto mb-4 w-32 h-32 object-cover rounded">
+
+        <div class="p-6 bg-gray-100 rounded-lg shadow" data-aos="fade-up" data-aos-delay="200">
+          <img src="images/bernd-dittrich-miHHRMLDDH8-unsplash.jpg" alt="RoRo" class="w-full md:w-32 h-48 md:h-32 object-cover rounded mb-4 mx-auto">
           <h4 class="text-xl font-semibold mb-2">RoRo (Roll-on/Roll-off)</h4>
           <p>Seamless shipping for vehicles and heavy machinery worldwide.</p>
         </div>
-        <div class="p-6 bg-gray-100 rounded-lg shadow service-card" data-aos="fade-up" data-aos-delay="300">
-          <img src="images/roro_pov_scaled-1024x617.jpg" alt="Special Cargo" class="mx-auto mb-4 w-32 h-32 object-cover rounded">
+
+        <div class="p-6 bg-gray-100 rounded-lg shadow" data-aos="fade-up" data-aos-delay="300">
+          <img src="images/roro_pov_scaled-1024x617.jpg" alt="Special Cargo" class="w-full md:w-32 h-48 md:h-32 object-cover rounded mb-4 mx-auto">
           <h4 class="text-xl font-semibold mb-2">Special Cargo</h4>
           <p>Custom solutions for oversized and time-sensitive cargo shipments.</p>
         </div>
@@ -106,7 +171,7 @@
     </div>
   </section>
 
-  <!-- Global Reach -->
+  <!-- GLOBAL REACH -->
   <section id="reach" class="py-20 bg-gray-50">
     <div class="container mx-auto text-center px-6">
       <h3 class="text-3xl font-bold mb-12" data-aos="fade-up">Our Global Reach</h3>
@@ -121,7 +186,7 @@
     </div>
   </section>
 
-  <!-- About -->
+  <!-- ABOUT -->
   <section id="about" class="py-20 bg-white">
     <div class="container mx-auto grid md:grid-cols-2 gap-12 items-center px-6">
       <div data-aos="fade-right">
@@ -130,12 +195,12 @@
         <p>Our mission is to connect businesses across continents and make international trade seamless.</p>
       </div>
       <div data-aos="fade-left">
-        <img src="images/shaah-shahidh--subrrYxv8A-unsplash.jpg" alt="About AOL" class="about-img shadow-lg w-full">
+        <img src="images/shaah-shahidh--subrrYxv8A-unsplash.jpg" alt="About AOL" class="w-full h-64 md:h-auto object-cover shadow-lg rounded">
       </div>
     </div>
   </section>
 
-  <!-- Why Choose Us -->
+  <!-- WHY -->
   <section id="why" class="py-20 bg-gray-50">
     <div class="container mx-auto px-6 text-center">
       <h3 class="text-3xl font-bold mb-12" data-aos="fade-up">Why Choose Us</h3>
@@ -156,34 +221,38 @@
     </div>
   </section>
 
-  <!-- Testimonials Section -->
+  <!-- TESTIMONIALS -->
   <section id="testimonials" class="bg-gray-50 py-20">
     <div class="container mx-auto px-6 text-center">
       <h2 class="text-3xl md:text-4xl font-bold mb-12" data-aos="fade-up">What Our Customers Say</h2>
+
       <div class="grid md:grid-cols-3 gap-8">
-        <!-- Testimonial 1 -->
+        <!-- 1 -->
         <div class="bg-white shadow-lg rounded-2xl p-6" data-aos="fade-up" data-aos-delay="100">
-          <img src="images/istockphoto-157421781-612x612.jpg" alt="Customer 1" class="w-20 h-20 mx-auto rounded-full mb-4 object-cover">
+          <img src="images/istockphoto-157421781-612x612.jpg" alt="Customer 1"
+               class="w-full md:w-24 h-48 md:h-24 object-cover rounded-lg md:rounded-full mx-auto mb-4">
           <div class="flex justify-center mb-3 text-yellow-500" aria-hidden="true"><span class="text-xl">⭐⭐⭐⭐⭐</span></div>
-          <p class="text-gray-600 mb-4 italic">“AOL Logistics handled my deliveries with such care and speed. I always felt informed with their real-time tracking.”</p>
+          <p class="text-gray-600 italic mb-4">“AOL Logistics handled my deliveries with such care and speed. I always felt informed with their real-time tracking.”</p>
           <h3 class="font-semibold text-yellow-600">Sarah Johnson</h3>
           <p class="text-sm text-gray-500">Small Business Owner</p>
         </div>
 
-        <!-- Testimonial 2 -->
+        <!-- 2 -->
         <div class="bg-white shadow-lg rounded-2xl p-6" data-aos="fade-up" data-aos-delay="200">
-          <img src="images/stevedore-1636392_1280.jpg" alt="Customer 2" class="w-20 h-20 mx-auto rounded-full mb-4 object-cover">
+          <img src="images/stevedore-1636392_1280.jpg" alt="Customer 2"
+               class="w-full md:w-24 h-48 md:h-24 object-cover rounded-lg md:rounded-full mx-auto mb-4">
           <div class="flex justify-center mb-3 text-yellow-500" aria-hidden="true"><span class="text-xl">⭐⭐⭐⭐⭐</span></div>
-          <p class="text-gray-600 mb-4 italic">“Fast, reliable, and transparent. My online store relies on AOL Logistics for every shipment — never been disappointed.”</p>
+          <p class="text-gray-600 italic mb-4">“Fast, reliable, and transparent. My online store relies on AOL Logistics for every shipment — never been disappointed.”</p>
           <h3 class="font-semibold text-yellow-600">Michael Lee</h3>
           <p class="text-sm text-gray-500">E-commerce Entrepreneur</p>
         </div>
 
-        <!-- Testimonial 3 -->
+        <!-- 3 -->
         <div class="bg-white shadow-lg rounded-2xl p-6" data-aos="fade-up" data-aos-delay="300">
-          <img src="images/teacher-with-glasses-class.jpg" alt="Customer 3" class="w-20 h-20 mx-auto rounded-full mb-4 object-cover">
+          <img src="images/teacher-with-glasses-class.jpg" alt="Customer 3"
+               class="w-full md:w-24 h-48 md:h-24 object-cover rounded-lg md:rounded-full mx-auto mb-4">
           <div class="flex justify-center mb-3 text-yellow-500" aria-hidden="true"><span class="text-xl">⭐⭐⭐⭐⭐</span></div>
-          <p class="text-gray-600 mb-4 italic">“Excellent support team, smooth process, and quick updates. AOL Logistics is a partner I fully trust with my cargo.”</p>
+          <p class="text-gray-600 italic mb-4">“Excellent support team, smooth process, and quick updates. AOL Logistics is a partner I fully trust with my cargo.”</p>
           <h3 class="font-semibold text-yellow-600">Amira Khan</h3>
           <p class="text-sm text-gray-500">Frequent Shipper</p>
         </div>
@@ -191,7 +260,7 @@
     </div>
   </section>
 
-  <!-- Industries Section -->
+  <!-- INDUSTRIES -->
   <section id="industries" class="py-20 bg-gray-50">
     <div class="container mx-auto px-6 text-center">
       <h3 class="text-3xl font-bold mb-12" data-aos="fade-up">Industries We Serve</h3>
@@ -204,7 +273,7 @@
     </div>
   </section>
 
-  <!-- News Section -->
+  <!-- NEWS -->
   <section id="news" class="py-20 bg-white">
     <div class="container mx-auto px-6 text-center">
       <h3 class="text-3xl font-bold mb-12" data-aos="fade-up">Latest Insights</h3>
@@ -216,7 +285,7 @@
     </div>
   </section>
 
-  <!-- Call to Action -->
+  <!-- CTA -->
   <section id="quote" class="py-20 bg-yellow-500 text-white text-center">
     <div class="container mx-auto px-6" data-aos="zoom-in">
       <h3 class="text-3xl font-bold mb-6">Ready to Ship With Us?</h3>
@@ -225,7 +294,7 @@
     </div>
   </section>
 
-  <!-- Footer -->
+  <!-- FOOTER -->
   <footer id="contact" class="bg-gray-900 text-white py-12">
     <div class="container mx-auto grid md:grid-cols-3 gap-8 text-center md:text-left px-6">
       <div>
@@ -241,7 +310,7 @@
           <li><a href="#services" class="hover:text-yellow-500">Services</a></li>
           <li><a href="tracking.html" class="hover:text-yellow-500">Track Shipment</a></li>
           <li><a href="form.html" class="hover:text-yellow-500">Create Shipment</a></li>
-          <li><a href="login.html" class="hover:text-yellow-500">Login</a></li>
+          <li><a href="admin/login.html" class="hover:text-yellow-500">Login</a></li>
         </ul>
       </div>
 
@@ -258,49 +327,41 @@
     </div>
   </footer>
 
-  <!-- Scripts -->
+  <!-- SCRIPTS -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
-    AOS.init({
-      duration: 1000,
-      once: true
-    });
+    AOS.init({ duration: 1000, once: true });
 
-    // Tracking form submit -> redirect to tracking page
+    // Tracking form -> redirect to tracking.html with query param
     (function () {
       const form = document.getElementById('trackingForm');
-      if (form) {
-        form.addEventListener('submit', function (e) {
-          e.preventDefault();
-          const trackingNo = (document.getElementById('tracking_no') || {}).value || '';
-          const trimmed = trackingNo.trim();
-          if (trimmed) {
-            window.location.href = `tracking.html?tracking_no=${encodeURIComponent(trimmed)}`;
-          }
-        });
-      }
+      if (!form) return;
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const v = (document.getElementById('tracking_no') || {}).value || '';
+        const t = v.trim();
+        if (t) window.location.href = `tracking.html?tracking_no=${encodeURIComponent(t)}`;
+      });
     })();
 
-    // Mobile menu toggle & close on link click
+    // Mobile menu toggle & auto-close on link click
     (function () {
       const menuBtn = document.getElementById('menuBtn');
       const mobileMenu = document.getElementById('mobileMenu');
-      if (menuBtn && mobileMenu) {
-        menuBtn.addEventListener('click', () => {
-          mobileMenu.classList.toggle('hidden');
-        });
+      if (!menuBtn || !mobileMenu) return;
 
-        // close menu when clicking any mobile link
-        const mobileLinks = mobileMenu.querySelectorAll('.mobile-link');
-        mobileLinks.forEach(link => {
-          link.addEventListener('click', () => {
-            // add small timeout so navigation can occur
-            setTimeout(() => mobileMenu.classList.add('hidden'), 150);
-          });
+      menuBtn.addEventListener('click', () => {
+        const isHidden = mobileMenu.classList.toggle('hidden');
+        menuBtn.setAttribute('aria-expanded', String(!isHidden));
+      });
+
+      mobileMenu.querySelectorAll('.mobile-link').forEach(link => {
+        link.addEventListener('click', () => {
+          // small delay to allow navigation
+          setTimeout(() => mobileMenu.classList.add('hidden'), 150);
         });
-      }
+      });
     })();
   </script>
-
 </body>
 </html>
