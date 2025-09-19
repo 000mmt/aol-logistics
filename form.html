@@ -71,11 +71,15 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    // Generate random tracking number
+    function generateTrackingNo() {
+      return "AOL-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+    }
+
     document.getElementById("shipmentForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      // Generate unique tracking number
-      const trackingNo = "AOL" + Math.floor(100000 + Math.random() * 900000);
+      const trackingNo = generateTrackingNo();
 
       const shipment = {
         tracking_no: trackingNo,
@@ -88,21 +92,30 @@
         created_at: new Date()
       };
 
-      const { error } = await supabase.from("shipments").insert([shipment]);
+      // Insert shipment
+      const { data, error } = await supabase
+        .from("shipments")
+        .insert([shipment])
+        .select("id");
 
       const messageDiv = document.getElementById("message");
+
       if (error) {
         messageDiv.innerHTML = `<p class="text-red-600 font-semibold">❌ Error: ${error.message}</p>`;
-      } else {
-        messageDiv.innerHTML = `
-          <p class="text-green-600 font-semibold">✅ Shipment created successfully!</p>
-          <p>Your Tracking Number is: 
-            <span class="font-bold text-blue-600">${trackingNo}</span>
-          </p>
-          <p>You can track your shipment 
-            <a href="tracking.html?tracking_no=${trackingNo}" class="text-yellow-600 underline">here</a>.
-          </p>
-        `;
+        return;
+      }
+
+      if (data.length > 0) {
+        const shipmentId = data[0].id;
+
+        // Insert initial tracking record
+        await supabase.from("tracking").insert([{
+          shipment_id: shipmentId,
+          status: "Pending",
+          note: "Shipment created"
+        }]);
+
+        messageDiv.innerHTML = `<p class="text-green-600 font-semibold">✅ Shipment created successfully!<br>Tracking Number: <b>${trackingNo}</b></p>`;
         document.getElementById("shipmentForm").reset();
       }
     });
