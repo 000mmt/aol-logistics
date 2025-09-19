@@ -8,19 +8,19 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
-<body class="flex bg-gray-100">
+<body class="flex bg-gray-900">
   <!-- Sidebar -->
-  <aside class="w-64 bg-white shadow-md h-screen p-6">
+  <aside class="w-64 bg-gray-800 shadow-md h-screen p-6">
     <h2 class="text-2xl font-bold text-yellow-500 mb-6">Admin</h2>
     <nav class="space-y-4">
-      <a href="#" class="block font-semibold hover:text-yellow-500">Dashboard</a>
+      <a href="#" class="block font-semibold text-gray-300 hover:text-yellow-500">Dashboard</a>
       <button id="logoutBtn" class="w-full mt-6 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600">Logout</button>
     </nav>
   </aside>
 
   <!-- Main -->
   <main class="flex-1 p-8">
-    <h1 class="text-3xl font-bold mb-6">User Shipments</h1>
+    <h1 class="text-3xl font-bold text-white mb-6">User Shipments</h1>
 
     <div id="userList" class="space-y-6"></div>
   </main>
@@ -44,87 +44,95 @@
       }
 
       if (!data.length) {
-        container.innerHTML = `<p class="text-gray-600">No shipments yet.</p>`;
+        container.innerHTML = `<p class="text-gray-400">No shipments yet.</p>`;
         return;
       }
 
       container.innerHTML = data.map(user => `
-        <div class="bg-white shadow rounded-lg p-6">
-          <h2 class="text-xl font-bold mb-2">${user.customer_name} 
-            <span class="text-sm text-gray-500">(${user.tracking_no})</span>
+        <div class="bg-gray-800 shadow rounded-lg p-6">
+          <h2 class="text-xl font-bold text-yellow-500 mb-2">${user.customer_name} 
+            <span class="text-sm text-gray-300">(${user.tracking_no})</span>
           </h2>
-          <p class="text-sm text-gray-600">${user.email} | ${user.phone || "N/A"}</p>
+          <p class="text-sm text-gray-400">${user.email} | ${user.phone || "N/A"}</p>
 
           <!-- Tabs -->
           <div class="mt-4">
-            <button onclick="toggleTab('${user.id}','tracking')" class="px-3 py-1 bg-yellow-500 text-white rounded">Tracking</button>
-            <button onclick="toggleTab('${user.id}','details')" class="px-3 py-1 bg-gray-300 rounded">Details Info</button>
+            <button onclick="toggleTab('${user.id}','tracking')" class="px-3 py-1 bg-yellow-600 text-white rounded">Tracking</button>
+            <button onclick="toggleTab('${user.id}','details')" class="px-3 py-1 bg-gray-700 text-white rounded">Details Info</button>
           </div>
 
           <!-- Tracking Section -->
           <div id="tracking-${user.id}" class="tab mt-4 hidden">
-            <h3 class="font-semibold mb-2">Shipment Tracking</h3>
-            <p><b>Tracking No:</b> ${user.tracking_no}</p>
-            <p><b>Tracking Link:</b> <a href="${user.tracking_link}" class="text-blue-500" target="_blank">${user.tracking_link}</a></p>
-            <p><b>Customer:</b> ${user.customer_name}</p>
-            <p><b>Origin:</b> ${user.origin || 'N/A'}</p>
-            <p><b>Destination:</b> ${user.destination || 'N/A'}</p>
-            <p><b>Status:</b> ${user.status || "Pending"}</p>
+            <h3 class="font-semibold text-white mb-2">Shipment Tracking</h3>
+            <p class="text-gray-300"><b>Tracking No:</b> ${user.tracking_no}</p>
+            <p class="text-gray-300"><b>Tracking Link:</b> <a href="${user.tracking_link}" class="text-yellow-400" target="_blank">${user.tracking_link}</a></p>
+            <p class="text-gray-300"><b>Customer:</b> ${user.customer_name}</p>
+            <p class="text-gray-300"><b>Origin:</b> ${user.origin || 'N/A'}</p>
+            <p class="text-gray-300"><b>Destination:</b> ${user.destination || 'N/A'}</p>
+            <p class="text-gray-300"><b>Status:</b> ${user.status || "Pending"}</p>
 
             <!-- Editable Form -->
-            <div class="mt-4">
-              <h4 class="font-semibold">Edit Tracking Info</h4>
-              <label class="block mb-1">Progress</label>
-              <select onchange="updateUser('${user.id}', { progress: this.value })" class="border p-2 rounded">
+            <div class="mt-4 hidden" id="trackingForm-${user.id}">
+              <h4 class="font-semibold text-white">Edit Tracking Info</h4>
+              <label class="block mb-1 text-gray-400">Progress</label>
+              <select onchange="saveTrackingUpdate('${user.id}', this.value)" class="border p-2 rounded bg-gray-700 text-white">
                 <option value="Order Placed" ${user.progress === "Order Placed" ? "selected" : ""}>Order Placed</option>
                 <option value="Preparing Shipment" ${user.progress === "Preparing Shipment" ? "selected" : ""}>Preparing Shipment</option>
                 <option value="Shipped" ${user.progress === "Shipped" ? "selected" : ""}>Shipped</option>
                 <option value="Delivered" ${user.progress === "Delivered" ? "selected" : ""}>Delivered</option>
               </select>
-              <button onclick="updateUser('${user.id}', { status: 'Updated' })" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Save Tracking Info</button>
+              <button onclick="saveTrackingUpdate('${user.id}', document.querySelector('#trackingForm-${user.id} select').value)" class="mt-2 bg-yellow-500 text-white px-4 py-2 rounded">Save Tracking Info</button>
             </div>
           </div>
 
           <!-- Details Info Section -->
           <div id="details-${user.id}" class="tab mt-4 hidden">
-            <h3 class="font-semibold mb-2">Details Info</h3>
-            <p><b>Origin:</b> ${user.origin || 'N/A'}</p>
-            <p><b>Destination:</b> ${user.destination || 'N/A'}</p>
-            <p><b>Weight:</b> ${user.weight || 'N/A'}</p>
-            <p><b>Description:</b> ${user.description || 'N/A'}</p>
-            <p><b>Registration Fee:</b> ${user.registration_fee || 'N/A'}</p>
-            <p><b>Delivery Fee:</b> ${user.delivery_fee || 'N/A'}</p>
-            <p><b>Insurance Fee:</b> ${user.insurance_fee || 'N/A'}</p>
+            <h3 class="font-semibold text-white mb-2">Details Info</h3>
+            <p class="text-gray-300"><b>Country:</b> ${user.country || 'N/A'}</p>
+            <p class="text-gray-300"><b>Address:</b> ${user.address || 'N/A'}</p>
+            <p class="text-gray-300"><b>Phone:</b> ${user.phone || 'N/A'}</p>
+            <p class="text-gray-300"><b>Weight:</b> ${user.weight || 'N/A'}</p>
+            <p class="text-gray-300"><b>Description:</b> ${user.description || 'N/A'}</p>
+            <p class="text-gray-300"><b>Registration Fee:</b> ${user.registration_fee || 'N/A'}</p>
+            <p class="text-gray-300"><b>Delivery Fee:</b> ${user.delivery_fee || 'N/A'}</p>
+            <p class="text-gray-300"><b>Insurance Fee:</b> ${user.insurance_fee || 'N/A'}</p>
 
             <!-- Editable Form -->
-            <div class="mt-4">
-              <h4 class="font-semibold">Edit Details Info</h4>
-              <label>Origin
-                <input type="text" value="${user.origin || ''}" onchange="updateUser('${user.id}', { origin: this.value })" class="border p-2 w-full rounded">
+            <div class="mt-4 hidden" id="detailsForm-${user.id}">
+              <h4 class="font-semibold text-white">Edit Details Info</h4>
+              <label class="block mb-1 text-gray-400">Origin
+                <input type="text" value="${user.origin || ''}" onchange="updateUser('${user.id}', { origin: this.value })" class="border p-2 w-full rounded bg-gray-700 text-white">
               </label>
-              <label>Destination
-                <input type="text" value="${user.destination || ''}" onchange="updateUser('${user.id}', { destination: this.value })" class="border p-2 w-full rounded">
+              <label class="block mb-1 text-gray-400">Destination
+                <input type="text" value="${user.destination || ''}" onchange="updateUser('${user.id}', { destination: this.value })" class="border p-2 w-full rounded bg-gray-700 text-white">
               </label>
-              <label>Weight
-                <input type="number" value="${user.weight || ''}" onchange="updateUser('${user.id}', { weight: this.value })" class="border p-2 w-full rounded">
+              <label class="block mb-1 text-gray-400">Weight
+                <input type="number" value="${user.weight || ''}" onchange="updateUser('${user.id}', { weight: this.value })" class="border p-2 w-full rounded bg-gray-700 text-white">
               </label>
-              <label>Description
-                <input type="text" value="${user.description || ''}" onchange="updateUser('${user.id}', { description: this.value })" class="border p-2 w-full rounded">
+              <label class="block mb-1 text-gray-400">Description
+                <input type="text" value="${user.description || ''}" onchange="updateUser('${user.id}', { description: this.value })" class="border p-2 w-full rounded bg-gray-700 text-white">
               </label>
-              <label>Registration Fee
-                <input type="number" value="${user.registration_fee || ''}" onchange="updateUser('${user.id}', { registration_fee: this.value })" class="border p-2 w-full rounded">
+              <label class="block mb-1 text-gray-400">Registration Fee
+                <input type="number" value="${user.registration_fee || ''}" onchange="updateUser('${user.id}', { registration_fee: this.value })" class="border p-2 w-full rounded bg-gray-700 text-white">
               </label>
-              <label>Delivery Fee
-                <input type="number" value="${user.delivery_fee || ''}" onchange="updateUser('${user.id}', { delivery_fee: this.value })" class="border p-2 w-full rounded">
+              <label class="block mb-1 text-gray-400">Delivery Fee
+                <input type="number" value="${user.delivery_fee || ''}" onchange="updateUser('${user.id}', { delivery_fee: this.value })" class="border p-2 w-full rounded bg-gray-700 text-white">
               </label>
-              <label>Insurance Fee
-                <input type="number" value="${user.insurance_fee || ''}" onchange="updateUser('${user.id}', { insurance_fee: this.value })" class="border p-2 w-full rounded">
+              <label class="block mb-1 text-gray-400">Insurance Fee
+                <input type="number" value="${user.insurance_fee || ''}" onchange="updateUser('${user.id}', { insurance_fee: this.value })" class="border p-2 w-full rounded bg-gray-700 text-white">
               </label>
-              <button onclick="updateUser('${user.id}')" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Save Details Info</button>
+              <button onclick="updateUser('${user.id}')" class="mt-2 bg-yellow-500 text-white px-4 py-2 rounded">Save Details Info</button>
             </div>
           </div>
         </div>
       `).join("");
+    }
+
+    // Save tracking update
+    async function saveTrackingUpdate(userId, progress) {
+      const { error } = await supabase.from("tracking_updates").insert([{ shipment_id: userId, progress }]);
+      if (error) alert("Error saving tracking update: " + error.message);
+      else loadUsers(); // Reload users to reflect changes
     }
 
     // Update user
@@ -134,23 +142,12 @@
       else loadUsers(); // Reload users to reflect changes
     }
 
-    // Delete user
-    async function deleteUser(id) {
-      if (!confirm("Delete this user?")) return;
-      const { error } = await supabase.from("user_info").delete().eq("id", id);
-      if (error) alert("Error deleting: " + error.message);
-      else loadUsers();
-    }
-
-    // Print receipt
-    function printReceipt(id) {
-      window.open(`receipt.html?id=${id}`, "_blank");
-    }
-
     // Tab toggle
     function toggleTab(userId, tab) {
       document.querySelectorAll(`#tracking-${userId}, #details-${userId}`).forEach(el => el.classList.add("hidden"));
+      document.querySelectorAll(`#trackingForm-${userId}, #detailsForm-${userId}`).forEach(el => el.classList.add("hidden"));
       document.getElementById(`${tab}-${userId}`).classList.remove("hidden");
+      document.getElementById(`${tab}Form-${userId}`).classList.remove("hidden");
     }
 
     // Logout
