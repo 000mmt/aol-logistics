@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard - AOL LOGISTICS</title>
+  <title>Admin Dashboard - AOL Logistics</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <!-- jsPDF for PDF export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body class="flex bg-gray-100">
@@ -15,10 +14,7 @@
     <h2 class="text-2xl font-bold text-yellow-500 mb-6">Admin</h2>
     <nav class="space-y-4">
       <a href="#" class="block font-semibold hover:text-yellow-500">Shipments</a>
-      <button id="logoutBtn"
-              class="w-full mt-6 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600">
-        Logout
-      </button>
+      <button id="logoutBtn" class="w-full mt-6 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600">Logout</button>
     </nav>
   </aside>
 
@@ -47,54 +43,43 @@
   </main>
 
   <script>
-    const supabase = window.supabase.createClient(
-      "https://byvffsxsfehrybkyamyu.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"
-    );
+    const supabase = window.supabase.createClient("https://byvffsxsfehrybkyamyu.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"); // Use environment variables in production
 
     // Load shipments
     async function loadShipments() {
-      const { data, error } = await supabase
-        .from("shipments")
-        .select("*")
-        .order("created_at", { ascending: false });
-
       const table = document.getElementById("shipmentTable");
-      table.innerHTML = "";
+      table.innerHTML = `<tr><td colspan="10" class="text-center p-3">Loading...</td></tr>`;
 
-      if (data) {
-        data.forEach(shipment => {
-          table.innerHTML += `
-            <tr class="border-b">
-              <td class="p-3">${shipment.shipment_no}</td>
-              <td class="p-3">${shipment.customer_name}</td>
-              <td class="p-3">${shipment.email}</td>
-              <td class="p-3">${shipment.phone || 'N/A'}</td>
-              <td class="p-3">${shipment.origin}</td>
-              <td class="p-3">${shipment.destination}</td>
-              <td class="p-3">${shipment.weight || 'N/A'} kg</td>
-              <td class="p-3">${shipment.description || 'N/A'}</td>
-              <td class="p-3">
-                <select onchange="updateStatus('${shipment.id}', this.value)" class="border p-2 rounded">
-                  <option ${shipment.status === "Pending" ? "selected" : ""}>Pending</option>
-                  <option ${shipment.status === "In Transit" ? "selected" : ""}>In Transit</option>
-                  <option ${shipment.status === "Delivered" ? "selected" : ""}>Delivered</option>
-                </select>
-              </td>
-              <td class="p-3 flex gap-2">
-                <button onclick='printReceipt(${JSON.stringify(shipment)})'
-                        class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
-                  Print
-                </button>
-                <button onclick='downloadPDF(${JSON.stringify(shipment)})'
-                        class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
-                  PDF
-                </button>
-              </td>
-            </tr>
-          `;
-        });
+      const { data, error } = await supabase.from("shipments").select("*").order("created_at", { ascending: false });
+
+      if (error) {
+        table.innerHTML = `<tr><td colspan="10" class="text-red-600 text-center p-3">Error loading shipments: ${error.message}</td></tr>`;
+        return;
       }
+
+      table.innerHTML = data.map(shipment => `
+        <tr class="border-b">
+          <td class="p-3">${shipment.shipment_no}</td>
+          <td class="p-3">${shipment.customer_name}</td>
+          <td class="p-3">${shipment.email}</td>
+          <td class="p-3">${shipment.phone || 'N/A'}</td>
+          <td class="p-3">${shipment.origin}</td>
+          <td class="p-3">${shipment.destination}</td>
+          <td class="p-3">${shipment.weight || 'N/A'} kg</td>
+          <td class="p-3">${shipment.description || 'N/A'}</td>
+          <td class="p-3">
+            <select onchange="updateStatus('${shipment.id}', this.value)" class="border p-2 rounded">
+              <option value="Pending" ${shipment.status === "Pending" ? "selected" : ""}>Pending</option>
+              <option value="In Transit" ${shipment.status === "In Transit" ? "selected" : ""}>In Transit</option>
+              <option value="Delivered" ${shipment.status === "Delivered" ? "selected" : ""}>Delivered</option>
+            </select>
+          </td>
+          <td class="p-3 flex gap-2">
+            <button onclick='printReceipt(${JSON.stringify(shipment)})' class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">Print</button>
+            <button onclick='downloadPDF(${JSON.stringify(shipment)})' class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">PDF</button>
+          </td>
+        </tr>
+      `).join('') || `<tr><td colspan="10" class="text-center p-3">No shipments found.</td></tr>`;
     }
 
     // Update shipment status
@@ -103,7 +88,7 @@
       loadShipments();
     }
 
-    // Print receipt (opens a new tab)
+    // Print receipt
     function printReceipt(data) {
       const receiptWindow = window.open("", "_blank");
       receiptWindow.document.write(`
@@ -142,14 +127,11 @@
     async function downloadPDF(data) {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
-
       doc.setFontSize(16);
-      doc.setTextColor(245, 158, 11); // Yellow-500
+      doc.setTextColor(245, 158, 11);
       doc.text("AOL LOGISTICS - Shipment Receipt", 20, 20);
-
       doc.setFontSize(12);
       doc.setTextColor(0, 0, 0);
-
       const details = [
         ["Shipment No", data.shipment_no],
         ["Customer", data.customer_name],
@@ -162,14 +144,12 @@
         ["Status", data.status],
         ["Date", new Date(data.created_at).toLocaleString()],
       ];
-
       let y = 40;
       details.forEach(([label, value]) => {
         doc.text(`${label}:`, 20, y);
         doc.text(String(value), 80, y);
         y += 10;
       });
-
       doc.save(`Shipment_${data.shipment_no}.pdf`);
     }
 
