@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shipment Receipt</title>
+  <title>Shipment Receipt - AOL Logistics</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -72,12 +72,32 @@
       font-size: 16px;
     }
 
+    ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
     .footer {
       font-size: 12px;
       text-align: right;
       color: #333;
       border-top: 2px solid #0074c7;
       padding-top: 10px;
+    }
+
+    .print-btn {
+      display: block;
+      margin: 20px auto;
+      background: #0074c7;
+      color: #fff;
+      padding: 10px 20px;
+      font-size: 14px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .print-btn:hover {
+      background: #005fa3;
     }
   </style>
 </head>
@@ -145,5 +165,8 @@
       <p>Signature: ___________ | Date: 12/06/2025</p>
     </div>
   </div>
+
+  <!-- Print Button -->
+  <button class="print-btn" onclick="window.print()">🖨️ Print Receipt</button>
 </body>
 </html>
