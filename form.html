@@ -80,10 +80,10 @@
 
     document.getElementById("shipmentForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      e.stopPropagation();
 
       const btn = e.target.querySelector("button[type='submit']");
       const messageDiv = document.getElementById("message");
+      const formEl = document.getElementById("shipmentForm");
 
       btn.disabled = true;
       btn.innerText = "Submitting...";
@@ -134,7 +134,7 @@
 
       const trackingId = trackingData?.[0]?.id || null;
 
-      // Insert into user_info
+      // Insert into user_info with defaults
       const { error: userInfoError } = await supabase
         .from("user_info")
         .insert([{
@@ -146,27 +146,42 @@
           phone: shipment.phone,
           address: shipment.address,
           country: shipment.country,
-          status: shipment.status
+          status: shipment.status,
+
+          origin: "",
+          destination: "",
+          weight: null,
+          description: "",
+          progress: "Order Placed",
+          registration_fee: null,
+          delivery_fee: null,
+          insurance_fee: null,
+          show_registration: true,
+          show_delivery: true,
+          show_insurance: true
         }]);
 
       if (userInfoError) {
         console.error("❌ User info error:", userInfoError);
+        messageDiv.innerHTML += `<p class="text-red-600">❌ User info insert failed: ${userInfoError.message}</p>`;
       }
 
       // Success message
       const trackingLink = `tracking.html?tracking_no=${trackingNo}`;
+      formEl.classList.add("hidden"); // hide the form after submission
       messageDiv.innerHTML = `
-        <p class="text-green-600 font-semibold">
-          ✅ Shipment created successfully!<br>
-          Tracking Number: <b>${trackingNo}</b><br>
-          <a href="${trackingLink}" class="text-blue-600 underline">Track your shipment here</a>
-        </p>
+        <div class="bg-white shadow-lg rounded-lg p-6">
+          <p class="text-green-600 font-semibold text-lg mb-4">
+            ✅ Shipment created successfully!
+          </p>
+          <p><b>Tracking Number:</b> ${trackingNo}</p>
+          <p><a href="${trackingLink}" class="text-blue-600 underline">Track your shipment here</a></p>
+        </div>
       `;
 
-      // Reset form
       btn.disabled = false;
       btn.innerText = "Submit Shipment";
-      document.getElementById("shipmentForm").reset();
+      formEl.reset();
     });
   </script>
 </body>
