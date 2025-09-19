@@ -48,16 +48,6 @@
           <input type="tel" id="phone" class="w-full mt-2 p-3 border rounded" required>
         </div>
 
-        <div>
-          <label for="address" class="block font-semibold">Address</label>
-          <textarea id="address" class="w-full mt-2 p-3 border rounded" required></textarea>
-        </div>
-
-        <div>
-          <label for="country" class="block font-semibold">Country</label>
-          <input type="text" id="country" class="w-full mt-2 p-3 border rounded" required>
-        </div>
-
         <button type="submit" class="w-full bg-yellow-500 text-white py-3 rounded-lg font-semibold hover:bg-yellow-600">
           Submit Shipment
         </button>
@@ -70,7 +60,7 @@
   <!-- Supabase Script -->
   <script>
     const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // Replace with a secure method to handle API keys
+    const SUPABASE_KEY = "your-supabase-key"; // Replace with a secure method to handle API keys
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     // Generate random tracking number
@@ -90,85 +80,53 @@
 
       const trackingNo = generateTrackingNo();
 
+      // Prepare data for user_info
       const shipment = {
-        tracking_no: trackingNo,
+        shipment_no: trackingNo, // Unique identifier
         customer_name: document.getElementById("customer_name").value,
         email: document.getElementById("email").value,
         phone: document.getElementById("phone").value,
-        address: document.getElementById("address").value,
-        country: document.getElementById("country").value,
-        status: "Pending",
-        created_at: new Date()
+        // Other fields can be filled manually later
       };
 
-      // Insert into shipments
-      const { data: shipmentData, error: shipmentError } = await supabase
-        .from("shipments")
+      // Insert into user_info
+      const { data: userInfoData, error: userInfoError } = await supabase
+        .from("user_info")
         .insert([shipment])
-        .select("id");
+        .select("id"); // Get the newly created user_info ID
 
-      if (shipmentError) {
-        console.error("❌ Shipment error:", shipmentError);
-        messageDiv.innerHTML = `<p class="text-red-600 font-semibold">❌ ${shipmentError.message}</p>`;
+      if (userInfoError) {
+        console.error("❌ User info error:", userInfoError);
+        messageDiv.innerHTML = `<p class="text-red-600">❌ User info insert failed: ${userInfoError.message}</p>`;
         btn.disabled = false;
         btn.innerText = "Submit Shipment";
         return;
       }
 
-      const shipmentId = shipmentData[0].id;
+      const shipmentId = userInfoData[0].id; // Get the ID of the newly created user_info entry
+
+      // Prepare data for tracking
+      const tracking = {
+        shipment_id: shipmentId, // Reference to the user_info record
+        tracking_no: trackingNo,
+        status: "Pending", // Default status
+        progress: "Order Placed", // Default progress
+        // Optional fields can be added later manually
+      };
 
       // Insert into tracking
-      const { data: trackingData, error: trackingError } = await supabase
+      const { error: trackingError } = await supabase
         .from("tracking")
-        .insert([{
-          shipment_id: shipmentId,
-          tracking_no: trackingNo,
-          status: "Pending",
-          note: "Shipment created"
-        }])
-        .select("id");
+        .insert([tracking]);
 
       if (trackingError) {
         console.error("❌ Tracking error:", trackingError);
-      }
-
-      const trackingId = trackingData?.[0]?.id || null;
-
-      // Insert into user_info with defaults
-      const { error: userInfoError } = await supabase
-        .from("user_info")
-        .insert([{
-          shipment_id: shipmentId,
-          tracking_id: trackingId,
-          tracking_no: shipment.tracking_no,
-          customer_name: shipment.customer_name,
-          email: shipment.email,
-          phone: shipment.phone,
-          address: shipment.address,
-          country: shipment.country,
-          status: shipment.status,
-
-          origin: "",
-          destination: "",
-          weight: null,
-          description: "",
-          progress: "Order Placed",
-          registration_fee: null,
-          delivery_fee: null,
-          insurance_fee: null,
-          show_registration: true,
-          show_delivery: true,
-          show_insurance: true
-        }]);
-
-      if (userInfoError) {
-        console.error("❌ User info error:", userInfoError);
-        messageDiv.innerHTML += `<p class="text-red-600">❌ User info insert failed: ${userInfoError.message}</p>`;
+        messageDiv.innerHTML += `<p class="text-red-600">❌ Tracking insert failed: ${trackingError.message}</p>`;
       }
 
       // Success message
       const trackingLink = `tracking.html?tracking_no=${trackingNo}`;
-      formEl.classList.add("hidden"); // hide the form after submission
+      formEl.classList.add("hidden"); // Hide the form after submission
       messageDiv.innerHTML = `
         <div class="bg-white shadow-lg rounded-lg p-6">
           <p class="text-green-600 font-semibold text-lg mb-4">
