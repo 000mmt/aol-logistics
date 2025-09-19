@@ -27,40 +27,59 @@
 
   <script>
     const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // ⚠️ use anon/public for client, service role only in backend
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // ⚠️ Replace with your actual key
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     // Load users
     async function loadUsers() {
-      const { data, error } = await supabase
+      const { data: users, error: userError } = await supabase
         .from("user_info")
         .select("*")
         .order("created_at", { ascending: false });
 
       const container = document.getElementById("userList");
-      if (error) {
-        container.innerHTML = `<p class="text-red-600">Error: ${error.message}</p>`;
+      if (userError) {
+        container.innerHTML = `<p class="text-red-600">Error: ${userError.message}</p>`;
         return;
       }
 
-      if (!data.length) {
+      if (!users.length) {
         container.innerHTML = `<p class="text-gray-400">No shipments yet.</p>`;
         return;
       }
 
-      container.innerHTML = data.map(user => `
+      // Fetch tracking updates for each user
+      const userTrackingPromises = users.map(async (user) => {
+        const { data: trackingUpdates, error: trackingError } = await supabase
+          .from("tracking_updates")
+          .select("*")
+          .eq("shipment_id", user.id)
+          .order("created_at", { ascending: false })
+          .limit(1); // Get the latest tracking update
+
+        if (trackingError) {
+          console.error("Error fetching tracking updates:", trackingError.message);
+          return { ...user, latestUpdate: null }; // Return user with null updates
+        }
+
+        return { ...user, latestUpdate: trackingUpdates[0] || null };
+      });
+
+      const usersWithTracking = await Promise.all(userTrackingPromises);
+
+      container.innerHTML = usersWithTracking.map(user => `
         <div class="bg-gray-800 shadow rounded-lg p-6">
           <h2 class="text-xl font-bold text-yellow-500 mb-2">${user.customer_name} 
             <span class="text-sm text-gray-300">(${user.tracking_no})</span>
           </h2>
           <p class="text-sm text-gray-400">${user.email} | ${user.phone || "N/A"}</p>
-
-          <!-- Tabs -->
+          <p class="text-sm text-gray-400"><b>Current Location:</b> ${user.latestUpdate ? user.latestUpdate.location || 'N/A' : 'N/A'}</p>
+          <p class="text-sm text-gray-400"><b>Tracking Link:</b> <a href="${user.tracking_link}" class="text-yellow-400" target="_blank">${user.tracking_link}</a></p>
+          <p class="text-sm text-gray-400"><b>Status:</b> ${user.latestUpdate ? user.latestUpdate.status : user.status}</p>
           <div class="mt-4">
             <button onclick="toggleTab('${user.id}','tracking')" class="px-3 py-1 bg-yellow-600 text-white rounded">Tracking</button>
             <button onclick="toggleTab('${user.id}','details')" class="px-3 py-1 bg-gray-700 text-white rounded">Details Info</button>
           </div>
-
           <!-- Tracking Section -->
           <div id="tracking-${user.id}" class="tab mt-4 hidden">
             <h3 class="font-semibold text-white mb-2">Shipment Tracking</h3>
@@ -69,37 +88,32 @@
             <p class="text-gray-300"><b>Customer:</b> ${user.customer_name}</p>
             <p class="text-gray-300"><b>Origin:</b> ${user.origin || 'N/A'}</p>
             <p class="text-gray-300"><b>Destination:</b> ${user.destination || 'N/A'}</p>
-            <p class="text-gray-300"><b>Status:</b> ${user.status || "Pending"}</p>
-
-            <!-- Editable Form -->
+            <p class="text-gray-300"><b>Status:</b> ${user.latestUpdate ? user.latestUpdate.status : user.status}</p>
             <div class="mt-4 hidden" id="trackingForm-${user.id}">
               <h4 class="font-semibold text-white">Edit Tracking Info</h4>
               <label class="block mb-1 text-gray-400">Progress</label>
               <select id="progressSelect-${user.id}" class="border p-2 rounded bg-gray-700 text-white">
-                <option value="Order Placed" ${user.progress === "Order Placed" ? "selected" : ""}>Order Placed</option>
-                <option value="Preparing Shipment" ${user.progress === "Preparing Shipment" ? "selected" : ""}>Preparing Shipment</option>
-                <option value="Shipped" ${user.progress === "Shipped" ? "selected" : ""}>Shipped</option>
-                <option value="Delivered" ${user.progress === "Delivered" ? "selected" : ""}>Delivered</option>
+                <option value="Order Placed" ${user.latestUpdate?.progress === "Order Placed" ? "selected" : ""}>Order Placed</option>
+                <option value="Preparing Shipment" ${user.latestUpdate?.progress === "Preparing Shipment" ? "selected" : ""}>Preparing Shipment</option>
+                <option value="Shipped" ${user.latestUpdate?.progress === "Shipped" ? "selected" : ""}>Shipped</option>
+                <option value="Delivered" ${user.latestUpdate?.progress === "Delivered" ? "selected" : ""}>Delivered</option>
               </select>
               <label class="block mb-1 text-gray-400">Location</label>
               <input type="text" id="locationInput-${user.id}" placeholder="Enter current location" class="border p-2 rounded bg-gray-700 text-white">
               <button onclick="saveTrackingUpdate('${user.id}')" class="mt-2 bg-yellow-500 text-white px-4 py-2 rounded">Save Tracking Info</button>
             </div>
           </div>
-
           <!-- Details Info Section -->
           <div id="details-${user.id}" class="tab mt-4 hidden">
             <h3 class="font-semibold text-white mb-2">Details Info</h3>
-            <p class="text-gray-300"><b>Country:</b> ${user.country || 'N/A'}</p>
-            <p class="text-gray-300"><b>Address:</b> ${user.address || 'N/A'}</p>
-            <p class="text-gray-300"><b>Phone:</b> ${user.phone || 'N/A'}</p>
+            <p class="text-gray-300"><b>Country:</b> ${user.receiver_country || 'N/A'}</p>
+            <p class="text-gray-300"><b>Address:</b> ${user.receiver_address || 'N/A'}</p>
+            <p class="text-gray-300"><b>Phone:</b> ${user.receiver_contact || 'N/A'}</p>
             <p class="text-gray-300"><b>Weight:</b> ${user.weight || 'N/A'}</p>
             <p class="text-gray-300"><b>Description:</b> ${user.description || 'N/A'}</p>
-            <p class="text-gray-300"><b>Registration Fee:</b> ${user.registration_fee || 'N/A'}</p>
+            <p class="text-gray-300"><b>Registration Fee:</b> ${user.reg_fee || 'N/A'}</p>
             <p class="text-gray-300"><b>Delivery Fee:</b> ${user.delivery_fee || 'N/A'}</p>
             <p class="text-gray-300"><b>Insurance Fee:</b> ${user.insurance_fee || 'N/A'}</p>
-
-            <!-- Editable Form -->
             <div class="mt-4 hidden" id="detailsForm-${user.id}">
               <h4 class="font-semibold text-white">Edit Details Info</h4>
               <label class="block mb-1 text-gray-400">Origin
@@ -115,7 +129,7 @@
                 <input type="text" value="${user.description || ''}" onchange="updateUser('${user.id}', { description: this.value })" class="border p-2 w-full rounded bg-gray-700 text-white">
               </label>
               <label class="block mb-1 text-gray-400">Registration Fee
-                <input type="number" value="${user.registration_fee || ''}" onchange="updateUser('${user.id}', { registration_fee: this.value })" class="border p-2 w-full rounded bg-gray-700 text-white">
+                <input type="number" value="${user.reg_fee || ''}" onchange="updateUser('${user.id}', { reg_fee: this.value })" class="border p-2 w-full rounded bg-gray-700 text-white">
               </label>
               <label class="block mb-1 text-gray-400">Delivery Fee
                 <input type="number" value="${user.delivery_fee || ''}" onchange="updateUser('${user.id}', { delivery_fee: this.value })" class="border p-2 w-full rounded bg-gray-700 text-white">
@@ -135,26 +149,23 @@
       const progress = document.querySelector(`#progressSelect-${userId}`).value;
       const location = document.querySelector(`#locationInput-${userId}`).value;
 
-      // Fetch user info to get the tracking_no
       const { data: userInfo, error: userError } = await supabase
         .from("user_info")
         .select("tracking_no")
         .eq("id", userId)
         .single();
 
-      // Handle potential error in fetching user info
       if (userError) {
         alert("Error fetching user info: " + userError.message);
         return;
       }
 
-      // Insert the tracking update
       const { error } = await supabase.from("tracking_updates").insert([
         {
           shipment_id: userId,
-          tracking_no: userInfo.tracking_no,  // Use fetched tracking_no
+          tracking_no: userInfo.tracking_no,
           progress: progress,
-          location: location,  // Include the location
+          location: location,
         },
       ]);
 
@@ -183,6 +194,11 @@
     // Logout
     document.getElementById("logoutBtn").addEventListener("click", async () => {
       await supabase.auth.signOut();
+      // Prevent back navigation
+      window.history.pushState(null, '', window.location.href);
+      window.onpopstate = function() {
+        window.history.pushState(null, '', window.location.href);
+      };
       window.location.href = "login.html";
     });
 
