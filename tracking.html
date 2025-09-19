@@ -6,6 +6,12 @@
   <title>Track Shipment - AOL Logistics</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <style>
+    .progress-icon {
+      width: 50px;
+      height: 50px;
+    }
+  </style>
 </head>
 <body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
 
@@ -28,6 +34,7 @@
         <p><strong>Origin:</strong> <span id="summaryOrigin"></span></p>
         <p><strong>Destination:</strong> <span id="summaryDestination"></span></p>
         <p><strong>Status:</strong> <span id="summaryStatus" class="font-semibold text-yellow-600"></span></p>
+        <p><strong>Current Location:</strong> <span id="summaryLocation" class="font-semibold text-gray-700"></span></p>
       </div>
     </div>
 
@@ -37,15 +44,19 @@
       <div class="flex items-center justify-between relative">
         <div class="absolute top-1/2 left-0 right-0 h-1 bg-gray-200 -z-10"></div>
         <div id="stepPending" class="flex flex-col items-center">
-          <div class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-200">1</div>
-          <p class="mt-2 text-sm">Pending</p>
+          <img src="images/pending.png" alt="Pending" class="progress-icon">
+          <p class="mt-2 text-sm">Order Placed</p>
         </div>
         <div id="stepTransit" class="flex flex-col items-center">
-          <div class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-200">2</div>
-          <p class="mt-2 text-sm">In Transit</p>
+          <img src="images/preparing.png" alt="Preparing Shipment" class="progress-icon">
+          <p class="mt-2 text-sm">Preparing Shipment</p>
+        </div>
+        <div id="stepShipped" class="flex flex-col items-center">
+          <img src="images/shipped.png" alt="Shipped" class="progress-icon">
+          <p class="mt-2 text-sm">Shipped</p>
         </div>
         <div id="stepDelivered" class="flex flex-col items-center">
-          <div class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-200">3</div>
+          <img src="images/delivered.png" alt="Delivered" class="progress-icon">
           <p class="mt-2 text-sm">Delivered</p>
         </div>
       </div>
@@ -68,7 +79,7 @@
 
   <script>
     const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // ⚠️ replace with your actual key
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const params = new URLSearchParams(window.location.search);
@@ -105,6 +116,7 @@
       document.getElementById("summaryOrigin").textContent = shipment.origin || "-";
       document.getElementById("summaryDestination").textContent = shipment.destination || "-";
       document.getElementById("summaryStatus").textContent = shipment.status || "Pending";
+      document.getElementById("summaryLocation").textContent = shipment.current_location || "Not available";
 
       // Progress bar
       progressEl.classList.remove("hidden");
@@ -114,7 +126,7 @@
       const { data: updates } = await supabase
         .from("tracking_updates")
         .select("*")
-        .eq("tracking_id", shipment.id)
+        .eq("shipment_id", shipment.id)
         .order("created_at", { ascending: false });
 
       if (!updates || updates.length === 0) {
@@ -139,21 +151,22 @@
 
     function highlightStep(status) {
       const steps = {
-        "Pending": "stepPending",
-        "In Transit": "stepTransit",
+        "Order Placed": "stepPending",
+        "Preparing Shipment": "stepTransit",
+        "Shipped": "stepShipped",
         "Delivered": "stepDelivered"
       };
 
       Object.values(steps).forEach(id => {
-        const step = document.getElementById(id).querySelector("div");
-        step.classList.remove("bg-yellow-500", "text-white");
-        step.classList.add("bg-gray-200");
+        const step = document.getElementById(id);
+        step.querySelector("img").classList.remove("opacity-100");
+        step.querySelector("p").classList.remove("font-bold");
       });
 
       if (steps[status]) {
-        const step = document.getElementById(steps[status]).querySelector("div");
-        step.classList.remove("bg-gray-200");
-        step.classList.add("bg-yellow-500", "text-white");
+        const step = document.getElementById(steps[status]);
+        step.querySelector("img").classList.add("opacity-100");
+        step.querySelector("p").classList.add("font-bold");
       }
     }
 
