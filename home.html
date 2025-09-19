@@ -45,6 +45,26 @@
     </div>
   </section>
 
+
+  <!-- Tracking Form -->
+<section class="py-16 bg-gray-50">
+  <div class="container mx-auto px-6 text-center">
+    <h2 class="text-2xl font-bold mb-6">Track Your Shipment</h2>
+
+    <form id="trackingForm" class="max-w-md mx-auto flex gap-2">
+      <input type="text" id="tracking_no" name="tracking_no"
+             placeholder="Enter Tracking Number"
+             class="flex-1 p-3 border rounded-lg" required>
+      <button type="submit"
+              class="bg-yellow-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-yellow-600">
+        Track
+      </button>
+    </form>
+  </div>
+</section>
+
+  
+
   <!-- Services -->
   <section id="services" class="py-20 bg-white">
     <div class="container mx-auto px-6 text-center">
@@ -200,6 +220,19 @@
       © 2025 AOL LOGISTICS. All rights reserved.
     </div>
   </footer>
+
+
+  <script>
+  document.getElementById("trackingForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const trackingNo = document.getElementById("tracking_no").value.trim();
+    if (trackingNo) {
+      // Redirect to tracking.html with tracking_no in the query
+      window.location.href = `tracking.html?tracking_no=${encodeURIComponent(trackingNo)}`;
+    }
+  });
+</script>
+  
 
   <!-- AOS JS -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
