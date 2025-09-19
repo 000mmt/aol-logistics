@@ -10,14 +10,6 @@
     .progress-icon {
       width: 50px;
       height: 50px;
-      opacity: 0.4;
-      transition: opacity 0.3s ease;
-    }
-    .active-step img {
-      opacity: 1 !important;
-    }
-    .active-step p {
-      font-weight: 700;
     }
   </style>
 </head>
@@ -32,25 +24,6 @@
   <!-- Container -->
   <main class="flex-1 container mx-auto px-6 py-10">
     <h2 class="text-3xl font-bold mb-6 text-center">Track Your Shipment</h2>
-
-    <!-- Tracking Form -->
-    <div id="trackingForm" class="bg-white shadow-lg rounded-xl p-6 mb-10">
-      <form id="form" class="flex flex-col md:flex-row items-center gap-4">
-        <input 
-          type="text" 
-          id="trackingInput" 
-          name="tracking_no" 
-          placeholder="Enter Tracking Number" 
-          class="flex-1 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500"
-          required
-        />
-        <button 
-          type="submit" 
-          class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition">
-          Track
-        </button>
-      </form>
-    </div>
 
     <!-- Shipment Summary -->
     <div id="shipmentSummary" class="bg-white shadow-lg rounded-xl p-6 mb-10 hidden">
@@ -71,19 +44,19 @@
       <div class="flex items-center justify-between relative">
         <div class="absolute top-1/2 left-0 right-0 h-1 bg-gray-200 -z-10"></div>
         <div id="stepPending" class="flex flex-col items-center">
-          <img src="images/pending.png" alt="Pending" class="progress-icon">
+          <img src="images/pending.png" alt="Pending" class="progress-icon opacity-50">
           <p class="mt-2 text-sm">Order Placed</p>
         </div>
         <div id="stepTransit" class="flex flex-col items-center">
-          <img src="images/preparing.png" alt="Preparing Shipment" class="progress-icon">
+          <img src="images/preparing.png" alt="Preparing Shipment" class="progress-icon opacity-50">
           <p class="mt-2 text-sm">Preparing Shipment</p>
         </div>
         <div id="stepShipped" class="flex flex-col items-center">
-          <img src="images/shipped.png" alt="Shipped" class="progress-icon">
+          <img src="images/shipped.png" alt="Shipped" class="progress-icon opacity-50">
           <p class="mt-2 text-sm">Shipped</p>
         </div>
         <div id="stepDelivered" class="flex flex-col items-center">
-          <img src="images/delivered.png" alt="Delivered" class="progress-icon">
+          <img src="images/delivered.png" alt="Delivered" class="progress-icon opacity-50">
           <p class="mt-2 text-sm">Delivered</p>
         </div>
       </div>
@@ -106,46 +79,33 @@
 
   <script>
     const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // ⚠️ replace with your actual key
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // ⚠️ Replace with your actual key
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const formEl = document.getElementById("form");
-    const trackingInput = document.getElementById("trackingInput");
+    const params = new URLSearchParams(window.location.search);
+    const trackingNo = params.get("tracking_no");
+
     const messageEl = document.getElementById("message");
     const summaryEl = document.getElementById("shipmentSummary");
     const updatesEl = document.getElementById("updatesTimeline");
     const progressEl = document.getElementById("progressSection");
     const timelineEl = document.getElementById("timeline");
-    const formContainer = document.getElementById("trackingForm");
 
-    formEl.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const trackingNo = trackingInput.value.trim();
+    async function loadTracking() {
       if (!trackingNo) {
-        messageEl.textContent = "⚠️ Please enter a tracking number.";
+        messageEl.textContent = "Please provide a tracking number.";
         return;
       }
-      await loadTracking(trackingNo);
-    });
-
-    async function loadTracking(trackingNo) {
       messageEl.textContent = "Loading shipment...";
-      summaryEl.classList.add("hidden");
-      progressEl.classList.add("hidden");
-      updatesEl.classList.add("hidden");
 
       const { data: shipment, error } = await supabase
-        .from("shipments")
+        .from("user_info")
         .select("*")
         .eq("tracking_no", trackingNo)
-        .maybeSingle();
+        .single();
 
       if (error || !shipment) {
-        messageEl.innerHTML = `
-          ❌ Tracking number not found.<br>
-          <span class="text-sm text-gray-500">Contact your shipping agent for enquiries.</span>
-        `;
-        formContainer.classList.remove("hidden");
+        messageEl.textContent = "❌ Tracking number not found.";
         return;
       }
 
@@ -181,7 +141,7 @@
           <div class="absolute -left-3 top-1 w-6 h-6 rounded-full bg-yellow-500 border-2 border-white"></div>
           <div class="ml-4">
             <p class="font-semibold text-yellow-600">${update.status}</p>
-            <p class="text-gray-700">${update.location || ""}</p>
+            <p class="text-gray-700">${update.location}</p>
             <p class="text-sm text-gray-500">${new Date(update.created_at).toLocaleString()}</p>
             ${update.note ? `<p class="mt-1 text-gray-600 italic">${update.note}</p>` : ""}
           </div>
@@ -199,14 +159,18 @@
 
       Object.values(steps).forEach(id => {
         const step = document.getElementById(id);
-        step.classList.remove("active-step");
+        step.querySelector("img").classList.remove("opacity-100");
+        step.querySelector("p").classList.remove("font-bold");
       });
 
       if (steps[status]) {
         const step = document.getElementById(steps[status]);
-        step.classList.add("active-step");
+        step.querySelector("img").classList.add("opacity-100");
+        step.querySelector("p").classList.add("font-bold");
       }
     }
+
+    loadTracking();
   </script>
 </body>
 </html>
