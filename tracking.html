@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Track Shipment - AOL LOGISTICS</title>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Track Your Shipment</h2>
+    <form id="trackingForm">
+      <label>Enter Shipment Number:</label>
+      <input type="text" id="shipment_no" placeholder="e.g., SHP20250919001" required>
+      <button type="submit">Track</button>
+    </form>
+
+    <div id="result" class="tracking-result"></div>
+  </div>
+
+  <script>
+    // 1. Initialize Supabase client
+    const SUPABASE_URL = "https://YOUR_PROJECT.supabase.co"; 
+    const SUPABASE_KEY = "YOUR_ANON_KEY"; 
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // 2. Handle form submission
+    document.getElementById("trackingForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const shipment_no = document.getElementById("shipment_no").value.trim();
+
+      // Query Supabase
+      const { data, error } = await supabase
+        .from("shipments")
+        .select("*")
+        .eq("shipment_no", shipment_no)
+        .single();
+
+      const resultDiv = document.getElementById("result");
+
+      if (error || !data) {
+        resultDiv.innerHTML = `<p class="error">❌ Shipment not found. Please check your number.</p>`;
+      } else {
+        resultDiv.innerHTML = `
+          <h3>Shipment Details</h3>
+          <p><strong>Shipment No:</strong> ${data.shipment_no}</p>
+          <p><strong>Customer:</strong> ${data.customer_name}</p>
+          <p><strong>Email:</strong> ${data.email}</p>
+          <p><strong>Phone:</strong> ${data.phone || 'N/A'}</p>
+          <p><strong>Origin:</strong> ${data.origin}</p>
+          <p><strong>Destination:</strong> ${data.destination}</p>
+          <p><strong>Weight:</strong> ${data.weight || 'N/A'} kg</p>
+          <p><strong>Description:</strong> ${data.description || 'N/A'}</p>
+          <p><strong>Status:</strong> <span class="status">${data.status}</span></p>
+          <p><strong>Created At:</strong> ${new Date(data.created_at).toLocaleString()}</p>
+        `;
+      }
+    });
+  </script>
+</body>
+</html>
