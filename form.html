@@ -68,7 +68,7 @@
   <!-- Supabase Script -->
   <script>
     const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY";
+    const SUPABASE_KEY = "YOUR-ANON-KEY"; // ⚠️ replace with your anon public key
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     // Generate random tracking number
@@ -115,7 +115,16 @@
           note: "Shipment created"
         }]);
 
-        messageDiv.innerHTML = `<p class="text-green-600 font-semibold">✅ Shipment created successfully!<br>Tracking Number: <b>${trackingNo}</b></p>`;
+        // ✅ Show success + tracking number as clickable link
+        const trackingLink = `tracking.html?tracking_no=${trackingNo}`;
+        messageDiv.innerHTML = `
+          <p class="text-green-600 font-semibold">
+            ✅ Shipment created successfully!<br>
+            Tracking Number: <b>${trackingNo}</b><br>
+            <a href="${trackingLink}" class="text-blue-600 underline">Track your shipment here</a>
+          </p>
+        `;
+
         document.getElementById("shipmentForm").reset();
       }
     });
