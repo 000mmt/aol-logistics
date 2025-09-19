@@ -1,32 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AOL LOGISTICS - Moving Cargo, Connecting Continents</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css" />
   <!-- AOS CSS -->
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
 </head>
 <body class="bg-gray-50 text-gray-800">
 
   <!-- Navbar -->
   <header class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
     <div class="container mx-auto flex items-center justify-between px-6 py-4">
-      <h1 class="text-2xl font-bold text-yellow-500">AOL LOGISTICS</h1>
+      <!-- Logo (clickable to home) -->
+      <a href="home.html" class="text-2xl font-bold text-yellow-500">AOL LOGISTICS</a>
+
+      <!-- Desktop Nav -->
       <nav class="hidden md:flex space-x-6">
         <a href="#home" class="hover:text-yellow-500">Home</a>
         <a href="#about" class="hover:text-yellow-500">About Us</a>
         <a href="#services" class="hover:text-yellow-500">Services</a>
+        <a href="tracking.html" class="hover:text-yellow-500">Track Shipment</a>
+        <a href="form.html" class="hover:text-yellow-500">Create Shipment</a>
         <a href="#reach" class="hover:text-yellow-500">Global Reach</a>
         <a href="#why" class="hover:text-yellow-500">Why Us</a>
         <a href="#industries" class="hover:text-yellow-500">Industries</a>
         <a href="#news" class="hover:text-yellow-500">News</a>
         <a href="#testimonials" class="hover:text-yellow-500">Testimonials</a>
         <a href="#contact" class="hover:text-yellow-500">Contact</a>
+        <a href="login.html" class="hover:text-yellow-500">Login</a>
       </nav>
-      <button class="md:hidden bg-yellow-500 text-white px-4 py-2 rounded">Menu</button>
+
+      <!-- Mobile Menu Button -->
+      <button id="menuBtn" aria-label="Open menu" class="md:hidden bg-yellow-500 text-white px-4 py-2 rounded">
+        Menu
+      </button>
+    </div>
+
+    <!-- Mobile Dropdown -->
+    <div id="mobileMenu" class="hidden bg-white shadow-md md:hidden">
+      <nav class="flex flex-col space-y-2 px-6 py-4">
+        <a href="home.html" class="hover:text-yellow-500 mobile-link">Home</a>
+        <a href="#about" class="hover:text-yellow-500 mobile-link">About Us</a>
+        <a href="#services" class="hover:text-yellow-500 mobile-link">Services</a>
+        <a href="tracking.html" class="hover:text-yellow-500 mobile-link">Track Shipment</a>
+        <a href="form.html" class="hover:text-yellow-500 mobile-link">Create Shipment</a>
+        <a href="#reach" class="hover:text-yellow-500 mobile-link">Global Reach</a>
+        <a href="#why" class="hover:text-yellow-500 mobile-link">Why Us</a>
+        <a href="#industries" class="hover:text-yellow-500 mobile-link">Industries</a>
+        <a href="#news" class="hover:text-yellow-500 mobile-link">News</a>
+        <a href="#testimonials" class="hover:text-yellow-500 mobile-link">Testimonials</a>
+        <a href="#contact" class="hover:text-yellow-500 mobile-link">Contact</a>
+        <a href="login.html" class="hover:text-yellow-500 mobile-link">Login</a>
+      </nav>
     </div>
   </header>
 
@@ -45,25 +73,21 @@
     </div>
   </section>
 
-
   <!-- Tracking Form -->
-<section class="py-16 bg-gray-50">
-  <div class="container mx-auto px-6 text-center">
-    <h2 class="text-2xl font-bold mb-6">Track Your Shipment</h2>
-
-    <form id="trackingForm" class="max-w-md mx-auto flex gap-2">
-      <input type="text" id="tracking_no" name="tracking_no"
-             placeholder="Enter Tracking Number"
-             class="flex-1 p-3 border rounded-lg" required>
-      <button type="submit"
-              class="bg-yellow-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-yellow-600">
-        Track
-      </button>
-    </form>
-  </div>
-</section>
-
-  
+  <section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-6 text-center">
+      <h2 class="text-2xl font-bold mb-6">Track Your Shipment</h2>
+      <form id="trackingForm" class="max-w-md mx-auto flex gap-2">
+        <input type="text" id="tracking_no" name="tracking_no"
+               placeholder="Enter Tracking Number"
+               class="flex-1 p-3 border rounded-lg" required>
+        <button type="submit"
+                class="bg-yellow-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-yellow-600">
+          Track
+        </button>
+      </form>
+    </div>
+  </section>
 
   <!-- Services -->
   <section id="services" class="py-20 bg-white">
@@ -139,18 +163,36 @@
     </div>
   </section>
 
-  <!-- Testimonials -->
-  <section id="testimonials" class="py-20 bg-white">
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="bg-gray-50 py-20">
     <div class="container mx-auto px-6 text-center">
-      <h3 class="text-3xl font-bold mb-12" data-aos="fade-up">What Our Clients Say</h3>
-      <div class="grid md:grid-cols-2 gap-10">
-        <div class="p-6 bg-gray-100 rounded shadow" data-aos="fade-right">
-          <p>"AOL Logistics handled our cargo with professionalism and speed. Highly recommended!"</p>
-          <h4 class="mt-4 font-semibold">- Sarah Johnson, USA</h4>
+      <h2 class="text-3xl md:text-4xl font-bold mb-12" data-aos="fade-up">What Our Customers Say</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <!-- Testimonial 1 -->
+        <div class="bg-white shadow-lg rounded-2xl p-6" data-aos="fade-up" data-aos-delay="100">
+          <img src="images/istockphoto-157421781-612x612.jpg" alt="Customer 1" class="w-20 h-20 mx-auto rounded-full mb-4 object-cover">
+          <div class="flex justify-center mb-3 text-yellow-500" aria-hidden="true"><span class="text-xl">⭐⭐⭐⭐⭐</span></div>
+          <p class="text-gray-600 mb-4 italic">“AOL Logistics handled my deliveries with such care and speed. I always felt informed with their real-time tracking.”</p>
+          <h3 class="font-semibold text-yellow-600">Sarah Johnson</h3>
+          <p class="text-sm text-gray-500">Small Business Owner</p>
         </div>
-        <div class="p-6 bg-gray-100 rounded shadow" data-aos="fade-left">
-          <p>"Their global reach and customer support are unmatched. We trust them with all our shipments."</p>
-          <h4 class="mt-4 font-semibold">- Carlos Mendes, Brazil</h4>
+
+        <!-- Testimonial 2 -->
+        <div class="bg-white shadow-lg rounded-2xl p-6" data-aos="fade-up" data-aos-delay="200">
+          <img src="images/stevedore-1636392_1280.jpg" alt="Customer 2" class="w-20 h-20 mx-auto rounded-full mb-4 object-cover">
+          <div class="flex justify-center mb-3 text-yellow-500" aria-hidden="true"><span class="text-xl">⭐⭐⭐⭐⭐</span></div>
+          <p class="text-gray-600 mb-4 italic">“Fast, reliable, and transparent. My online store relies on AOL Logistics for every shipment — never been disappointed.”</p>
+          <h3 class="font-semibold text-yellow-600">Michael Lee</h3>
+          <p class="text-sm text-gray-500">E-commerce Entrepreneur</p>
+        </div>
+
+        <!-- Testimonial 3 -->
+        <div class="bg-white shadow-lg rounded-2xl p-6" data-aos="fade-up" data-aos-delay="300">
+          <img src="images/teacher-with-glasses-class.jpg" alt="Customer 3" class="w-20 h-20 mx-auto rounded-full mb-4 object-cover">
+          <div class="flex justify-center mb-3 text-yellow-500" aria-hidden="true"><span class="text-xl">⭐⭐⭐⭐⭐</span></div>
+          <p class="text-gray-600 mb-4 italic">“Excellent support team, smooth process, and quick updates. AOL Logistics is a partner I fully trust with my cargo.”</p>
+          <h3 class="font-semibold text-yellow-600">Amira Khan</h3>
+          <p class="text-sm text-gray-500">Frequent Shipper</p>
         </div>
       </div>
     </div>
@@ -197,50 +239,75 @@
         <h4 class="text-xl font-bold mb-4">AOL LOGISTICS</h4>
         <p>Connecting continents with reliable shipping and logistics solutions.</p>
       </div>
+
       <div>
         <h4 class="text-xl font-bold mb-4">Quick Links</h4>
-        <ul>
+        <ul class="space-y-2">
           <li><a href="#home" class="hover:text-yellow-500">Home</a></li>
-          <li><a href="#about" class="hover:text-yellow-500">About</a></li>
+          <li><a href="#about" class="hover:text-yellow-500">About Us</a></li>
           <li><a href="#services" class="hover:text-yellow-500">Services</a></li>
-          <li><a href="#reach" class="hover:text-yellow-500">Global Reach</a></li>
-          <li><a href="#industries" class="hover:text-yellow-500">Industries</a></li>
-          <li><a href="#news" class="hover:text-yellow-500">News</a></li>
-          <li><a href="#contact" class="hover:text-yellow-500">Contact</a></li>
+          <li><a href="tracking.html" class="hover:text-yellow-500">Track Shipment</a></li>
+          <li><a href="form.html" class="hover:text-yellow-500">Create Shipment</a></li>
+          <li><a href="login.html" class="hover:text-yellow-500">Login</a></li>
         </ul>
       </div>
+
       <div>
         <h4 class="text-xl font-bold mb-4">Contact</h4>
-        <p>Email: info@aollogistics.com</p>
-        <p>Phone: +1 (555) 123-4567</p>
-        <p>Worldwide Offices</p>
+        <p>Email: support@aollogistics.com</p>
+        <p>Phone: +1 800 123 4567</p>
+        <p>Address: 123 Global Trade Road, New York, USA</p>
       </div>
     </div>
-    <div class="text-center mt-8 text-gray-400 text-sm">
-      © 2025 AOL LOGISTICS. All rights reserved.
+
+    <div class="text-center mt-8 border-t border-gray-700 pt-6">
+      <p>&copy; 2025 AOL LOGISTICS. All rights reserved.</p>
     </div>
   </footer>
 
-
-  <script>
-  document.getElementById("trackingForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-    const trackingNo = document.getElementById("tracking_no").value.trim();
-    if (trackingNo) {
-      // Redirect to tracking.html with tracking_no in the query
-      window.location.href = `tracking.html?tracking_no=${encodeURIComponent(trackingNo)}`;
-    }
-  });
-</script>
-  
-
-  <!-- AOS JS -->
+  <!-- Scripts -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
     AOS.init({
-      duration: 1200,
+      duration: 1000,
       once: true
     });
+
+    // Tracking form submit -> redirect to tracking page
+    (function () {
+      const form = document.getElementById('trackingForm');
+      if (form) {
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          const trackingNo = (document.getElementById('tracking_no') || {}).value || '';
+          const trimmed = trackingNo.trim();
+          if (trimmed) {
+            window.location.href = `tracking.html?tracking_no=${encodeURIComponent(trimmed)}`;
+          }
+        });
+      }
+    })();
+
+    // Mobile menu toggle & close on link click
+    (function () {
+      const menuBtn = document.getElementById('menuBtn');
+      const mobileMenu = document.getElementById('mobileMenu');
+      if (menuBtn && mobileMenu) {
+        menuBtn.addEventListener('click', () => {
+          mobileMenu.classList.toggle('hidden');
+        });
+
+        // close menu when clicking any mobile link
+        const mobileLinks = mobileMenu.querySelectorAll('.mobile-link');
+        mobileLinks.forEach(link => {
+          link.addEventListener('click', () => {
+            // add small timeout so navigation can occur
+            setTimeout(() => mobileMenu.classList.add('hidden'), 150);
+          });
+        });
+      }
+    })();
   </script>
+
 </body>
 </html>
