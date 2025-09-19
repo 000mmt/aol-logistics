@@ -1,50 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Track Shipment - AOL LOGISTICS</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Track Shipment - AOL Logistics</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
 
-  <!-- Navbar -->
-  <header class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
-    <div class="container mx-auto flex items-center justify-between px-6 py-4">
-      <a href="home.html" class="text-2xl font-bold text-yellow-500">AOL LOGISTICS</a>
-      <nav class="hidden md:flex space-x-6">
-        <a href="home.html" class="hover:text-yellow-500">Home</a>
-        <a href="form.html" class="hover:text-yellow-500">Create Shipment</a>
-        <a href="tracking.html" class="hover:text-yellow-500">Track Shipment</a>
-      </nav>
-    </div>
+  <!-- Header -->
+  <header class="bg-white shadow-md p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-yellow-600">AOL Logistics</h1>
+    <a href="home.html" class="text-gray-600 hover:text-yellow-600">Home</a>
   </header>
 
-  <!-- Tracking Result -->
-  <section class="pt-32 pb-20">
-    <div class="container mx-auto px-6">
-      <h2 class="text-3xl font-bold text-center mb-8">Shipment Tracking</h2>
-      <div id="result" class="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-8"></div>
+  <!-- Container -->
+  <main class="flex-1 container mx-auto px-6 py-10">
+    <h2 class="text-3xl font-bold mb-6 text-center">Track Your Shipment</h2>
+
+    <!-- Shipment Summary -->
+    <div id="shipmentSummary" class="bg-white shadow-lg rounded-xl p-6 mb-10 hidden">
+      <h3 class="text-xl font-semibold mb-4">Shipment Details</h3>
+      <div class="grid md:grid-cols-2 gap-4 text-sm">
+        <p><strong>Tracking No:</strong> <span id="summaryTrackingNo"></span></p>
+        <p><strong>Customer:</strong> <span id="summaryCustomer"></span></p>
+        <p><strong>Origin:</strong> <span id="summaryOrigin"></span></p>
+        <p><strong>Destination:</strong> <span id="summaryDestination"></span></p>
+        <p><strong>Status:</strong> <span id="summaryStatus" class="font-semibold text-yellow-600"></span></p>
+      </div>
     </div>
-  </section>
+
+    <!-- Progress Bar -->
+    <div id="progressSection" class="mb-10 hidden">
+      <h3 class="text-xl font-semibold mb-4">Shipment Progress</h3>
+      <div class="flex items-center justify-between relative">
+        <div class="absolute top-1/2 left-0 right-0 h-1 bg-gray-200 -z-10"></div>
+        <div id="stepPending" class="flex flex-col items-center">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-200">1</div>
+          <p class="mt-2 text-sm">Pending</p>
+        </div>
+        <div id="stepTransit" class="flex flex-col items-center">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-200">2</div>
+          <p class="mt-2 text-sm">In Transit</p>
+        </div>
+        <div id="stepDelivered" class="flex flex-col items-center">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-200">3</div>
+          <p class="mt-2 text-sm">Delivered</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div id="updatesTimeline" class="bg-white shadow-lg rounded-xl p-6 hidden">
+      <h3 class="text-xl font-semibold mb-6">Tracking Updates</h3>
+      <div id="timeline" class="relative border-l border-gray-300 pl-6 space-y-6"></div>
+    </div>
+
+    <!-- Error / Loading -->
+    <div id="message" class="text-center text-gray-600 mt-10"></div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white text-center py-4">
+    <p>&copy; 2025 AOL Logistics. All rights reserved.</p>
+  </footer>
 
   <script>
     const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // ⚠️ replace with anon key
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function getShipment() {
-      const params = new URLSearchParams(window.location.search);
-      const trackingNo = params.get("tracking_no");
+    const params = new URLSearchParams(window.location.search);
+    const trackingNo = params.get("tracking_no");
 
-      const resultDiv = document.getElementById("result");
+    const messageEl = document.getElementById("message");
+    const summaryEl = document.getElementById("shipmentSummary");
+    const updatesEl = document.getElementById("updatesTimeline");
+    const progressEl = document.getElementById("progressSection");
+    const timelineEl = document.getElementById("timeline");
+
+    async function loadTracking() {
       if (!trackingNo) {
-        resultDiv.innerHTML = `<p class="text-red-600">❌ No tracking number provided.</p>`;
+        messageEl.textContent = "Please provide a tracking number.";
         return;
       }
+      messageEl.textContent = "Loading shipment...";
 
-      // Fetch shipment by tracking number
       const { data: shipment, error } = await supabase
         .from("shipments")
         .select("*")
@@ -52,46 +94,70 @@
         .single();
 
       if (error || !shipment) {
-        resultDiv.innerHTML = `<p class="text-red-600">❌ Shipment not found for <b>${trackingNo}</b></p>`;
+        messageEl.textContent = "❌ Tracking number not found.";
         return;
       }
 
-      // Fetch tracking updates
-      const { data: updates, error: updateError } = await supabase
+      // Fill summary
+      summaryEl.classList.remove("hidden");
+      document.getElementById("summaryTrackingNo").textContent = shipment.tracking_no;
+      document.getElementById("summaryCustomer").textContent = shipment.customer_name || "-";
+      document.getElementById("summaryOrigin").textContent = shipment.origin || "-";
+      document.getElementById("summaryDestination").textContent = shipment.destination || "-";
+      document.getElementById("summaryStatus").textContent = shipment.status || "Pending";
+
+      // Progress bar
+      progressEl.classList.remove("hidden");
+      highlightStep(shipment.status);
+
+      // Load updates
+      const { data: updates } = await supabase
         .from("tracking_updates")
         .select("*")
         .eq("tracking_id", shipment.id)
         .order("created_at", { ascending: false });
 
-      // Render shipment + updates
-      resultDiv.innerHTML = `
-        <h3 class="text-xl font-bold mb-4">Shipment Details</h3>
-        <p><b>Tracking No:</b> ${shipment.tracking_no}</p>
-        <p><b>Customer:</b> ${shipment.customer_name}</p>
-        <p><b>Email:</b> ${shipment.email}</p>
-        <p><b>Phone:</b> ${shipment.phone || "-"}</p>
-        <p><b>Address:</b> ${shipment.address}</p>
-        <p><b>Status:</b> <span class="text-yellow-600 font-semibold">${shipment.status}</span></p>
-        <p><b>Created At:</b> ${new Date(shipment.created_at).toLocaleString()}</p>
+      if (!updates || updates.length === 0) {
+        messageEl.textContent = "No updates available yet.";
+        return;
+      }
 
-        <h3 class="text-xl font-bold mt-6 mb-4">Tracking Updates</h3>
-        <div class="space-y-4">
-          ${updates && updates.length > 0
-            ? updates.map(update => `
-                <div class="border-l-4 border-yellow-500 pl-4">
-                  <p><b>Location:</b> ${update.location}</p>
-                  <p><b>Status:</b> ${update.status}</p>
-                  <p><b>Note:</b> ${update.note || "-"}</p>
-                  <p class="text-sm text-gray-500">${new Date(update.created_at).toLocaleString()}</p>
-                </div>
-              `).join("")
-            : `<p class="text-gray-500">No updates available yet.</p>`
-          }
+      messageEl.textContent = "";
+      updatesEl.classList.remove("hidden");
+      timelineEl.innerHTML = updates.map(update => `
+        <div class="relative">
+          <div class="absolute -left-3 top-1 w-6 h-6 rounded-full bg-yellow-500 border-2 border-white"></div>
+          <div class="ml-4">
+            <p class="font-semibold text-yellow-600">${update.status}</p>
+            <p class="text-gray-700">${update.location}</p>
+            <p class="text-sm text-gray-500">${new Date(update.created_at).toLocaleString()}</p>
+            ${update.note ? `<p class="mt-1 text-gray-600 italic">${update.note}</p>` : ""}
+          </div>
         </div>
-      `;
+      `).join("");
     }
 
-    getShipment();
+    function highlightStep(status) {
+      const steps = {
+        "Pending": "stepPending",
+        "In Transit": "stepTransit",
+        "Delivered": "stepDelivered"
+      };
+
+      Object.values(steps).forEach(id => {
+        const step = document.getElementById(id).querySelector("div");
+        step.classList.remove("bg-yellow-500", "text-white");
+        step.classList.add("bg-gray-200");
+      });
+
+      if (steps[status]) {
+        const step = document.getElementById(steps[status]).querySelector("div");
+        step.classList.remove("bg-gray-200");
+        step.classList.add("bg-yellow-500", "text-white");
+      }
+    }
+
+    loadTracking();
   </script>
 </body>
 </html>
