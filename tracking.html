@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Track Shipment - AOL LOGISTICS</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body class="bg-gray-50 text-gray-800">
 
   <!-- Navbar -->
   <header class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
     <div class="container mx-auto flex items-center justify-between px-6 py-4">
-      <!-- Logo links to home -->
       <a href="home.html" class="text-2xl font-bold text-yellow-500">AOL LOGISTICS</a>
 
       <!-- Desktop Nav -->
@@ -20,79 +19,128 @@
         <a href="home.html" class="hover:text-yellow-500">Home</a>
         <a href="form.html" class="hover:text-yellow-500">Create Shipment</a>
         <a href="tracking.html" class="hover:text-yellow-500">Track Shipment</a>
+        <a href="admin/login.html" class="hover:text-yellow-500">Login</a>
       </nav>
 
       <!-- Mobile Menu Button -->
-      <button id="menuBtn" class="md:hidden focus:outline-none">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
+      <button id="menuBtn" class="md:hidden bg-yellow-500 text-white px-4 py-2 rounded">Menu</button>
     </div>
 
-    <!-- Mobile Nav -->
-    <nav id="mobileMenu" class="hidden md:hidden bg-white shadow-md">
-      <div class="flex flex-col px-6 py-4 space-y-4">
-        <a href="home.html" class="hover:text-yellow-500">Home</a>
-        <a href="form.html" class="hover:text-yellow-500">Create Shipment</a>
-        <a href="tracking.html" class="hover:text-yellow-500">Track Shipment</a>
-      </div>
-    </nav>
+    <!-- Mobile Dropdown -->
+    <div id="mobileMenu" class="hidden bg-white shadow-md md:hidden">
+      <nav class="flex flex-col space-y-2 px-6 py-4">
+        <a href="home.html" class="hover:text-yellow-500 mobile-link">Home</a>
+        <a href="form.html" class="hover:text-yellow-500 mobile-link">Create Shipment</a>
+        <a href="tracking.html" class="hover:text-yellow-500 mobile-link">Track Shipment</a>
+        <a href="admin/login.html" class="hover:text-yellow-500 mobile-link">Login</a>
+      </nav>
+    </div>
   </header>
 
-  <!-- Tracking Result -->
-  <section class="pt-32 pb-20">
-    <div class="container mx-auto px-6">
-      <h2 class="text-3xl font-bold text-center mb-8">Shipment Tracking</h2>
-      <div id="result" class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-8 text-center"></div>
+  <!-- Tracking Section -->
+  <section class="pt-28 pb-20 container mx-auto px-6">
+    <h2 class="text-3xl font-bold mb-6 text-center">Track Your Shipment</h2>
+    
+    <!-- Tracking Input -->
+    <form id="trackingForm" class="max-w-lg mx-auto flex gap-2 mb-12">
+      <input type="text" id="tracking_no" name="tracking_no"
+             placeholder="Enter Tracking Number"
+             class="flex-1 p-3 border rounded-lg" required>
+      <button type="submit"
+              class="bg-yellow-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-yellow-600">
+        Track
+      </button>
+    </form>
+
+    <!-- Shipment Info -->
+    <div id="shipmentInfo" class="max-w-2xl mx-auto hidden mb-12 bg-white shadow rounded-lg p-6">
+      <h3 class="text-xl font-semibold mb-4 text-yellow-600">Shipment Details</h3>
+      <p><strong>Tracking No:</strong> <span id="infoTracking"></span></p>
+      <p><strong>Status:</strong> <span id="infoStatus"></span></p>
+      <p><strong>Recipient:</strong> <span id="infoName"></span></p>
+      <p><strong>Address:</strong> <span id="infoAddress"></span></p>
+    </div>
+
+    <!-- Tracking Timeline -->
+    <div id="timeline" class="max-w-2xl mx-auto hidden">
+      <h3 class="text-xl font-semibold mb-6 text-yellow-600">Tracking Updates</h3>
+      <ol id="timelineList" class="relative border-l border-gray-300 space-y-8">
+        <!-- Updates injected here -->
+      </ol>
     </div>
   </section>
 
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-8 text-center">
+    <p>&copy; 2025 AOL LOGISTICS. All rights reserved.</p>
+  </footer>
+
+  <!-- Scripts -->
   <script>
-    // Mobile menu toggle
-    document.getElementById("menuBtn").addEventListener("click", () => {
-      document.getElementById("mobileMenu").classList.toggle("hidden");
+    // Demo data until backend is connected
+    const demoData = {
+      tracking_no: "AOL-12345",
+      status: "In Transit",
+      name: "Sarah Johnson",
+      address: "123 Trade Road, Lagos, Nigeria",
+      updates: [
+        { location: "Lagos Port, Nigeria", status: "Departed", note: "Loaded on vessel", created_at: "2025-09-15 10:00" },
+        { location: "Atlantic Ocean", status: "In Transit", note: "On route to Europe", created_at: "2025-09-17 08:30" },
+        { location: "Hamburg Port, Germany", status: "Arrived", note: "Waiting for customs clearance", created_at: "2025-09-19 12:45" }
+      ]
+    };
+
+    // Form handler
+    document.getElementById("trackingForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const input = document.getElementById("tracking_no").value.trim();
+
+      if (!input) return;
+
+      // Replace this block with real API fetch
+      if (input === demoData.tracking_no) {
+        document.getElementById("shipmentInfo").classList.remove("hidden");
+        document.getElementById("timeline").classList.remove("hidden");
+
+        document.getElementById("infoTracking").textContent = demoData.tracking_no;
+        document.getElementById("infoStatus").textContent = demoData.status;
+        document.getElementById("infoName").textContent = demoData.name;
+        document.getElementById("infoAddress").textContent = demoData.address;
+
+        const list = document.getElementById("timelineList");
+        list.innerHTML = "";
+
+        demoData.updates.forEach(update => {
+          const li = document.createElement("li");
+          li.className = "ml-6";
+          li.innerHTML = `
+            <span class="absolute -left-3 flex items-center justify-center w-6 h-6 bg-yellow-500 rounded-full"></span>
+            <h4 class="font-semibold">${update.status}</h4>
+            <p class="text-sm text-gray-600">${update.location}</p>
+            <p class="text-xs text-gray-500">${update.created_at}</p>
+            <p class="text-sm italic">${update.note || ""}</p>
+          `;
+          list.appendChild(li);
+        });
+      } else {
+        alert("Tracking number not found.");
+      }
     });
 
-    const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY";
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    async function getShipment() {
-      const params = new URLSearchParams(window.location.search);
-      const trackingNo = params.get("tracking_no");
-
-      const resultDiv = document.getElementById("result");
-      if (!trackingNo) {
-        resultDiv.innerHTML = `<p class="text-red-600">❌ No tracking number provided.</p>`;
-        return;
-      }
-
-      // Fetch shipment by tracking number
-      const { data, error } = await supabase
-        .from("shipments")
-        .select("*")
-        .eq("tracking_no", trackingNo)
-        .single();
-
-      if (error || !data) {
-        resultDiv.innerHTML = `<p class="text-red-600">❌ Shipment not found for <b>${trackingNo}</b></p>`;
-      } else {
-        resultDiv.innerHTML = `
-          <h3 class="text-xl font-bold mb-4">Shipment Details</h3>
-          <p><b>Tracking No:</b> ${data.tracking_no}</p>
-          <p><b>Customer:</b> ${data.customer_name}</p>
-          <p><b>Email:</b> ${data.email}</p>
-          <p><b>Phone:</b> ${data.phone || "-"}</p>
-          <p><b>Address:</b> ${data.address}</p>
-          <p><b>Status:</b> <span class="text-yellow-600 font-semibold">${data.status}</span></p>
-          <p><b>Created At:</b> ${new Date(data.created_at).toLocaleString()}</p>
-        `;
-      }
+    // Mobile menu toggle
+    const menuBtn = document.getElementById("menuBtn");
+    const mobileMenu = document.getElementById("mobileMenu");
+    if (menuBtn && mobileMenu) {
+      menuBtn.addEventListener("click", () => {
+        mobileMenu.classList.toggle("hidden");
+      });
+      const mobileLinks = mobileMenu.querySelectorAll(".mobile-link");
+      mobileLinks.forEach(link => {
+        link.addEventListener("click", () => {
+          setTimeout(() => mobileMenu.classList.add("hidden"), 150);
+        });
+      });
     }
-
-    getShipment();
   </script>
 </body>
 </html>
