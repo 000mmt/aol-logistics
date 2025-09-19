@@ -74,23 +74,35 @@
     document.getElementById("shipmentForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
-const shipment = {
-  customer_name: document.getElementById("customer_name").value,
-  email: document.getElementById("email").value,
-  phone: document.getElementById("phone").value,
-  address: document.getElementById("address").value,
-  country: document.getElementById("country").value,  // new field
-  status: "Pending"
-};
+      // Generate unique tracking number
+      const trackingNo = "AOL" + Math.floor(100000 + Math.random() * 900000);
 
-const { data, error } = await supabase.from("shipments").insert([shipment]);
+      const shipment = {
+        tracking_no: trackingNo,
+        customer_name: document.getElementById("customer_name").value,
+        email: document.getElementById("email").value,
+        phone: document.getElementById("phone").value,
+        address: document.getElementById("address").value,
+        country: document.getElementById("country").value,
+        status: "Pending",
+        created_at: new Date()
+      };
 
+      const { error } = await supabase.from("shipments").insert([shipment]);
 
       const messageDiv = document.getElementById("message");
       if (error) {
         messageDiv.innerHTML = `<p class="text-red-600 font-semibold">❌ Error: ${error.message}</p>`;
       } else {
-        messageDiv.innerHTML = `<p class="text-green-600 font-semibold">✅ Shipment created successfully!</p>`;
+        messageDiv.innerHTML = `
+          <p class="text-green-600 font-semibold">✅ Shipment created successfully!</p>
+          <p>Your Tracking Number is: 
+            <span class="font-bold text-blue-600">${trackingNo}</span>
+          </p>
+          <p>You can track your shipment 
+            <a href="tracking.html?tracking_no=${trackingNo}" class="text-yellow-600 underline">here</a>.
+          </p>
+        `;
         document.getElementById("shipmentForm").reset();
       }
     });
