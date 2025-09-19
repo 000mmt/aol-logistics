@@ -1,84 +1,102 @@
-/* dashboard.css */
+/* General Styles */
+body {
+    background-color: #1a1a2e; /* Dark background */
+    color: #eaeaea; /* Light text */
+    font-family: 'Arial', sans-serif;
+}
 
-/* ===== Sidebar ===== */
+h1, h2, h3, h4 {
+    color: #ffffff; /* White headings */
+}
+
+p {
+    color: #d1d1d1; /* Light grey text for paragraphs */
+}
+
+/* Sidebar */
 aside {
-  transition: all 0.3s ease-in-out;
-  border-right: 1px solid #f3f4f6; /* subtle divider */
+    background-color: #16213e; /* Darker sidebar */
 }
 
 aside h2 {
-  letter-spacing: 1px;
+    color: #FFD700; /* Gold for admin title */
 }
 
-/* ===== Navigation ===== */
-nav a, nav button {
-  display: block;
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  transition: all 0.2s ease-in-out;
+nav a {
+    color: #eaeaea; /* Light text for links */
 }
 
-nav a:hover, nav button:hover {
-  background: #fef3c7; /* light yellow */
-  color: #b45309;      /* deep yellow text */
+nav a:hover {
+    color: #FFD700; /* Gold on hover */
 }
 
-/* ===== User Cards ===== */
-#userList > div {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border: 1px solid #f3f4f6;
+/* Main Content */
+main {
+    padding: 20px;
 }
 
-#userList > div:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+/* User Card */
+.bg-white {
+    background-color: #1e1e1e; /* Dark card background */
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* ===== Tabs ===== */
+.shadow {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Buttons */
+button {
+    background-color: #FFD700; /* Gold button */
+    color: #1a1a2e; /* Dark text */
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #FFC107; /* Lighter gold on hover */
+}
+
+/* Input Fields */
+input, select {
+    background-color: #333; /* Dark background for inputs */
+    color: #eaeaea; /* Light text */
+    border: 1px solid #444; /* Dark border */
+    border-radius: 5px;
+    padding: 10px;
+}
+
+input:focus, select:focus {
+    border-color: #FFD700; /* Gold border on focus */
+    outline: none; /* Remove default outline */
+}
+
+/* Tab Styles */
 .tab {
-  animation: fadeIn 0.3s ease-in-out;
+    display: none; /* Hide tabs by default */
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
-  to   { opacity: 1; transform: translateY(0); }
+.tab:not(.hidden) {
+    display: block; /* Show the selected tab */
 }
 
-/* ===== Form Elements ===== */
-input, select, textarea {
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
+/* Responsive Styles */
+@media (max-width: 768px) {
+    body {
+        font-size: 14px; /* Smaller font on mobile */
+    }
 
-input:focus, select:focus, textarea:focus {
-  border-color: #facc15; /* yellow-400 */
-  box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.3);
-}
+    aside {
+        position: absolute; /* Sidebar positioning for smaller screens */
+        left: -250px; /* Hide off-screen */
+        transition: left 0.3s; /* Smooth transition */
+    }
 
-/* ===== Buttons ===== */
-button, .btn {
-  transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-button:hover, .btn:hover {
-  transform: translateY(-1px);
-}
-
-/* Primary yellow button */
-.btn-yellow {
-  background: #facc15;
-  color: #1f2937;
-}
-
-.btn-yellow:hover {
-  background: #eab308;
-}
-
-/* Danger button */
-.btn-red {
-  background: #ef4444;
-  color: #fff;
-}
-
-.btn-red:hover {
-  background: #dc2626;
+    aside.active {
+        left: 0; /* Show sidebar */
+    }
 }
