@@ -75,13 +75,15 @@
             <div class="mt-4 hidden" id="trackingForm-${user.id}">
               <h4 class="font-semibold text-white">Edit Tracking Info</h4>
               <label class="block mb-1 text-gray-400">Progress</label>
-              <select onchange="saveTrackingUpdate('${user.id}', this.value)" class="border p-2 rounded bg-gray-700 text-white">
+              <select id="progressSelect-${user.id}" class="border p-2 rounded bg-gray-700 text-white">
                 <option value="Order Placed" ${user.progress === "Order Placed" ? "selected" : ""}>Order Placed</option>
                 <option value="Preparing Shipment" ${user.progress === "Preparing Shipment" ? "selected" : ""}>Preparing Shipment</option>
                 <option value="Shipped" ${user.progress === "Shipped" ? "selected" : ""}>Shipped</option>
                 <option value="Delivered" ${user.progress === "Delivered" ? "selected" : ""}>Delivered</option>
               </select>
-              <button onclick="saveTrackingUpdate('${user.id}', document.querySelector('#trackingForm-${user.id} select').value)" class="mt-2 bg-yellow-500 text-white px-4 py-2 rounded">Save Tracking Info</button>
+              <label class="block mb-1 text-gray-400">Location</label>
+              <input type="text" id="locationInput-${user.id}" placeholder="Enter current location" class="border p-2 rounded bg-gray-700 text-white">
+              <button onclick="saveTrackingUpdate('${user.id}')" class="mt-2 bg-yellow-500 text-white px-4 py-2 rounded">Save Tracking Info</button>
             </div>
           </div>
 
@@ -129,10 +131,38 @@
     }
 
     // Save tracking update
-    async function saveTrackingUpdate(userId, progress) {
-      const { error } = await supabase.from("tracking_updates").insert([{ shipment_id: userId, progress }]);
-      if (error) alert("Error saving tracking update: " + error.message);
-      else loadUsers(); // Reload users to reflect changes
+    async function saveTrackingUpdate(userId) {
+      const progress = document.querySelector(`#progressSelect-${userId}`).value;
+      const location = document.querySelector(`#locationInput-${userId}`).value;
+
+      // Fetch user info to get the tracking_no
+      const { data: userInfo, error: userError } = await supabase
+        .from("user_info")
+        .select("tracking_no")
+        .eq("id", userId)
+        .single();
+
+      // Handle potential error in fetching user info
+      if (userError) {
+        alert("Error fetching user info: " + userError.message);
+        return;
+      }
+
+      // Insert the tracking update
+      const { error } = await supabase.from("tracking_updates").insert([
+        {
+          shipment_id: userId,
+          tracking_no: userInfo.tracking_no,  // Use fetched tracking_no
+          progress: progress,
+          location: location,  // Include the location
+        },
+      ]);
+
+      if (error) {
+        alert("Error saving tracking update: " + error.message);
+      } else {
+        loadUsers(); // Reload users to reflect changes
+      }
     }
 
     // Update user
