@@ -21,34 +21,40 @@
     </div>
   </header>
 
-  <!-- Tracking Result -->
+  <!-- Tracking Section -->
   <section class="pt-32 pb-20">
     <div class="container mx-auto px-6">
       <h2 class="text-3xl font-bold text-center mb-8">Shipment Tracking</h2>
+
+      <!-- Search Box -->
+      <div id="searchBox" class="max-w-xl mx-auto mb-6 text-center hidden">
+        <form id="trackingForm" class="flex gap-2">
+          <input type="text" id="trackingInput" placeholder="Enter your tracking number"
+                 class="flex-1 p-3 border rounded-lg" required>
+          <button type="submit" class="bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600">
+            Track
+          </button>
+        </form>
+      </div>
+
+      <!-- Result -->
       <div id="result" class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-8 text-center"></div>
     </div>
   </section>
 
   <script>
     const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY";
+    const SUPABASE_KEY = "YOUR-ANON-KEY"; // ⚠️ replace with your anon public key
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function getShipment() {
-      const params = new URLSearchParams(window.location.search);
-      const trackingNo = params.get("tracking_no");
-
+    async function getShipment(trackingNo) {
       const resultDiv = document.getElementById("result");
-      if (!trackingNo) {
-        resultDiv.innerHTML = `<p class="text-red-600">❌ No tracking number provided.</p>`;
-        return;
-      }
 
       // Fetch shipment by tracking number
       const { data, error } = await supabase
         .from("shipments")
         .select("*")
-        .eq("id", trackingNo)   // 👈 replace with "tracking_no" if you create that column
+        .eq("tracking_no", trackingNo)
         .single();
 
       if (error || !data) {
@@ -56,6 +62,7 @@
       } else {
         resultDiv.innerHTML = `
           <h3 class="text-xl font-bold mb-4">Shipment Details</h3>
+          <p><b>Tracking No:</b> ${data.tracking_no}</p>
           <p><b>Customer:</b> ${data.customer_name}</p>
           <p><b>Email:</b> ${data.email}</p>
           <p><b>Phone:</b> ${data.phone || "-"}</p>
@@ -66,7 +73,23 @@
       }
     }
 
-    getShipment();
+    // On page load
+    const params = new URLSearchParams(window.location.search);
+    const trackingNo = params.get("tracking_no");
+
+    if (!trackingNo) {
+      document.getElementById("searchBox").classList.remove("hidden");
+
+      document.getElementById("trackingForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const input = document.getElementById("trackingInput").value.trim();
+        if (input) {
+          getShipment(input);
+        }
+      });
+    } else {
+      getShipment(trackingNo);
+    }
   </script>
 </body>
 </html>
