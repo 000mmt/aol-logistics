@@ -3,37 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AOL Logistics</title>
-  <link rel="stylesheet" href="css/style.css">
-
-  <!-- Tailwind CDN -->
+  <title>AOL LOGISTICS - Moving Cargo, Connecting Continents</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- AOS (Animate On Scroll) -->
+  <link rel="stylesheet" href="css/style.css">
+  <!-- AOS CSS -->
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
-<body class="font-sans antialiased text-gray-800">
+<body class="bg-gray-50 text-gray-800">
 
-  <!-- Header -->
-  <header class="bg-white shadow fixed w-full top-0 z-50">
-    <div class="container mx-auto flex items-center justify-between py-4 px-6">
-      <h1 class="text-2xl font-bold text-yellow-600">AOL LOGISTICS</h1>
-      <nav class="space-x-6 hidden md:block">
+  <!-- Navbar -->
+  <header class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
+    <div class="container mx-auto flex items-center justify-between px-6 py-4">
+      <h1 class="text-2xl font-bold text-yellow-500">AOL LOGISTICS</h1>
+      <nav class="hidden md:flex space-x-6">
         <a href="#home" class="hover:text-yellow-500">Home</a>
-        <a href="#about" class="hover:text-yellow-500">About</a>
+        <a href="#about" class="hover:text-yellow-500">About Us</a>
         <a href="#services" class="hover:text-yellow-500">Services</a>
         <a href="#reach" class="hover:text-yellow-500">Global Reach</a>
+        <a href="#why" class="hover:text-yellow-500">Why Us</a>
+        <a href="#industries" class="hover:text-yellow-500">Industries</a>
+        <a href="#news" class="hover:text-yellow-500">News</a>
+        <a href="#testimonials" class="hover:text-yellow-500">Testimonials</a>
         <a href="#contact" class="hover:text-yellow-500">Contact</a>
       </nav>
+      <button class="md:hidden bg-yellow-500 text-white px-4 py-2 rounded">Menu</button>
     </div>
   </header>
 
   <!-- Hero Section -->
-  <section id="home" class="relative bg-gray-900 text-white min-h-screen flex items-center justify-center overflow-hidden">
+  <section id="home" class="relative bg-gray-900 text-white pt-28 pb-32 min-h-screen flex items-center overflow-hidden">
     <div class="absolute inset-0 hero-bg">
       <img src="images/ACL-Port-Scene.jpg" alt="Cargo Ship" class="w-full h-full object-cover opacity-40">
     </div>
-    <div class="container mx-auto relative z-10 text-center px-6">
+    <div class="container mx-auto relative z-10 text-center">
       <h2 class="text-5xl md:text-6xl font-bold mb-6 hero-title">Moving Cargo. Connecting Continents.</h2>
       <p class="text-lg md:text-xl mb-8">Reliable logistics solutions that deliver across the globe.</p>
       <div class="space-x-4">
@@ -43,42 +45,25 @@
     </div>
   </section>
 
-  <!-- About -->
-  <section id="about" class="py-20 bg-white">
-    <div class="container mx-auto px-6 md:flex md:items-center">
-      <div class="md:w-1/2" data-aos="fade-right">
-        <img src="images/about-cargo.jpg" alt="About AOL Logistics" class="rounded-lg shadow-lg">
-      </div>
-      <div class="md:w-1/2 md:pl-12 mt-10 md:mt-0" data-aos="fade-left">
-        <h3 class="text-3xl font-bold mb-4">About Us</h3>
-        <p class="mb-6 text-gray-600">
-          At AOL Logistics, we are committed to delivering reliable shipping and freight solutions across the world. 
-          From RORO vessels to container shipping, we connect businesses and people to every corner of the globe.
-        </p>
-        <a href="#services" class="bg-yellow-500 text-white px-6 py-3 rounded-lg font-semibold">Learn More</a>
-      </div>
-    </div>
-  </section>
-
   <!-- Services -->
-  <section id="services" class="py-20 bg-gray-50">
+  <section id="services" class="py-20 bg-white">
     <div class="container mx-auto px-6 text-center">
       <h3 class="text-3xl font-bold mb-12" data-aos="fade-up">Our Services</h3>
       <div class="grid md:grid-cols-3 gap-10">
-        <div class="p-6 bg-white rounded-lg shadow-lg hover:shadow-2xl transition" data-aos="zoom-in">
-          <img src="images/roro.png" alt="RORO Shipping" class="mx-auto mb-4 w-20">
-          <h4 class="text-xl font-semibold mb-2">RORO Shipping</h4>
-          <p class="text-gray-600">Specialized Roll-on/Roll-off vessels to transport cars, trucks, and heavy machinery.</p>
-        </div>
-        <div class="p-6 bg-white rounded-lg shadow-lg hover:shadow-2xl transition" data-aos="zoom-in" data-aos-delay="100">
-          <img src="images/container.png" alt="Container Shipping" class="mx-auto mb-4 w-20">
+        <div class="p-6 bg-gray-100 rounded-lg shadow service-card" data-aos="fade-up" data-aos-delay="100">
+          <img src="images/aron-yigin-lNpAmLA_bvQ-unsplash.jpg" alt="Container Shipping" class="mx-auto mb-4 w-32 h-32 object-cover rounded">
           <h4 class="text-xl font-semibold mb-2">Container Shipping</h4>
-          <p class="text-gray-600">Secure and efficient containerized freight services worldwide.</p>
+          <p>Secure and efficient container transport across global trade routes.</p>
         </div>
-        <div class="p-6 bg-white rounded-lg shadow-lg hover:shadow-2xl transition" data-aos="zoom-in" data-aos-delay="200">
-          <img src="images/warehouse.png" alt="Warehousing" class="mx-auto mb-4 w-20">
-          <h4 class="text-xl font-semibold mb-2">Warehousing</h4>
-          <p class="text-gray-600">Strategic warehousing solutions to keep your cargo safe before final delivery.</p>
+        <div class="p-6 bg-gray-100 rounded-lg shadow service-card" data-aos="fade-up" data-aos-delay="200">
+          <img src="images/bernd-dittrich-miHHRMLDDH8-unsplash.jpg" alt="RORO" class="mx-auto mb-4 w-32 h-32 object-cover rounded">
+          <h4 class="text-xl font-semibold mb-2">RoRo (Roll-on/Roll-off)</h4>
+          <p>Seamless shipping for vehicles and heavy machinery worldwide.</p>
+        </div>
+        <div class="p-6 bg-gray-100 rounded-lg shadow service-card" data-aos="fade-up" data-aos-delay="300">
+          <img src="images/roro_pov_scaled-1024x617.jpg" alt="Special Cargo" class="mx-auto mb-4 w-32 h-32 object-cover rounded">
+          <h4 class="text-xl font-semibold mb-2">Special Cargo</h4>
+          <p>Custom solutions for oversized and time-sensitive cargo shipments.</p>
         </div>
       </div>
     </div>
@@ -88,43 +73,141 @@
   <section id="reach" class="py-20 bg-gray-50">
     <div class="container mx-auto text-center px-6">
       <h3 class="text-3xl font-bold mb-12" data-aos="fade-up">Our Global Reach</h3>
-      <p class="mb-10 max-w-2xl mx-auto text-gray-600">
-        From North America to Africa, Europe to Asia and South America, we deliver logistics solutions that connect continents and empower global trade.
-      </p>
+      <p class="mb-10 max-w-2xl mx-auto text-gray-600">We proudly deliver across every continent — serving businesses from North America to Asia, Africa to Europe, and South America.</p>
       <div class="grid grid-cols-2 md:grid-cols-5 gap-10 global-reach">
-        <div class="flag-card" data-aos="zoom-in">
-          <img src="https://flagcdn.com/w320/us.png" alt="North America" class="mx-auto w-20">
-          <p class="mt-3 font-semibold">North America</p>
+        <div data-aos="zoom-in"><img src="https://flagcdn.com/us.svg" alt="North America" class="mx-auto w-20 h-14"><p class="mt-3 font-semibold">North America</p></div>
+        <div data-aos="zoom-in" data-aos-delay="100"><img src="https://flagcdn.com/br.svg" alt="South America" class="mx-auto w-20 h-14"><p class="mt-3 font-semibold">South America</p></div>
+        <div data-aos="zoom-in" data-aos-delay="200"><img src="https://flagcdn.com/de.svg" alt="Europe" class="mx-auto w-20 h-14"><p class="mt-3 font-semibold">Europe</p></div>
+        <div data-aos="zoom-in" data-aos-delay="300"><img src="https://flagcdn.com/kr.svg" alt="Asia" class="mx-auto w-20 h-14"><p class="mt-3 font-semibold">Asia</p></div>
+        <div data-aos="zoom-in" data-aos-delay="400"><img src="https://flagcdn.com/ng.svg" alt="Africa" class="mx-auto w-20 h-14"><p class="mt-3 font-semibold">Africa</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="py-20 bg-white">
+    <div class="container mx-auto grid md:grid-cols-2 gap-12 items-center px-6">
+      <div data-aos="fade-right">
+        <h3 class="text-3xl font-bold mb-6">About Us</h3>
+        <p class="mb-4">AOL LOGISTICS is a trusted name in global shipping and logistics. With decades of experience, we ensure smooth, reliable, and cost-effective transportation of goods worldwide.</p>
+        <p>Our mission is to connect businesses across continents and make international trade seamless.</p>
+      </div>
+      <div data-aos="fade-left">
+        <img src="images/shaah-shahidh--subrrYxv8A-unsplash.jpg" alt="About AOL" class="about-img shadow-lg w-full">
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Us -->
+  <section id="why" class="py-20 bg-gray-50">
+    <div class="container mx-auto px-6 text-center">
+      <h3 class="text-3xl font-bold mb-12" data-aos="fade-up">Why Choose Us</h3>
+      <div class="grid md:grid-cols-3 gap-10">
+        <div class="p-6 bg-white shadow rounded" data-aos="flip-left">
+          <h4 class="text-xl font-semibold mb-2">Experience</h4>
+          <p>Decades of global logistics expertise across industries.</p>
         </div>
-        <div class="flag-card" data-aos="zoom-in" data-aos-delay="100">
-          <img src="https://flagcdn.com/w320/br.png" alt="South America" class="mx-auto w-20">
-          <p class="mt-3 font-semibold">South America</p>
+        <div class="p-6 bg-white shadow rounded" data-aos="flip-left" data-aos-delay="100">
+          <h4 class="text-xl font-semibold mb-2">Global Network</h4>
+          <p>Strong connections with ports, carriers and warehouses worldwide.</p>
         </div>
-        <div class="flag-card" data-aos="zoom-in" data-aos-delay="200">
-          <img src="https://flagcdn.com/w320/de.png" alt="Europe" class="mx-auto w-20">
-          <p class="mt-3 font-semibold">Europe</p>
-        </div>
-        <div class="flag-card" data-aos="zoom-in" data-aos-delay="300">
-          <img src="https://flagcdn.com/w320/kr.png" alt="Asia" class="mx-auto w-20">
-          <p class="mt-3 font-semibold">Asia</p>
-        </div>
-        <div class="flag-card" data-aos="zoom-in" data-aos-delay="400">
-          <img src="https://flagcdn.com/w320/ng.png" alt="Africa" class="mx-auto w-20">
-          <p class="mt-3 font-semibold">Africa</p>
+        <div class="p-6 bg-white shadow rounded" data-aos="flip-left" data-aos-delay="200">
+          <h4 class="text-xl font-semibold mb-2">Customer Focus</h4>
+          <p>Personalized solutions, transparent tracking and 24/7 support.</p>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- Testimonials -->
+  <section id="testimonials" class="py-20 bg-white">
+    <div class="container mx-auto px-6 text-center">
+      <h3 class="text-3xl font-bold mb-12" data-aos="fade-up">What Our Clients Say</h3>
+      <div class="grid md:grid-cols-2 gap-10">
+        <div class="p-6 bg-gray-100 rounded shadow" data-aos="fade-right">
+          <p>"AOL Logistics handled our cargo with professionalism and speed. Highly recommended!"</p>
+          <h4 class="mt-4 font-semibold">- Sarah Johnson, USA</h4>
+        </div>
+        <div class="p-6 bg-gray-100 rounded shadow" data-aos="fade-left">
+          <p>"Their global reach and customer support are unmatched. We trust them with all our shipments."</p>
+          <h4 class="mt-4 font-semibold">- Carlos Mendes, Brazil</h4>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Industries Section -->
+  <section id="industries" class="py-20 bg-gray-50">
+    <div class="container mx-auto px-6 text-center">
+      <h3 class="text-3xl font-bold mb-12" data-aos="fade-up">Industries We Serve</h3>
+      <div class="grid md:grid-cols-4 gap-10">
+        <div class="p-6 bg-white shadow rounded" data-aos="fade-up"><h4 class="font-semibold mb-2">Automotive</h4><p>Reliable RoRo shipping for cars, trucks and heavy machinery.</p></div>
+        <div class="p-6 bg-white shadow rounded" data-aos="fade-up" data-aos-delay="100"><h4 class="font-semibold mb-2">Retail</h4><p>Fast supply chain solutions for stores and e-commerce businesses.</p></div>
+        <div class="p-6 bg-white shadow rounded" data-aos="fade-up" data-aos-delay="200"><h4 class="font-semibold mb-2">Energy</h4><p>Safe transport of equipment for oil, gas and renewable energy projects.</p></div>
+        <div class="p-6 bg-white shadow rounded" data-aos="fade-up" data-aos-delay="300"><h4 class="font-semibold mb-2">Healthcare</h4><p>Temperature-controlled shipping for pharmaceuticals and medical supplies.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- News Section -->
+  <section id="news" class="py-20 bg-white">
+    <div class="container mx-auto px-6 text-center">
+      <h3 class="text-3xl font-bold mb-12" data-aos="fade-up">Latest Insights</h3>
+      <div class="grid md:grid-cols-3 gap-10">
+        <div class="p-6 bg-gray-100 rounded shadow" data-aos="fade-up"><h4 class="font-semibold mb-2">Global Shipping Trends 2025</h4><p>How digitization is transforming logistics worldwide.</p></div>
+        <div class="p-6 bg-gray-100 rounded shadow" data-aos="fade-up" data-aos-delay="100"><h4 class="font-semibold mb-2">Sustainable Logistics</h4><p>Green initiatives that make shipping eco-friendly.</p></div>
+        <div class="p-6 bg-gray-100 rounded shadow" data-aos="fade-up" data-aos-delay="200"><h4 class="font-semibold mb-2">Expanding to Asia</h4><p>AOL Logistics opens new offices in Seoul and Singapore.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section id="quote" class="py-20 bg-yellow-500 text-white text-center">
+    <div class="container mx-auto px-6" data-aos="zoom-in">
+      <h3 class="text-3xl font-bold mb-6">Ready to Ship With Us?</h3>
+      <p class="mb-6">Get a free quote today and experience world-class logistics service.</p>
+      <a href="#contact" class="bg-white text-yellow-600 px-6 py-3 rounded-lg font-semibold">Request Quote</a>
+    </div>
+  </section>
+
   <!-- Footer -->
-  <footer class="bg-gray-900 text-white py-6">
-    <div class="container mx-auto text-center">
-      <p>&copy; 2025 AOL Logistics. All rights reserved.</p>
+  <footer id="contact" class="bg-gray-900 text-white py-12">
+    <div class="container mx-auto grid md:grid-cols-3 gap-8 text-center md:text-left px-6">
+      <div>
+        <h4 class="text-xl font-bold mb-4">AOL LOGISTICS</h4>
+        <p>Connecting continents with reliable shipping and logistics solutions.</p>
+      </div>
+      <div>
+        <h4 class="text-xl font-bold mb-4">Quick Links</h4>
+        <ul>
+          <li><a href="#home" class="hover:text-yellow-500">Home</a></li>
+          <li><a href="#about" class="hover:text-yellow-500">About</a></li>
+          <li><a href="#services" class="hover:text-yellow-500">Services</a></li>
+          <li><a href="#reach" class="hover:text-yellow-500">Global Reach</a></li>
+          <li><a href="#industries" class="hover:text-yellow-500">Industries</a></li>
+          <li><a href="#news" class="hover:text-yellow-500">News</a></li>
+          <li><a href="#contact" class="hover:text-yellow-500">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-xl font-bold mb-4">Contact</h4>
+        <p>Email: info@aollogistics.com</p>
+        <p>Phone: +1 (555) 123-4567</p>
+        <p>Worldwide Offices</p>
+      </div>
+    </div>
+    <div class="text-center mt-8 text-gray-400 text-sm">
+      © 2025 AOL LOGISTICS. All rights reserved.
     </div>
   </footer>
 
   <!-- AOS JS -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script>AOS.init();</script>
+  <script>
+    AOS.init({
+      duration: 1200,
+      once: true
+    });
+  </script>
 </body>
 </html>
