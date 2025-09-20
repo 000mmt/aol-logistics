@@ -79,7 +79,7 @@
 
   <script>
     const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // ⚠️ Replace with your actual key
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; 
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const params = new URLSearchParams(window.location.search);
@@ -98,37 +98,47 @@
       }
       messageEl.textContent = "Loading shipment...";
 
-      const { data: shipment, error } = await supabase
+      // 1. Get the master shipment info
+      const { data: shipment, error: shipmentError } = await supabase
         .from("user_info")
         .select("*")
         .eq("tracking_no", trackingNo)
-        .single();
+        .maybeSingle();
 
-      if (error || !shipment) {
+      if (shipmentError || !shipment) {
         messageEl.textContent = "❌ Tracking number not found.";
         return;
       }
 
-      // Fill summary
-      summaryEl.classList.remove("hidden");
-      document.getElementById("summaryTrackingNo").textContent = shipment.tracking_no;
-      document.getElementById("summaryCustomer").textContent = shipment.customer_name || "-";
-      document.getElementById("summaryOrigin").textContent = shipment.origin || "-";
-      document.getElementById("summaryDestination").textContent = shipment.destination || "-";
-      document.getElementById("summaryStatus").textContent = shipment.status || "Pending";
-      document.getElementById("summaryLocation").textContent = shipment.current_location || "Not available";
-
-      // Progress bar
-      progressEl.classList.remove("hidden");
-      highlightStep(shipment.status);
-
-      // Load updates
-      const { data: updates } = await supabase
+      // 2. Get updates for this shipment
+      const { data: updates, error: updatesError } = await supabase
         .from("tracking_updates")
         .select("*")
         .eq("shipment_id", shipment.id)
         .order("created_at", { ascending: false });
 
+      if (updatesError) {
+        messageEl.textContent = "⚠️ Error loading updates.";
+        return;
+      }
+
+      // Latest update (for status + location)
+      const latestUpdate = updates && updates.length > 0 ? updates[0] : null;
+
+      // 3. Fill shipment summary
+      summaryEl.classList.remove("hidden");
+      document.getElementById("summaryTrackingNo").textContent = shipment.tracking_no;
+      document.getElementById("summaryCustomer").textContent = shipment.customer_name || "-";
+      document.getElementById("summaryOrigin").textContent = shipment.origin || "-";
+      document.getElementById("summaryDestination").textContent = shipment.destination || "-";
+      document.getElementById("summaryStatus").textContent = latestUpdate?.progress || "Pending";
+      document.getElementById("summaryLocation").textContent = latestUpdate?.location || "Not available";
+
+      // 4. Progress bar
+      progressEl.classList.remove("hidden");
+      highlightStep(latestUpdate?.progress || "Order Placed");
+
+      // 5. Timeline
       if (!updates || updates.length === 0) {
         messageEl.textContent = "No updates available yet.";
         return;
@@ -136,12 +146,13 @@
 
       messageEl.textContent = "";
       updatesEl.classList.remove("hidden");
+
       timelineEl.innerHTML = updates.map(update => `
         <div class="relative">
           <div class="absolute -left-3 top-1 w-6 h-6 rounded-full bg-yellow-500 border-2 border-white"></div>
           <div class="ml-4">
-            <p class="font-semibold text-yellow-600">${update.status}</p>
-            <p class="text-gray-700">${update.location}</p>
+            <p class="font-semibold text-yellow-600">${update.progress}</p>
+            <p class="text-gray-700">${update.location || "Unknown"}</p>
             <p class="text-sm text-gray-500">${new Date(update.created_at).toLocaleString()}</p>
             ${update.note ? `<p class="mt-1 text-gray-600 italic">${update.note}</p>` : ""}
           </div>
@@ -149,7 +160,7 @@
       `).join("");
     }
 
-    function highlightStep(status) {
+    function highlightStep(progress) {
       const steps = {
         "Order Placed": "stepPending",
         "Preparing Shipment": "stepTransit",
@@ -159,13 +170,13 @@
 
       Object.values(steps).forEach(id => {
         const step = document.getElementById(id);
-        step.querySelector("img").classList.remove("opacity-100");
+        step.querySelector("img").classList.add("opacity-50");
         step.querySelector("p").classList.remove("font-bold");
       });
 
-      if (steps[status]) {
-        const step = document.getElementById(steps[status]);
-        step.querySelector("img").classList.add("opacity-100");
+      if (steps[progress]) {
+        const step = document.getElementById(steps[progress]);
+        step.querySelector("img").classList.remove("opacity-50");
         step.querySelector("p").classList.add("font-bold");
       }
     }
