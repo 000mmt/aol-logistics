@@ -7,11 +7,9 @@
   <link rel="stylesheet" href="dashboard.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-
-
-  
 </head>
 <body class="flex bg-gray-900">
+
   <!-- Sidebar -->
   <aside class="w-64 bg-gray-800 shadow-md h-screen p-6">
     <h2 class="text-2xl font-bold text-yellow-500 mb-6">Admin</h2>
@@ -22,203 +20,185 @@
   </aside>
 
   <!-- Main -->
-  <main class="flex-1 p-8">
+  <main class="flex-1 p-8 overflow-y-auto">
     <h1 class="text-3xl font-bold text-white mb-6">User Shipments</h1>
-
     <div id="userList" class="space-y-6"></div>
   </main>
 
-  <script>
-    const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // ⚠️ Replace with your actual key
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+<script>
+const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
+const SUPABASE_KEY = "YOUR_KEY_HERE"; // ⚠️ Replace securely
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// Session check
+(async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    window.location.replace("login.html");
+    return;
+  }
+  loadUsers();
+})();
 
-        // Session check at page load
-    (async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        window.location.replace("login.html");
-        return;
-      }
-      // If session exists → then load users
-      loadUsers();
-    })();
-    
+// Load users with tracking
+async function loadUsers() {
+  const { data: users, error: userError } = await supabase
+    .from("user_info")
+    .select("*")
+    .order("created_at", { ascending: false });
 
-    // Load users
-    async function loadUsers() {
-      const { data: users, error: userError } = await supabase
-        .from("user_info")
-        .select("*")
-        .order("created_at", { ascending: false });
+  const container = document.getElementById("userList");
 
-      const container = document.getElementById("userList");
-      if (userError) {
-        container.innerHTML = `<p class="text-red-600">Error: ${userError.message}</p>`;
-        return;
-      }
+  if (userError) {
+    container.innerHTML = `<p class="text-red-600">Error: ${userError.message}</p>`;
+    return;
+  }
+  if (!users.length) {
+    container.innerHTML = `<p class="text-gray-400">No shipments yet.</p>`;
+    return;
+  }
 
-      if (!users.length) {
-        container.innerHTML = `<p class="text-gray-400">No shipments yet.</p>`;
-        return;
-      }
+  // Fetch tracking updates
+  const userTrackingPromises = users.map(async (user) => {
+    const { data: trackingUpdates } = await supabase
+      .from("tracking_updates")
+      .select("*")
+      .eq("shipment_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(1);
+    return { ...user, latestUpdate: trackingUpdates?.[0] || null };
+  });
 
-      // Fetch tracking updates for each user
-      const userTrackingPromises = users.map(async (user) => {
-        const { data: trackingUpdates, error: trackingError } = await supabase
-          .from("tracking_updates")
-          .select("*")
-          .eq("shipment_id", user.id)
-          .order("created_at", { ascending: false })
-          .limit(1); // Get the latest tracking update
+  const usersWithTracking = await Promise.all(userTrackingPromises);
 
-        if (trackingError) {
-          console.error("Error fetching tracking updates:", trackingError.message);
-          return { ...user, latestUpdate: null }; // Return user with null updates
-        }
+  container.innerHTML = usersWithTracking.map(user => `
+    <div class="bg-gray-800 shadow rounded-lg p-6">
+      <h2 class="text-xl font-bold text-yellow-500 mb-2">
+        ${user.receiver_name || "N/A"} 
+        <span class="text-sm text-gray-300">(${user.tracking_no})</span>
+      </h2>
+      <p class="text-sm text-gray-400">${user.receiver_email || "N/A"} | ${user.receiver_phone || "N/A"}</p>
+      <p class="text-sm text-gray-400"><b>Current Location:</b> ${user.latestUpdate?.location || 'N/A'}</p>
+      <p class="text-sm text-gray-400"><b>Tracking Link:</b> <a href="${user.tracking_link}" class="text-yellow-400" target="_blank">${user.tracking_link}</a></p>
+      <p class="text-sm text-gray-400"><b>Status:</b> ${user.latestUpdate?.status || "Pending"}</p>
+      <div class="mt-4">
+        <button onclick="toggleTab('${user.id}','tracking')" class="px-3 py-1 bg-yellow-600 text-white rounded">Tracking</button>
+        <button onclick="toggleTab('${user.id}','details')" class="px-3 py-1 bg-gray-700 text-white rounded">Details Info</button>
+      </div>
 
-        return { ...user, latestUpdate: trackingUpdates[0] || null };
-      });
+      <!-- Tracking Section -->
+      <div id="tracking-${user.id}" class="tab mt-4 hidden">
+        <h3 class="font-semibold text-white mb-2">Shipment Tracking</h3>
+        <p class="text-gray-300"><b>Tracking No:</b> ${user.tracking_no}</p>
+        <p class="text-gray-300"><b>Customer:</b> ${user.receiver_name}</p>
+        <p class="text-gray-300"><b>Status:</b> ${user.latestUpdate?.status || "Pending"}</p>
+        <p class="text-gray-300"><b>Progress:</b> ${user.latestUpdate?.progress || "N/A"}</p>
+        <p class="text-gray-300"><b>Location:</b> ${user.latestUpdate?.location || "N/A"}</p>
 
-      const usersWithTracking = await Promise.all(userTrackingPromises);
+        <!-- Edit tracking -->
+        <div class="mt-4" id="trackingForm-${user.id}">
+          <h4 class="font-semibold text-white">Edit Tracking Info</h4>
+          <label class="block mb-1 text-gray-400">Status</label>
+          <input type="text" id="statusInput-${user.id}" value="${user.latestUpdate?.status || ""}" class="border p-2 rounded bg-gray-700 text-white w-full">
 
-      container.innerHTML = usersWithTracking.map(user => `
-        <div class="bg-gray-800 shadow rounded-lg p-6">
-          <h2 class="text-xl font-bold text-yellow-500 mb-2">${user.customer_name} 
-            <span class="text-sm text-gray-300">(${user.tracking_no})</span>
-          </h2>
-          <p class="text-sm text-gray-400">${user.email} | ${user.phone || "N/A"}</p>
-          <p class="text-sm text-gray-400"><b>Current Location:</b> ${user.latestUpdate ? user.latestUpdate.location || 'N/A' : 'N/A'}</p>
-          <p class="text-sm text-gray-400"><b>Tracking Link:</b> <a href="${user.tracking_link}" class="text-yellow-400" target="_blank">${user.tracking_link}</a></p>
-          <p class="text-sm text-gray-400"><b>Status:</b> ${user.latestUpdate ? user.latestUpdate.status : user.status}</p>
-          <div class="mt-4">
-            <button onclick="toggleTab('${user.id}','tracking')" class="px-3 py-1 bg-yellow-600 text-white rounded">Tracking</button>
-            <button onclick="toggleTab('${user.id}','details')" class="px-3 py-1 bg-gray-700 text-white rounded">Details Info</button>
-          </div>
-          <!-- Tracking Section -->
-          <div id="tracking-${user.id}" class="tab mt-4 hidden">
-            <h3 class="font-semibold text-white mb-2">Shipment Tracking</h3>
-            <p class="text-gray-300"><b>Tracking No:</b> ${user.tracking_no}</p>
-            <p class="text-gray-300"><b>Tracking Link:</b> <a href="${user.tracking_link}" class="text-yellow-400" target="_blank">${user.tracking_link}</a></p>
-            <p class="text-gray-300"><b>Customer:</b> ${user.customer_name}</p>
-            <p class="text-gray-300"><b>Origin:</b> ${user.origin || 'N/A'}</p>
-            <p class="text-gray-300"><b>Destination:</b> ${user.destination || 'N/A'}</p>
-            <p class="text-gray-300"><b>Status:</b> ${user.latestUpdate ? user.latestUpdate.status : user.status}</p>
-            <div class="mt-4 hidden" id="trackingForm-${user.id}">
-              <h4 class="font-semibold text-white">Edit Tracking Info</h4>
-              <label class="block mb-1 text-gray-400">Progress</label>
-              <select id="progressSelect-${user.id}" class="border p-2 rounded bg-gray-700 text-white">
-                <option value="Order Placed" ${user.latestUpdate?.progress === "Order Placed" ? "selected" : ""}>Order Placed</option>
-                <option value="Preparing Shipment" ${user.latestUpdate?.progress === "Preparing Shipment" ? "selected" : ""}>Preparing Shipment</option>
-                <option value="Shipped" ${user.latestUpdate?.progress === "Shipped" ? "selected" : ""}>Shipped</option>
-                <option value="Delivered" ${user.latestUpdate?.progress === "Delivered" ? "selected" : ""}>Delivered</option>
-              </select>
-              <label class="block mb-1 text-gray-400">Location</label>
-              <input type="text" id="locationInput-${user.id}" placeholder="Enter current location" class="border p-2 rounded bg-gray-700 text-white">
-              <button onclick="saveTrackingUpdate('${user.id}')" class="mt-2 bg-yellow-500 text-white px-4 py-2 rounded">Save Tracking Info</button>
-            </div>
-          </div>
-          <!-- Details Info Section -->
-          <div id="details-${user.id}" class="tab mt-4 hidden">
-            <h3 class="font-semibold text-white mb-2">Details Info</h3>
-            <p class="text-gray-300"><b>Country:</b> ${user.receiver_country || 'N/A'}</p>
-            <p class="text-gray-300"><b>Address:</b> ${user.receiver_address || 'N/A'}</p>
-            <p class="text-gray-300"><b>Phone:</b> ${user.receiver_contact || 'N/A'}</p>
-            <p class="text-gray-300"><b>Weight:</b> ${user.weight || 'N/A'}</p>
-            <p class="text-gray-300"><b>Description:</b> ${user.description || 'N/A'}</p>
-            <p class="text-gray-300"><b>Registration Fee:</b> ${user.reg_fee || 'N/A'}</p>
-            <p class="text-gray-300"><b>Delivery Fee:</b> ${user.delivery_fee || 'N/A'}</p>
-            <p class="text-gray-300"><b>Insurance Fee:</b> ${user.insurance_fee || 'N/A'}</p>
-            <div class="mt-4 hidden" id="detailsForm-${user.id}">
-              <h4 class="font-semibold text-white">Edit Details Info</h4>
-              <label class="block mb-1 text-gray-400">Origin
-                <input type="text" value="${user.origin || ''}" onchange="updateUser('${user.id}', { origin: this.value })" class="border p-2 w-full rounded bg-gray-700 text-white">
-              </label>
-              <label class="block mb-1 text-gray-400">Destination
-                <input type="text" value="${user.destination || ''}" onchange="updateUser('${user.id}', { destination: this.value })" class="border p-2 w-full rounded bg-gray-700 text-white">
-              </label>
-              <label class="block mb-1 text-gray-400">Weight
-                <input type="number" value="${user.weight || ''}" onchange="updateUser('${user.id}', { weight: this.value })" class="border p-2 w-full rounded bg-gray-700 text-white">
-              </label>
-              <label class="block mb-1 text-gray-400">Description
-                <input type="text" value="${user.description || ''}" onchange="updateUser('${user.id}', { description: this.value })" class="border p-2 w-full rounded bg-gray-700 text-white">
-              </label>
-              <label class="block mb-1 text-gray-400">Registration Fee
-                <input type="number" value="${user.reg_fee || ''}" onchange="updateUser('${user.id}', { reg_fee: this.value })" class="border p-2 w-full rounded bg-gray-700 text-white">
-              </label>
-              <label class="block mb-1 text-gray-400">Delivery Fee
-                <input type="number" value="${user.delivery_fee || ''}" onchange="updateUser('${user.id}', { delivery_fee: this.value })" class="border p-2 w-full rounded bg-gray-700 text-white">
-              </label>
-              <label class="block mb-1 text-gray-400">Insurance Fee
-                <input type="number" value="${user.insurance_fee || ''}" onchange="updateUser('${user.id}', { insurance_fee: this.value })" class="border p-2 w-full rounded bg-gray-700 text-white">
-              </label>
-              <button onclick="updateUser('${user.id}')" class="mt-2 bg-yellow-500 text-white px-4 py-2 rounded">Save Details Info</button>
-            </div>
-          </div>
+          <label class="block mb-1 text-gray-400">Progress</label>
+          <select id="progressSelect-${user.id}" class="border p-2 rounded bg-gray-700 text-white w-full">
+            <option ${user.latestUpdate?.progress === "Order Placed" ? "selected" : ""}>Order Placed</option>
+            <option ${user.latestUpdate?.progress === "Preparing Shipment" ? "selected" : ""}>Preparing Shipment</option>
+            <option ${user.latestUpdate?.progress === "Shipped" ? "selected" : ""}>Shipped</option>
+            <option ${user.latestUpdate?.progress === "Delivered" ? "selected" : ""}>Delivered</option>
+          </select>
+
+          <label class="block mb-1 text-gray-400">Location</label>
+          <input type="text" id="locationInput-${user.id}" value="${user.latestUpdate?.location || ""}" class="border p-2 rounded bg-gray-700 text-white w-full">
+
+          <label class="block mb-1 text-gray-400">Note</label>
+          <textarea id="noteInput-${user.id}" class="border p-2 rounded bg-gray-700 text-white w-full">${user.latestUpdate?.note || ""}</textarea>
+
+          <button onclick="saveTrackingUpdate('${user.id}')" class="mt-2 bg-yellow-500 text-white px-4 py-2 rounded">Save Tracking Info</button>
         </div>
-      `).join("");
-    }
+      </div>
 
-    // Save tracking update
-    async function saveTrackingUpdate(userId) {
-      const progress = document.querySelector(`#progressSelect-${userId}`).value;
-      const location = document.querySelector(`#locationInput-${userId}`).value;
+      <!-- Details Section -->
+      <div id="details-${user.id}" class="tab mt-4 hidden">
+        <h3 class="font-semibold text-white mb-2">Receiver & Shipment Details</h3>
+        <div class="grid grid-cols-2 gap-4">
+          <label class="block text-gray-400">Receiver Name
+            <input type="text" value="${user.receiver_name || ''}" onchange="updateUser('${user.id}', { receiver_name: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+          </label>
+          <label class="block text-gray-400">Receiver Email
+            <input type="text" value="${user.receiver_email || ''}" onchange="updateUser('${user.id}', { receiver_email: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+          </label>
+          <label class="block text-gray-400">Receiver Phone
+            <input type="text" value="${user.receiver_phone || ''}" onchange="updateUser('${user.id}', { receiver_phone: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+          </label>
+          <label class="block text-gray-400">Receiver Address
+            <input type="text" value="${user.receiver_address || ''}" onchange="updateUser('${user.id}', { receiver_address: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+          </label>
+          <label class="block text-gray-400">Receiver Country
+            <input type="text" value="${user.receiver_country || ''}" onchange="updateUser('${user.id}', { receiver_country: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+          </label>
+        </div>
 
-      const { data: userInfo, error: userError } = await supabase
-        .from("user_info")
-        .select("tracking_no")
-        .eq("id", userId)
-        .single();
+        <div class="mt-4 grid grid-cols-2 gap-4">
+          <label class="block text-gray-400">ASALU No
+            <input type="text" value="${user.asalu_no || ''}" onchange="updateUser('${user.id}', { asalu_no: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+          </label>
+          <label class="block text-gray-400">Delivery Code
+            <input type="text" value="${user.delivery_code || ''}" onchange="updateUser('${user.id}', { delivery_code: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+          </label>
+          <label class="block text-gray-400">Item No
+            <input type="text" value="${user.item_no || ''}" onchange="updateUser('${user.id}', { item_no: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+          </label>
+        </div>
+        <button onclick="updateUser('${user.id}')" class="mt-2 bg-yellow-500 text-white px-4 py-2 rounded">Save Details</button>
+      </div>
+    </div>
+  `).join("");
+}
 
-      if (userError) {
-        alert("Error fetching user info: " + userError.message);
-        return;
-      }
+// Save tracking update
+async function saveTrackingUpdate(userId) {
+  const progress = document.querySelector(`#progressSelect-${userId}`).value;
+  const status = document.querySelector(`#statusInput-${userId}`).value;
+  const location = document.querySelector(`#locationInput-${userId}`).value;
+  const note = document.querySelector(`#noteInput-${userId}`).value;
 
-      const { error } = await supabase.from("tracking_updates").insert([
-        {
-          shipment_id: userId,
-          tracking_no: userInfo.tracking_no,
-          progress: progress,
-          location: location,
-        },
-      ]);
+  const { data: userInfo } = await supabase
+    .from("user_info")
+    .select("tracking_no")
+    .eq("id", userId)
+    .single();
 
-      if (error) {
-        alert("Error saving tracking update: " + error.message);
-      } else {
-        loadUsers(); // Reload users to reflect changes
-      }
-    }
+  await supabase.from("tracking_updates").insert([{
+    shipment_id: userId,
+    tracking_no: userInfo.tracking_no,
+    status,
+    progress,
+    location,
+    note
+  }]);
 
-    // Update user
-    async function updateUser(id, updates = {}) {
-      const { error } = await supabase.from("user_info").update(updates).eq("id", id);
-      if (error) alert("Error updating: " + error.message);
-      else loadUsers(); // Reload users to reflect changes
-    }
+  loadUsers();
+}
 
-    // Tab toggle
-    function toggleTab(userId, tab) {
-      document.querySelectorAll(`#tracking-${userId}, #details-${userId}`).forEach(el => el.classList.add("hidden"));
-      document.querySelectorAll(`#trackingForm-${userId}, #detailsForm-${userId}`).forEach(el => el.classList.add("hidden"));
-      document.getElementById(`${tab}-${userId}`).classList.remove("hidden");
-      document.getElementById(`${tab}Form-${userId}`).classList.remove("hidden");
-    }
+// Update user
+async function updateUser(id, updates = {}) {
+  await supabase.from("user_info").update(updates).eq("id", id);
+  loadUsers();
+}
 
-    // Logout
-    document.getElementById("logoutBtn").addEventListener("click", async () => {
-      await supabase.auth.signOut();
-      // Prevent back navigation
-      window.history.pushState(null, '', window.location.href);
-      window.onpopstate = function() {
-        window.history.pushState(null, '', window.location.href);
-      };
-      window.location.href = "login.html";
-    });
+// Tab toggle function
+function toggleTab(userId, tab) {
+  document.querySelectorAll(`#tracking-${userId}, #details-${userId}`).forEach(el => el.classList.add("hidden"));
+  document.getElementById(`${tab}-${userId}`).classList.remove("hidden");
+}
 
-    loadUsers();
-  </script>
+// Logout
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  await supabase.auth.signOut();
+  window.location.href = "login.html";
+});
+</script>
 </body>
 </html>
