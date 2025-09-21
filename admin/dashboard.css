@@ -1,101 +1,93 @@
-/* General Styles */
+/* dashboard.css */
+
+/* General */
 body {
-    background-color: #1a1a2e; /* Dark background */
-    color: #eaeaea; /* Light text */
-    font-family: 'Arial', sans-serif;
-}
-
-h1, h2, h3, h4 {
-    color: #ffffff; /* White headings */
-}
-
-p {
-    color: #d1d1d1; /* Light grey text for paragraphs */
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
 /* Sidebar */
 aside {
-    background-color: #16213e; /* Darker sidebar */
+  background: #1f2937; /* Tailwind gray-800 */
+  border-right: 1px solid #374151; /* gray-700 */
 }
 
 aside h2 {
-    color: #FFD700; /* Gold for admin title */
+  letter-spacing: 1px;
 }
 
-nav a {
-    color: #eaeaea; /* Light text for links */
+aside nav a {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 6px;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
-nav a:hover {
-    color: #FFD700; /* Gold on hover */
+aside nav a:hover {
+  background: #374151; /* gray-700 */
+  color: #facc15; /* yellow-400 */
 }
 
-/* Main Content */
+/* Main */
 main {
-    padding: 20px;
+  background: #111827; /* gray-900 */
 }
 
-/* User Card */
-.bg-gray-800 {
-    background-color: #1e1e1e; /* Dark card background */
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+/* User Cards */
+#userList .bg-gray-800 {
+  border: 1px solid #374151; /* gray-700 */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.shadow {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+#userList .bg-gray-800:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* Tabs */
+.tab {
+  border-top: 1px solid #374151;
+  padding-top: 1rem;
 }
 
 /* Buttons */
 button {
-    background-color: #FFD700; /* Gold button */
-    color: #1a1a2e; /* Dark text */
-    border: none;
-    border-radius: 5px;
-    padding: 10px 15px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s ease, transform 0.1s ease;
 }
 
 button:hover {
-    background-color: #FFC107; /* Lighter gold on hover */
+  transform: scale(1.02);
 }
 
-/* Input Fields */
-input, select {
-    background-color: #333; /* Dark background for inputs */
-    color: #eaeaea; /* Light text */
-    border: 1px solid #444; /* Dark border */
-    border-radius: 5px;
-    padding: 10px;
+/* Inputs */
+input, select, textarea {
+  outline: none;
+  border: 1px solid #374151;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-input:focus, select:focus {
-    border-color: #FFD700; /* Gold border on focus */
-    outline: none; /* Remove default outline */
+input:focus, select:focus, textarea:focus {
+  border-color: #facc15; /* yellow-400 */
+  box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.3);
 }
 
-/* Tab Styles */
-.tab {
-    display: none; /* Hide tabs by default */
+/* Scrollbar (for dark mode aesthetic) */
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-.tab:not(.hidden) {
-    display: block; /* Show the selected tab */
+::-webkit-scrollbar-track {
+  background: #1f2937;
 }
 
-/* Responsive Styles */
-@media (max-width: 768px) {
-    body {
-        font-size: 14px; /* Smaller font on mobile */
-    }
+::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 4px;
+}
 
-    aside {
-        position: absolute; /* Sidebar positioning for smaller screens */
-        left: -250px; /* Hide off-screen */
-        transition: left 0.3s; /* Smooth transition */
-    }
-
-    aside.active {
-        left: 0; /* Show sidebar */
-    }
+::-webkit-scrollbar-thumb:hover {
+  background: #4b5563;
 }
