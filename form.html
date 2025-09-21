@@ -51,11 +51,6 @@
           <input type="text" id="receiver_country" class="w-full mt-2 p-3 border rounded" required>
         </div>
 
-<!--         <div>
-          <label for="receiver_contact" class="block font-semibold">Contact Person</label>
-          <input type="text" id="receiver_contact" class="w-full mt-2 p-3 border rounded" required>
-        </div> -->
-
         <div>
           <label for="receiver_phone" class="block font-semibold">Phone number</label>
           <input type="tel" id="receiver_phone" class="w-full mt-2 p-3 border rounded" required>
@@ -109,13 +104,12 @@
 
       // Prepare data for user_info
       const shipment = {
-        shipment_no: trackingNo,
+        tracking_no: trackingNo,        // ✅ fixed field name
         tracking_link: trackingLink,
         receiver_name: document.getElementById("receiver_name").value,
         receiver_email: document.getElementById("receiver_email").value,
         receiver_address: document.getElementById("receiver_address").value,
         receiver_country: document.getElementById("receiver_country").value,
-        receiver_contact: document.getElementById("receiver_contact").value,
         receiver_phone: document.getElementById("receiver_phone").value,
         asalu_no: asaluNo,
         delivery_code: deliveryCode,
@@ -171,7 +165,6 @@
 
       btn.disabled = false;
       btn.innerText = "Submit Shipment";
-      formEl.reset();
     });
   </script>
 </body>
