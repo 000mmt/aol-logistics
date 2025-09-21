@@ -3,11 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shipment Form - AOL LOGISTICS</title>
+  <title>Create Shipment - AOL LOGISTICS</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="css/style.css">
   <!-- Supabase -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
@@ -22,7 +20,7 @@
       <nav class="hidden md:flex space-x-6">
         <a href="home.html" class="hover:text-yellow-500">Home</a>
         <a href="form.html" class="hover:text-yellow-500">Create Shipment</a>
-        <a href="tracking.html" class="hover:text-yellow-500">Track Shipment</a>
+        <a href="tracking-form.html" class="hover:text-yellow-500">Track Shipment</a>
       </nav>
     </div>
   </header>
@@ -30,32 +28,37 @@
   <!-- Shipment Form -->
   <section class="pt-32 pb-20">
     <div class="container mx-auto px-6">
-      <h2 class="text-3xl font-bold text-center mb-8">Create a New Shipment</h2>
+      <h2 class="text-3xl font-bold text-center mb-8">Receiver Information</h2>
 
       <form id="shipmentForm" class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-8 space-y-6">
         <div>
-          <label for="customer_name" class="block font-semibold">Customer Name</label>
-          <input type="text" id="customer_name" class="w-full mt-2 p-3 border rounded" required>
+          <label for="receiver_name" class="block font-semibold">Name</label>
+          <input type="text" id="receiver_name" class="w-full mt-2 p-3 border rounded" required>
         </div>
 
         <div>
-          <label for="email" class="block font-semibold">Email</label>
-          <input type="email" id="email" class="w-full mt-2 p-3 border rounded" required>
+          <label for="receiver_email" class="block font-semibold">Email</label>
+          <input type="email" id="receiver_email" class="w-full mt-2 p-3 border rounded" required>
         </div>
 
         <div>
-          <label for="phone" class="block font-semibold">Phone</label>
-          <input type="tel" id="phone" class="w-full mt-2 p-3 border rounded" required>
+          <label for="receiver_address" class="block font-semibold">Address</label>
+          <textarea id="receiver_address" class="w-full mt-2 p-3 border rounded" required></textarea>
         </div>
 
         <div>
-          <label for="address" class="block font-semibold">Address</label>
-          <textarea id="address" class="w-full mt-2 p-3 border rounded" required></textarea>
+          <label for="receiver_country" class="block font-semibold">Country</label>
+          <input type="text" id="receiver_country" class="w-full mt-2 p-3 border rounded" required>
         </div>
 
         <div>
-          <label for="country" class="block font-semibold">Country</label>
-          <input type="text" id="country" class="w-full mt-2 p-3 border rounded" required>
+          <label for="receiver_contact" class="block font-semibold">Contact Person</label>
+          <input type="text" id="receiver_contact" class="w-full mt-2 p-3 border rounded" required>
+        </div>
+
+        <div>
+          <label for="receiver_phone" class="block font-semibold">Phone number</label>
+          <input type="tel" id="receiver_phone" class="w-full mt-2 p-3 border rounded" required>
         </div>
 
         <button type="submit" class="w-full bg-yellow-500 text-white py-3 rounded-lg font-semibold hover:bg-yellow-600">
@@ -70,12 +73,21 @@
   <!-- Supabase Script -->
   <script>
     const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // Replace with a secure method to handle API keys
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // ⚠️ Replace with secure method
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Generate random tracking number
+    // Auto generators
     function generateTrackingNo() {
       return "AOL-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+    }
+    function generateAsaluNo() {
+      return "ASALU-" + Math.floor(Math.random() * 1000000);
+    }
+    function generateDeliveryCode() {
+      return "DEL-" + Math.random().toString(36).substr(2, 6).toUpperCase();
+    }
+    function generateItemNo() {
+      return "ITEM-" + Math.floor(Math.random() * 1000000);
     }
 
     document.getElementById("shipmentForm").addEventListener("submit", async (e) => {
@@ -88,48 +100,58 @@
       btn.disabled = true;
       btn.innerText = "Submitting...";
 
+      // Auto-generate numbers
       const trackingNo = generateTrackingNo();
+      const trackingLink = `tracking.html?tracking_no=${trackingNo}`;
+      const asaluNo = generateAsaluNo();
+      const deliveryCode = generateDeliveryCode();
+      const itemNo = generateItemNo();
 
       // Prepare data for user_info
       const shipment = {
-        shipment_no: trackingNo, // Unique identifier
-        customer_name: document.getElementById("customer_name").value,
-        email: document.getElementById("email").value,
-        phone: document.getElementById("phone").value,
-        address: document.getElementById("address").value,
-        country: document.getElementById("country").value,
-        // Other fields can be filled manually later
+        shipment_no: trackingNo,
+        tracking_link: trackingLink,
+        receiver_name: document.getElementById("receiver_name").value,
+        receiver_email: document.getElementById("receiver_email").value,
+        receiver_address: document.getElementById("receiver_address").value,
+        receiver_country: document.getElementById("receiver_country").value,
+        receiver_contact: document.getElementById("receiver_contact").value,
+        receiver_phone: document.getElementById("receiver_phone").value,
+        asalu_no: asaluNo,
+        delivery_code: deliveryCode,
+        item_no: itemNo,
+        status: "Order Placed"
       };
 
       // Insert into user_info
       const { data: userInfoData, error: userInfoError } = await supabase
         .from("user_info")
         .insert([shipment])
-        .select("id"); // Get the newly created user_info ID
+        .select("id");
 
       if (userInfoError) {
         console.error("❌ User info error:", userInfoError);
-        messageDiv.innerHTML = `<p class="text-red-600">❌ User info insert failed: ${userInfoError.message}</p>`;
+        messageDiv.innerHTML = `<p class="text-red-600">❌ Failed: ${userInfoError.message}</p>`;
         btn.disabled = false;
         btn.innerText = "Submit Shipment";
         return;
       }
 
-      const shipmentId = userInfoData[0].id; // Get the ID of the newly created user_info entry
+      const shipmentId = userInfoData[0].id;
 
-      // Prepare data for tracking
-      const tracking = {
-        shipment_id: shipmentId, // Reference to the user_info record
+      // Insert initial tracking update
+      const trackingUpdate = {
+        shipment_id: shipmentId,
         tracking_no: trackingNo,
-        status: "Pending", // Default status
-        progress: "Order Placed", // Default progress
-        // Optional fields can be added later manually
+        status: "Pending",
+        progress: "Order Placed",
+        location: shipment.receiver_country,
+        note: "Shipment created"
       };
 
-      // Insert into tracking
       const { error: trackingError } = await supabase
-        .from("tracking")
-        .insert([tracking]);
+        .from("tracking_updates")
+        .insert([trackingUpdate]);
 
       if (trackingError) {
         console.error("❌ Tracking error:", trackingError);
@@ -137,14 +159,12 @@
       }
 
       // Success message
-      const trackingLink = `tracking.html?tracking_no=${trackingNo}`;
-      formEl.classList.add("hidden"); // Hide the form after submission
+      formEl.classList.add("hidden");
       messageDiv.innerHTML = `
         <div class="bg-white shadow-lg rounded-lg p-6">
-          <p class="text-green-600 font-semibold text-lg mb-4">
-            ✅ Shipment created successfully!
-          </p>
+          <p class="text-green-600 font-semibold text-lg mb-4">✅ Shipment created successfully!</p>
           <p><b>Tracking Number:</b> ${trackingNo}</p>
+          <p><b>Delivery Code:</b> ${deliveryCode}</p>
           <p><a href="${trackingLink}" class="text-blue-600 underline">Track your shipment here</a></p>
         </div>
       `;
