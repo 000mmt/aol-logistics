@@ -8,10 +8,10 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
-<body class="flex bg-gray-900">
+<body class="flex flex-col md:flex-row bg-gray-900">
 
   <!-- Sidebar -->
-  <aside class="w-64 bg-gray-800 shadow-md h-screen p-6">
+  <aside class="w-full md:w-64 bg-gray-800 shadow-md h-auto md:h-screen p-6">
     <h2 class="text-2xl font-bold text-yellow-500 mb-6">Admin</h2>
     <nav class="space-y-4">
       <a href="#" class="block font-semibold text-gray-300 hover:text-yellow-500">Dashboard</a>
@@ -20,14 +20,14 @@
   </aside>
 
   <!-- Main -->
-  <main class="flex-1 p-8 overflow-y-auto">
-    <h1 class="text-3xl font-bold text-white mb-6">User Shipments</h1>
+  <main class="flex-1 p-4 md:p-8 overflow-y-auto">
+    <h1 class="text-2xl md:text-3xl font-bold text-white mb-6">User Shipments</h1>
     <div id="userList" class="space-y-6"></div>
   </main>
 
 <script>
 const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // ⚠️ Replace securely
+const SUPABASE_KEY = "YOUR_SUPABASE_KEY"; // ⚠️ Replace securely
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // Session check
@@ -73,15 +73,15 @@ async function loadUsers() {
 
   container.innerHTML = usersWithTracking.map(user => `
     <div class="bg-gray-800 shadow rounded-lg p-6">
-      <h2 class="text-xl font-bold text-yellow-500 mb-2">
+      <h2 class="text-lg md:text-xl font-bold text-yellow-500 mb-2">
         ${user.receiver_name || "N/A"} 
         <span class="text-sm text-gray-300">(${user.tracking_no})</span>
       </h2>
       <p class="text-sm text-gray-400">${user.receiver_email || "N/A"} | ${user.receiver_phone || "N/A"}</p>
       <p class="text-sm text-gray-400"><b>Current Location:</b> ${user.latestUpdate?.location || 'N/A'}</p>
-      <p class="text-sm text-gray-400"><b>Tracking Link:</b> <a href="${user.tracking_link}" class="text-yellow-400" target="_blank">${user.tracking_link}</a></p>
+      <p class="text-sm text-gray-400"><b>Tracking Link:</b> <a href="${user.tracking_link}" class="text-yellow-400 break-all" target="_blank">${user.tracking_link}</a></p>
       <p class="text-sm text-gray-400"><b>Status:</b> ${user.latestUpdate?.status || "Pending"}</p>
-      <div class="mt-4">
+      <div class="mt-4 flex flex-wrap gap-2">
         <button onclick="toggleTab('${user.id}','tracking')" class="px-3 py-1 bg-yellow-600 text-white rounded">Tracking</button>
         <button onclick="toggleTab('${user.id}','details')" class="px-3 py-1 bg-gray-700 text-white rounded">Details Info</button>
       </div>
@@ -115,14 +115,15 @@ async function loadUsers() {
           <label class="block mb-1 text-gray-400">Note</label>
           <textarea id="noteInput-${user.id}" class="border p-2 rounded bg-gray-700 text-white w-full">${user.latestUpdate?.note || ""}</textarea>
 
-          <button onclick="saveTrackingUpdate('${user.id}')" class="mt-2 bg-yellow-500 text-white px-4 py-2 rounded">Save Tracking Info</button>
+          <button onclick="saveTrackingUpdate('${user.id}')" class="mt-2 bg-yellow-500 text-white px-4 py-2 rounded w-full">Save Tracking Info</button>
         </div>
       </div>
 
       <!-- Details Section -->
       <div id="details-${user.id}" class="tab mt-4 hidden">
-        <h3 class="font-semibold text-white mb-2">Receiver & Shipment Details</h3>
-        <div class="grid grid-cols-2 gap-4">
+        <h3 class="font-semibold text-white mb-2">Receiver, Customer & Shipment Details</h3>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <label class="block text-gray-400">Receiver Name
             <input type="text" value="${user.receiver_name || ''}" onchange="updateUser('${user.id}', { receiver_name: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
           </label>
@@ -140,7 +141,25 @@ async function loadUsers() {
           </label>
         </div>
 
-        <div class="mt-4 grid grid-cols-2 gap-4">
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <label class="block text-gray-400">Customer Name
+            <input type="text" value="${user.customer_name || ''}" onchange="updateUser('${user.id}', { customer_name: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+          </label>
+          <label class="block text-gray-400">Customer Email
+            <input type="text" value="${user.email || ''}" onchange="updateUser('${user.id}', { email: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+          </label>
+          <label class="block text-gray-400">Customer Phone
+            <input type="text" value="${user.phone || ''}" onchange="updateUser('${user.id}', { phone: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+          </label>
+          <label class="block text-gray-400">Origin
+            <input type="text" value="${user.origin || ''}" onchange="updateUser('${user.id}', { origin: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+          </label>
+          <label class="block text-gray-400">Destination
+            <input type="text" value="${user.destination || ''}" onchange="updateUser('${user.id}', { destination: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+          </label>
+        </div>
+
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
           <label class="block text-gray-400">ASALU No
             <input type="text" value="${user.asalu_no || ''}" onchange="updateUser('${user.id}', { asalu_no: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
           </label>
@@ -151,7 +170,8 @@ async function loadUsers() {
             <input type="text" value="${user.item_no || ''}" onchange="updateUser('${user.id}', { item_no: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
           </label>
         </div>
-        <button onclick="updateUser('${user.id}')" class="mt-2 bg-yellow-500 text-white px-4 py-2 rounded">Save Details</button>
+        
+        <button onclick="updateUser('${user.id}')" class="mt-2 bg-yellow-500 text-white px-4 py-2 rounded w-full">Save Details</button>
       </div>
     </div>
   `).join("");
