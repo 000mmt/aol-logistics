@@ -12,17 +12,26 @@
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
 
   <style>
-    /* HERO SLIDER */
+    /* HERO SLIDER - fade transition */
     .hero-slider {
       position: absolute;
       inset: 0;
-      display: flex;
-      width: 300%;
+      width: 100%;
       height: 100%;
-      animation: slide 18s linear infinite;
-      animation-direction: reverse; /* plays the animation rightwards */
+      overflow: hidden;
     }
-    .hero-slide { flex: 1 0 100%; }
+
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 1.5s ease-in-out;
+    }
+
+    .hero-slide.active {
+      opacity: 1;
+    }
+
     .hero-slide img {
       width: 100%;
       height: 100%;
@@ -37,21 +46,6 @@
       inset: 0;
       background: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.35));
       pointer-events: none;
-    }
-
-    @keyframes slide {
-      0% { transform: translateX(0%); }
-      30% { transform: translateX(0%); }
-      35% { transform: translateX(-100%); }
-      65% { transform: translateX(-100%); }
-      70% { transform: translateX(-200%); }
-      95% { transform: translateX(-200%); }
-      100% { transform: translateX(0%); }
-    }
-
-    /* Respect reduced motion preference */
-    @media (prefers-reduced-motion: reduce) {
-      .hero-slider { animation: none; }
     }
 
     /* Small adjustments for hero text on small screens */
@@ -113,7 +107,7 @@
   <section id="home" class="relative bg-gray-900 text-white pt-28 pb-32 min-h-screen flex items-center overflow-hidden">
     <!-- Slider (3 images) -->
     <div class="hero-slider">
-      <div class="hero-slide"><img src="images/ACL-Port-Scene.jpg" alt="Cargo Ship"></div>
+      <div class="hero-slide active"><img src="images/ACL-Port-Scene.jpg" alt="Cargo Ship"></div>
       <div class="hero-slide"><img src="images/truck-8656658_1280.jpg" alt="Container Port"></div>
       <div class="hero-slide"><img src="images/shaah-shahidh--subrrYxv8A-unsplash.jpg" alt="Logistics Truck"></div>
     </div>
@@ -151,19 +145,19 @@
       <h3 class="text-3xl font-bold mb-12" data-aos="fade-up">Our Services</h3>
       <div class="grid md:grid-cols-3 gap-10">
         <div class="p-6 bg-gray-100 rounded-lg shadow" data-aos="fade-up" data-aos-delay="100">
-          <img src="images/aron-yigin-lNpAmLA_bvQ-unsplash.jpg" alt="Container Shipping" class="w-full md:w-32 h-48 md:h-32 object-cover rounded mb-4 mx-auto">
+          <img src="images/aron-yigin-lNpAmLA_bvQ-unsplash.jpg" alt="Container Shipping" class="w-full h-48 object-cover rounded mb-4 mx-auto">
           <h4 class="text-xl font-semibold mb-2">Container Shipping</h4>
           <p>Secure and efficient container transport across global trade routes.</p>
         </div>
 
         <div class="p-6 bg-gray-100 rounded-lg shadow" data-aos="fade-up" data-aos-delay="200">
-          <img src="images/bernd-dittrich-miHHRMLDDH8-unsplash.jpg" alt="RoRo" class="w-full md:w-32 h-48 md:h-32 object-cover rounded mb-4 mx-auto">
+          <img src="images/bernd-dittrich-miHHRMLDDH8-unsplash.jpg" alt="RoRo" class="w-full h-48 object-cover rounded mb-4 mx-auto">
           <h4 class="text-xl font-semibold mb-2">RoRo (Roll-on/Roll-off)</h4>
           <p>Seamless shipping for vehicles and heavy machinery worldwide.</p>
         </div>
 
         <div class="p-6 bg-gray-100 rounded-lg shadow" data-aos="fade-up" data-aos-delay="300">
-          <img src="images/roro_pov_scaled-1024x617.jpg" alt="Special Cargo" class="w-full md:w-32 h-48 md:h-32 object-cover rounded mb-4 mx-auto">
+          <img src="images/roro_pov_scaled-1024x617.jpg" alt="Special Cargo" class="w-full h-48 object-cover rounded mb-4 mx-auto">
           <h4 class="text-xl font-semibold mb-2">Special Cargo</h4>
           <p>Custom solutions for oversized and time-sensitive cargo shipments.</p>
         </div>
@@ -230,7 +224,7 @@
         <!-- 1 -->
         <div class="bg-white shadow-lg rounded-2xl p-6" data-aos="fade-up" data-aos-delay="100">
           <img src="images/istockphoto-157421781-612x612.jpg" alt="Customer 1"
-               class="w-full md:w-24 h-48 md:h-24 object-cover rounded-lg md:rounded-full mx-auto mb-4">
+               class="w-full h-48 object-cover rounded-lg mx-auto mb-4">
           <div class="flex justify-center mb-3 text-yellow-500" aria-hidden="true"><span class="text-xl">⭐⭐⭐⭐⭐</span></div>
           <p class="text-gray-600 italic mb-4">“AOL Logistics handled my deliveries with such care and speed. I always felt informed with their real-time tracking.”</p>
           <h3 class="font-semibold text-yellow-600">Sarah Johnson</h3>
@@ -240,7 +234,7 @@
         <!-- 2 -->
         <div class="bg-white shadow-lg rounded-2xl p-6" data-aos="fade-up" data-aos-delay="200">
           <img src="images/stevedore-1636392_1280.jpg" alt="Customer 2"
-               class="w-full md:w-24 h-48 md:h-24 object-cover rounded-lg md:rounded-full mx-auto mb-4">
+               class="w-full h-48 object-cover rounded-lg mx-auto mb-4">
           <div class="flex justify-center mb-3 text-yellow-500" aria-hidden="true"><span class="text-xl">⭐⭐⭐⭐⭐</span></div>
           <p class="text-gray-600 italic mb-4">“Fast, reliable, and transparent. My online store relies on AOL Logistics for every shipment — never been disappointed.”</p>
           <h3 class="font-semibold text-yellow-600">Michael Lee</h3>
@@ -250,7 +244,7 @@
         <!-- 3 -->
         <div class="bg-white shadow-lg rounded-2xl p-6" data-aos="fade-up" data-aos-delay="300">
           <img src="images/teacher-with-glasses-class.jpg" alt="Customer 3"
-               class="w-full md:w-24 h-48 md:h-24 object-cover rounded-lg md:rounded-full mx-auto mb-4">
+               class="w-full h-48 object-cover rounded-lg mx-auto mb-4">
           <div class="flex justify-center mb-3 text-yellow-500" aria-hidden="true"><span class="text-xl">⭐⭐⭐⭐⭐</span></div>
           <p class="text-gray-600 italic mb-4">“Excellent support team, smooth process, and quick updates. AOL Logistics is a partner I fully trust with my cargo.”</p>
           <h3 class="font-semibold text-yellow-600">Amira Khan</h3>
@@ -278,90 +272,80 @@
     <div class="container mx-auto px-6 text-center">
       <h3 class="text-3xl font-bold mb-12" data-aos="fade-up">Latest Insights</h3>
       <div class="grid md:grid-cols-3 gap-10">
-        <div class="p-6 bg-gray-100 rounded shadow" data-aos="fade-up"><h4 class="font-semibold mb-2">Global Shipping Trends 2025</h4><p>How digitization is transforming logistics worldwide.</p></div>
-        <div class="p-6 bg-gray-100 rounded shadow" data-aos="fade-up" data-aos-delay="100"><h4 class="font-semibold mb-2">Sustainable Logistics</h4><p>Green initiatives that make shipping eco-friendly.</p></div>
-        <div class="p-6 bg-gray-100 rounded shadow" data-aos="fade-up" data-aos-delay="200"><h4 class="font-semibold mb-2">Expanding to Asia</h4><p>AOL Logistics opens new offices in Seoul and Singapore.</p></div>
+        <div class="p-6 bg-gray-100 rounded shadow" data-aos="fade-up"><h4 class="font-semibold mb-2">Global Shipping Trends 2025</h4><p>Stay updated with the latest challenges and innovations in global shipping.</p></div>
+        <div class="p-6 bg-gray-100 rounded shadow" data-aos="fade-up" data-aos-delay="100"><h4 class="font-semibold mb-2">How AOL Optimizes RoRo</h4><p>Discover how we simplify vehicle and machinery shipping worldwide.</p></div>
+        <div class="p-6 bg-gray-100 rounded shadow" data-aos="fade-up" data-aos-delay="200"><h4 class="font-semibold mb-2">Technology in Logistics</h4><p>Learn how AI and IoT are transforming the shipping industry.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- CTA -->
-  <section id="quote" class="py-20 bg-yellow-500 text-white text-center">
-    <div class="container mx-auto px-6" data-aos="zoom-in">
-      <h3 class="text-3xl font-bold mb-6">Ready to Ship With Us?</h3>
-      <p class="mb-6">Get a free quote today and experience world-class logistics service.</p>
-      <a href="#contact" class="bg-white text-yellow-600 px-6 py-3 rounded-lg font-semibold">Request Quote</a>
+  <!-- CONTACT -->
+  <section id="contact" class="py-20 bg-gray-50">
+    <div class="container mx-auto px-6">
+      <h3 class="text-3xl font-bold mb-8 text-center" data-aos="fade-up">Contact Us</h3>
+      <div class="grid md:grid-cols-2 gap-12">
+        <div data-aos="fade-right">
+          <p class="mb-4">📍 Headquarters: 123 Global Trade Street, New York, USA</p>
+          <p class="mb-4">📞 Phone: +1 234 567 890</p>
+          <p class="mb-4">📧 Email: info@aollogistics.com</p>
+        </div>
+        <form class="space-y-4" data-aos="fade-left">
+          <input type="text" placeholder="Your Name" class="w-full p-3 border rounded" required>
+          <input type="email" placeholder="Your Email" class="w-full p-3 border rounded" required>
+          <textarea placeholder="Your Message" rows="5" class="w-full p-3 border rounded" required></textarea>
+          <button type="submit" class="bg-yellow-500 text-white px-6 py-3 rounded font-semibold hover:bg-yellow-600">Send Message</button>
+        </form>
+      </div>
     </div>
   </section>
 
   <!-- FOOTER -->
-  <footer id="contact" class="bg-gray-900 text-white py-12">
-    <div class="container mx-auto grid md:grid-cols-3 gap-8 text-center md:text-left px-6">
-      <div>
-        <h4 class="text-xl font-bold mb-4">AOL LOGISTICS</h4>
-        <p>Connecting continents with reliable shipping and logistics solutions.</p>
-      </div>
-
-      <div>
-        <h4 class="text-xl font-bold mb-4">Quick Links</h4>
-        <ul class="space-y-2">
-          <li><a href="#home" class="hover:text-yellow-500">Home</a></li>
-          <li><a href="#about" class="hover:text-yellow-500">About Us</a></li>
-          <li><a href="#services" class="hover:text-yellow-500">Services</a></li>
-          <li><a href="tracking.html" class="hover:text-yellow-500">Track Shipment</a></li>
-          <li><a href="form.html" class="hover:text-yellow-500">Create Shipment</a></li>
-          <li><a href="admin/login.html" class="hover:text-yellow-500">Login</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <h4 class="text-xl font-bold mb-4">Contact</h4>
-        <p>Email: support@aollogistics.com</p>
-        <p>Phone: +1 800 123 4567</p>
-        <p>Address: 123 Global Trade Road, New York, USA</p>
-      </div>
-    </div>
-
-    <div class="text-center mt-8 border-t border-gray-700 pt-6">
-      <p>&copy; 2025 AOL LOGISTICS. All rights reserved.</p>
-    </div>
+  <footer class="bg-gray-900 text-white py-6 text-center">
+    <p>&copy; 2025 AOL LOGISTICS. All rights reserved.</p>
   </footer>
 
-  <!-- SCRIPTS -->
+  <!-- AOS -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>AOS.init({duration: 800, once: true});</script>
+
+  <!-- HERO SLIDER -->
   <script>
-    AOS.init({ duration: 1000, once: true });
+    const slides = document.querySelectorAll(".hero-slide");
+    let index = 0;
 
-    // Tracking form -> redirect to tracking.html with query param
-    (function () {
-      const form = document.getElementById('trackingForm');
-      if (!form) return;
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const v = (document.getElementById('tracking_no') || {}).value || '';
-        const t = v.trim();
-        if (t) window.location.href = `tracking.html?tracking_no=${encodeURIComponent(t)}`;
+    function showSlide(i) {
+      slides.forEach((s, idx) => {
+        s.classList.toggle("active", idx === i);
       });
-    })();
+    }
 
-    // Mobile menu toggle & auto-close on link click
-    (function () {
-      const menuBtn = document.getElementById('menuBtn');
-      const mobileMenu = document.getElementById('mobileMenu');
-      if (!menuBtn || !mobileMenu) return;
+    function nextSlide() {
+      index = (index + 1) % slides.length;
+      showSlide(index);
+    }
 
-      menuBtn.addEventListener('click', () => {
-        const isHidden = mobileMenu.classList.toggle('hidden');
-        menuBtn.setAttribute('aria-expanded', String(!isHidden));
+    if (slides.length) {
+      showSlide(index);
+      setInterval(nextSlide, 5000);
+    }
+  </script>
+
+  <!-- MOBILE MENU -->
+  <script>
+    const menuBtn = document.getElementById("menuBtn");
+    const mobileMenu = document.getElementById("mobileMenu");
+
+    menuBtn.addEventListener("click", () => {
+      const isOpen = mobileMenu.classList.toggle("hidden");
+      menuBtn.setAttribute("aria-expanded", !isOpen);
+    });
+
+    document.querySelectorAll(".mobile-link").forEach(link => {
+      link.addEventListener("click", () => {
+        mobileMenu.classList.add("hidden");
+        menuBtn.setAttribute("aria-expanded", "false");
       });
-
-      mobileMenu.querySelectorAll('.mobile-link').forEach(link => {
-        link.addEventListener('click', () => {
-          // small delay to allow navigation
-          setTimeout(() => mobileMenu.classList.add('hidden'), 150);
-        });
-      });
-    })();
+    });
   </script>
 </body>
 </html>
