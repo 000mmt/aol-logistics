@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Track Shipment - AOL Logistics</title>
+  <title>배송 추적 - AOL 물류</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <style>
@@ -17,8 +17,11 @@
 
   <!-- Header -->
   <header class="bg-white shadow-md p-4 flex justify-between items-center">
-    <h1 class="text-2xl font-bold text-yellow-600">AOL Logistics</h1>
-    <a href="home.html" class="text-gray-600 hover:text-yellow-600">Home</a>
+    <h1 class="text-2xl font-bold text-yellow-600">AOL 물류</h1>
+    <div class="flex items-center space-x-4">
+      <a href="home.html" class="text-gray-600 hover:text-yellow-600" data-key="home">홈</a>
+      <button id="toggleLang" class="px-3 py-1 text-sm bg-yellow-500 text-white rounded-md hover:bg-yellow-600">English</button>
+    </div>
   </header>
 
   <!-- Container -->
@@ -26,44 +29,44 @@
 
     <!-- Shipment Summary -->
     <div id="shipmentSummary" class="bg-white shadow-lg rounded-xl p-6 mb-10 hidden">
-      <h3 class="text-xl font-semibold mb-4">Shipment Details</h3>
+      <h3 class="text-xl font-semibold mb-4" data-key="shipmentDetails">배송 세부 정보</h3>
       <div class="grid md:grid-cols-2 gap-4 text-sm">
-        <p><strong>Tracking No:</strong> <span id="summaryTrackingNo"></span></p>
-        <p><strong>Customer:</strong> <span id="summaryCustomer"></span></p>
-        <p><strong>Origin:</strong> <span id="summaryOrigin"></span></p>
-        <p><strong>Destination:</strong> <span id="summaryDestination"></span></p>
-        <p><strong>Status:</strong> <span id="summaryStatus" class="font-semibold text-yellow-600"></span></p>
-        <p><strong>Current Location:</strong> <span id="summaryLocation" class="font-semibold text-gray-700"></span></p>
+        <p><strong data-key="trackingNo">운송장 번호:</strong> <span id="summaryTrackingNo"></span></p>
+        <p><strong data-key="customer">고객:</strong> <span id="summaryCustomer"></span></p>
+        <p><strong data-key="origin">출발지:</strong> <span id="summaryOrigin"></span></p>
+        <p><strong data-key="destination">도착지:</strong> <span id="summaryDestination"></span></p>
+        <p><strong data-key="status">상태:</strong> <span id="summaryStatus" class="font-semibold text-yellow-600"></span></p>
+        <p><strong data-key="location">현재 위치:</strong> <span id="summaryLocation" class="font-semibold text-gray-700"></span></p>
       </div>
     </div>
 
     <!-- Progress Bar -->
     <div id="progressSection" class="mb-10 hidden">
-      <h3 class="text-xl font-semibold mb-4">Shipment Progress</h3>
+      <h3 class="text-xl font-semibold mb-4" data-key="shipmentProgress">배송 진행 상황</h3>
       <div class="flex items-center justify-between relative">
         <div class="absolute top-1/2 left-0 right-0 h-1 bg-gray-200 -z-10"></div>
         <div id="stepPending" class="flex flex-col items-center">
           <img src="https://cdn-icons-png.flaticon.com/512/861/861060.png" alt="Pending" class="progress-icon opacity-50">
-          <p class="mt-2 text-sm">Order Placed</p>
+          <p class="mt-2 text-sm" data-key="orderPlaced">주문 접수</p>
         </div>
         <div id="stepTransit" class="flex flex-col items-center">
           <img src="https://cdn-icons-png.flaticon.com/512/263/263142.png" alt="Preparing Shipment" class="progress-icon opacity-50">
-          <p class="mt-2 text-sm">Preparing</p>
+          <p class="mt-2 text-sm" data-key="preparing">준비 중</p>
         </div>
         <div id="stepShipped" class="flex flex-col items-center">
           <img src="https://cdn-icons-png.flaticon.com/512/1995/1995560.png" alt="Shipped" class="progress-icon opacity-50">
-          <p class="mt-2 text-sm">Shipped</p>
+          <p class="mt-2 text-sm" data-key="shipped">배송 중</p>
         </div>
         <div id="stepDelivered" class="flex flex-col items-center">
           <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="Delivered" class="progress-icon opacity-50">
-          <p class="mt-2 text-sm">Delivered</p>
+          <p class="mt-2 text-sm" data-key="delivered">배송 완료</p>
         </div>
       </div>
     </div>
 
     <!-- Timeline -->
     <div id="updatesTimeline" class="bg-white shadow-lg rounded-xl p-6 hidden">
-      <h3 class="text-xl font-semibold mb-6">Tracking Updates</h3>
+      <h3 class="text-xl font-semibold mb-6" data-key="trackingUpdates">배송 업데이트</h3>
       <div id="timeline" class="relative border-l border-gray-300 pl-6 space-y-6"></div>
     </div>
 
@@ -73,12 +76,12 @@
 
   <!-- Footer -->
   <footer class="bg-gray-900 text-white text-center py-4">
-    <p>&copy; 2025 AOL Logistics. All rights reserved.</p>
+    <p>&copy; 2025 AOL 물류. 모든 권리 보유.</p>
   </footer>
 
   <script>
   const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // ⚠️ replace with your real key
+  const SUPABASE_KEY = "YOUR_KEY"; // ⚠️ replace with your real key
   const { createClient } = supabase;
   const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -91,15 +94,69 @@
   const timelineEl = document.getElementById("timeline");
   const messageEl = document.getElementById("message");
 
+  // Dictionary for translations
+  const translations = {
+    ko: {
+      home: "홈",
+      shipmentDetails: "배송 세부 정보",
+      trackingNo: "운송장 번호:",
+      customer: "고객:",
+      origin: "출발지:",
+      destination: "도착지:",
+      status: "상태:",
+      location: "현재 위치:",
+      shipmentProgress: "배송 진행 상황",
+      orderPlaced: "주문 접수",
+      preparing: "준비 중",
+      shipped: "배송 중",
+      delivered: "배송 완료",
+      trackingUpdates: "배송 업데이트",
+    },
+    en: {
+      home: "Home",
+      shipmentDetails: "Shipment Details",
+      trackingNo: "Tracking No:",
+      customer: "Customer:",
+      origin: "Origin:",
+      destination: "Destination:",
+      status: "Status:",
+      location: "Current Location:",
+      shipmentProgress: "Shipment Progress",
+      orderPlaced: "Order Placed",
+      preparing: "Preparing",
+      shipped: "Shipped",
+      delivered: "Delivered",
+      trackingUpdates: "Tracking Updates",
+    }
+  };
+
+  let currentLang = "ko"; // default Korean
+
+  function switchLanguage() {
+    const elements = document.querySelectorAll("[data-key]");
+    elements.forEach(el => {
+      const key = el.getAttribute("data-key");
+      el.textContent = translations[currentLang][key];
+    });
+    document.getElementById("toggleLang").textContent = currentLang === "ko" ? "English" : "한국어";
+  }
+
+  document.getElementById("toggleLang").addEventListener("click", () => {
+    currentLang = currentLang === "ko" ? "en" : "ko";
+    switchLanguage();
+  });
+
+  // Initial translation load
+  switchLanguage();
+
   async function loadTracking() {
     if (!trackingNo) {
-      window.location.href = "tracking-form.html"; // redirect if no tracking number
+      window.location.href = "tracking-form.html";
       return;
     }
 
-    messageEl.textContent = "Loading shipment...";
+    messageEl.textContent = currentLang === "ko" ? "배송 정보를 불러오는 중..." : "Loading shipment...";
 
-    // 1. Get shipment from DB
     const { data: shipment, error: shipmentError } = await supabaseClient
       .from("user_info")
       .select("*")
@@ -107,11 +164,10 @@
       .maybeSingle();
 
     if (shipmentError || !shipment) {
-      window.location.href = "tracking-form.html"; // if invalid, redirect back
+      window.location.href = "tracking-form.html";
       return;
     }
 
-    // 2. Get updates from DB
     const { data: updates, error: updatesError } = await supabaseClient
       .from("tracking_updates")
       .select("*")
@@ -119,7 +175,7 @@
       .order("created_at", { ascending: false });
 
     if (updatesError) {
-      messageEl.textContent = "⚠️ Error loading updates.";
+      messageEl.textContent = currentLang === "ko" ? "⚠️ 업데이트 불러오기 오류." : "⚠️ Error loading updates.";
       return;
     }
 
@@ -128,11 +184,11 @@
     // Fill summary
     summaryEl.classList.remove("hidden");
     document.getElementById("summaryTrackingNo").textContent = shipment.tracking_no;
-    document.getElementById("summaryCustomer").textContent = shipment.customer_name || "-";
+    document.getElementById("summaryCustomer").textContent = shipment.receiver_name || "-";
     document.getElementById("summaryOrigin").textContent = shipment.origin || "-";
-    document.getElementById("summaryDestination").textContent = shipment.destination || "-";
-    document.getElementById("summaryStatus").textContent = latestUpdate?.progress || "Order Placed";
-    document.getElementById("summaryLocation").textContent = latestUpdate?.location || "Not available";
+    document.getElementById("summaryDestination").textContent = shipment.receiver_country || "-";
+    document.getElementById("summaryStatus").textContent = latestUpdate?.progress || translations[currentLang].orderPlaced;
+    document.getElementById("summaryLocation").textContent = latestUpdate?.location || (currentLang === "ko" ? "정보 없음" : "Not available");
 
     // Progress bar
     progressEl.classList.remove("hidden");
@@ -146,7 +202,7 @@
           <div class="absolute -left-3 top-1 w-6 h-6 rounded-full bg-yellow-500 border-2 border-white"></div>
           <div class="ml-4">
             <p class="font-semibold text-yellow-600">${update.progress}</p>
-            <p class="text-gray-700">${update.location || "Unknown"}</p>
+            <p class="text-gray-700">${update.location || (currentLang === "ko" ? "알 수 없음" : "Unknown")}</p>
             <p class="text-sm text-gray-500">${new Date(update.created_at).toLocaleString()}</p>
             ${update.note ? `<p class="mt-1 text-gray-600 italic">${update.note}</p>` : ""}
           </div>
@@ -162,19 +218,27 @@
       "Order Placed": "stepPending",
       "Preparing Shipment": "stepTransit",
       "Shipped": "stepShipped",
-      "Delivered": "stepDelivered"
+      "Delivered": "stepDelivered",
+      "주문 접수": "stepPending",
+      "준비 중": "stepTransit",
+      "배송 중": "stepShipped",
+      "배송 완료": "stepDelivered"
     };
 
     Object.values(steps).forEach(id => {
       const step = document.getElementById(id);
-      step.querySelector("img").classList.add("opacity-50");
-      step.querySelector("p").classList.remove("font-bold");
+      if (step) {
+        step.querySelector("img").classList.add("opacity-50");
+        step.querySelector("p").classList.remove("font-bold");
+      }
     });
 
     if (steps[progress]) {
       const step = document.getElementById(steps[progress]);
-      step.querySelector("img").classList.remove("opacity-50");
-      step.querySelector("p").classList.add("font-bold");
+      if (step) {
+        step.querySelector("img").classList.remove("opacity-50");
+        step.querySelector("p").classList.add("font-bold");
+      }
     }
   }
 
