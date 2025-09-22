@@ -149,14 +149,15 @@
   // Initial translation load
   switchLanguage();
 
-  async function loadTracking() {
+async function loadTracking() {
     if (!trackingNo) {
-      window.location.href = "tracking-form.html";
+      window.location.href = "tracking-form.html"; // redirect if no tracking number
       return;
     }
 
-    messageEl.textContent = currentLang === "ko" ? "배송 정보를 불러오는 중..." : "Loading shipment...";
+    messageEl.textContent = "Loading shipment...";
 
+    // 1. Get shipment from DB
     const { data: shipment, error: shipmentError } = await supabaseClient
       .from("user_info")
       .select("*")
@@ -164,10 +165,11 @@
       .maybeSingle();
 
     if (shipmentError || !shipment) {
-      window.location.href = "tracking-form.html";
+      window.location.href = "tracking-form.html"; // if invalid, redirect back
       return;
     }
 
+    // 2. Get updates from DB
     const { data: updates, error: updatesError } = await supabaseClient
       .from("tracking_updates")
       .select("*")
@@ -175,7 +177,7 @@
       .order("created_at", { ascending: false });
 
     if (updatesError) {
-      messageEl.textContent = currentLang === "ko" ? "⚠️ 업데이트 불러오기 오류." : "⚠️ Error loading updates.";
+      messageEl.textContent = "⚠️ Error loading updates.";
       return;
     }
 
@@ -187,8 +189,8 @@
     document.getElementById("summaryCustomer").textContent = shipment.receiver_name || "-";
     document.getElementById("summaryOrigin").textContent = shipment.origin || "-";
     document.getElementById("summaryDestination").textContent = shipment.receiver_country || "-";
-    document.getElementById("summaryStatus").textContent = latestUpdate?.progress || translations[currentLang].orderPlaced;
-    document.getElementById("summaryLocation").textContent = latestUpdate?.location || (currentLang === "ko" ? "정보 없음" : "Not available");
+    document.getElementById("summaryStatus").textContent = latestUpdate?.progress || "Order Placed";
+    document.getElementById("summaryLocation").textContent = latestUpdate?.location || "Not available";
 
     // Progress bar
     progressEl.classList.remove("hidden");
@@ -202,7 +204,7 @@
           <div class="absolute -left-3 top-1 w-6 h-6 rounded-full bg-yellow-500 border-2 border-white"></div>
           <div class="ml-4">
             <p class="font-semibold text-yellow-600">${update.progress}</p>
-            <p class="text-gray-700">${update.location || (currentLang === "ko" ? "알 수 없음" : "Unknown")}</p>
+            <p class="text-gray-700">${update.location || "Unknown"}</p>
             <p class="text-sm text-gray-500">${new Date(update.created_at).toLocaleString()}</p>
             ${update.note ? `<p class="mt-1 text-gray-600 italic">${update.note}</p>` : ""}
           </div>
@@ -218,27 +220,19 @@
       "Order Placed": "stepPending",
       "Preparing Shipment": "stepTransit",
       "Shipped": "stepShipped",
-      "Delivered": "stepDelivered",
-      "주문 접수": "stepPending",
-      "준비 중": "stepTransit",
-      "배송 중": "stepShipped",
-      "배송 완료": "stepDelivered"
+      "Delivered": "stepDelivered"
     };
 
     Object.values(steps).forEach(id => {
       const step = document.getElementById(id);
-      if (step) {
-        step.querySelector("img").classList.add("opacity-50");
-        step.querySelector("p").classList.remove("font-bold");
-      }
+      step.querySelector("img").classList.add("opacity-50");
+      step.querySelector("p").classList.remove("font-bold");
     });
 
     if (steps[progress]) {
       const step = document.getElementById(steps[progress]);
-      if (step) {
-        step.querySelector("img").classList.remove("opacity-50");
-        step.querySelector("p").classList.add("font-bold");
-      }
+      step.querySelector("img").classList.remove("opacity-50");
+      step.querySelector("p").classList.add("font-bold");
     }
   }
 
