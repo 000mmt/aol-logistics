@@ -15,14 +15,34 @@
 </head>
 <body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
 
-  <!-- Header -->
-  <header class="bg-white shadow-md p-4 flex justify-between items-center">
-    <h1 class="text-2xl font-bold text-yellow-600">AOL 물류</h1>
+<!-- NAVBAR -->
+<header class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
+  <div class="container mx-auto flex items-center justify-between px-6 py-2">
+    <!-- Logo + brand -->
+    <a href="home.html" class="flex items-center space-x-2">
+      <!-- Logo -->
+      <img src="images/images (2).jpeg" alt="Logo" class="h-12 w-12 object-cover rounded-full">
+      
+      <!-- Company name + tagline -->
+      <div class="flex flex-col leading-tight">
+        <h1 class="text-2xl italic font-extrabold text-sky-600" data-key="brand">
+          AOL 물류
+        </h1>
+        <p class="text-xs italic text-gray-600 -mt-1 tracking-tight">
+          최고의 배송 서비스
+        </p>
+      </div>
+    </a>
+
+    <!-- Right side: Home + language toggle -->
     <div class="flex items-center space-x-4">
-      <a href="home.html" class="text-gray-600 hover:text-yellow-600" data-key="home">홈</a>
-      <button id="toggleLang" class="px-3 py-1 text-sm bg-yellow-500 text-white rounded-md hover:bg-yellow-600">English</button>
+      <a href="home.html" class="text-gray-600 hover:text-yellow-600 text-sm font-medium" data-key="home">홈</a>
+      <button id="toggleLang" class="px-3 py-1 text-sm bg-yellow-500 text-white rounded-md hover:bg-yellow-600">
+        English
+      </button>
     </div>
-  </header>
+  </div>
+</header>
 
   <!-- Container -->
   <main class="flex-1 container mx-auto px-6 py-10">
