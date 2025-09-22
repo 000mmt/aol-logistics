@@ -53,73 +53,86 @@
       .hero-title { font-size: 1.8rem; }
       .hero-btn { padding-left: 1rem; padding-right: 1rem; }
     }
+
+    /* Dark background for the page */
+    body {
+      background-color: #1a202c; /* Dark background */
+      color: #e2e8f0; /* Light text color */
+    }
+
+    /* Adjustments for mobile navbar items */
+    .mobile-link {
+      padding: 10px; /* Adjusted padding for mobile links */
+      font-size: 1rem; /* Adjusted font size */
+    }
+
+    /* Change text color to skyblue */
+    .text-skyblue {
+      color: #87CEEB; /* Skyblue color */
+    }
+
+    .bg-skyblue {
+      background-color: #87CEEB; /* Skyblue background */
+    }
   </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body>
 
   <!-- NAVBAR -->
-<header class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
+<header class="bg-gray-800 shadow-md fixed top-0 left-0 w-full z-50">
   <div class="container mx-auto flex items-center justify-between px-6 py-2">
     <a href="home.html" class="flex items-center space-x-2">
-      <!-- Logo on the left (slightly smaller) -->
       <img src="images/images (2).jpeg" alt="Logo" class="h-12 w-12 object-cover rounded-full">
-      
-      <!-- Company name + tagline -->
       <div class="flex flex-col leading-tight">
         <h1 class="text-2xl italic font-extrabold text-sky-600" data-key="brand">
           AOL LOGISTICS
         </h1>
-        <p class="text-xs italic text-gray-600 -mt-1 tracking-tight">
+        <p class="text-xs italic text-gray-300 -mt-1 tracking-tight">
           delivery service at its finest
         </p>
       </div>
     </a>
     
-
       <!-- Desktop Nav -->
       <nav class="hidden md:flex space-x-6">
-        <a href="#about" class="hover:text-yellow-500" data-key="nav_about">회사 소개</a>
-        <a href="#services" class="hover:text-yellow-500" data-key="nav_services">서비스</a>
-        <a href="tracking.html" class="hover:text-yellow-500" data-key="nav_track">배송 추적</a>
-        <a href="form.html" class="hover:text-yellow-500" data-key="nav_create">배송 생성</a>
-        <a href="#news" class="hover:text-yellow-500" data-key="nav_news">뉴스</a>
-        <a href="#contact" class="hover:text-yellow-500" data-key="nav_contact">연락처</a>
-        <a href="admin/login.html" class="hover:text-yellow-500" data-key="nav_login">로그인</a>
+        <a href="#about" class="hover:text-skyblue" data-key="nav_about">회사 소개</a>
+        <a href="#services" class="hover:text-skyblue" data-key="nav_services">서비스</a>
+        <a href="tracking.html" class="hover:text-skyblue" data-key="nav_track">배송 추적</a>
+        <a href="form.html" class="hover:text-skyblue" data-key="nav_create">배송 생성</a>
+        <a href="#news" class="hover:text-skyblue" data-key="nav_news">뉴스</a>
+        <a href="#contact" class="hover:text-skyblue" data-key="nav_contact">연락처</a>
+        <a href="admin/login.html" class="hover:text-skyblue" data-key="nav_login">로그인</a>
       </nav>
 
       <div class="flex items-center">
-        <!-- Language Toggle -->
-        <button id="langToggle" class="ml-4 bg-yellow-500 text-white px-4 py-2 rounded">English</button>
-
-        <!-- Mobile Menu Button -->
-        <button id="menuBtn" aria-expanded="false" aria-label="Open menu" class="md:hidden bg-yellow-500 text-white px-4 py-2 rounded ml-3" data-key="menu_text">
+        <button id="langToggle" class="ml-4 bg-skyblue text-white px-4 py-2 rounded">English</button>
+        <button id="menuBtn" aria-expanded="false" aria-label="Open menu" class="md:hidden bg-skyblue text-white px-4 py-2 rounded ml-3" data-key="menu_text">
           메뉴
         </button>
       </div>
     </div>
 
     <!-- Mobile Dropdown -->
-    <div id="mobileMenu" class="hidden bg-white shadow-md md:hidden">
+    <div id="mobileMenu" class="hidden bg-gray-800 shadow-md md:hidden">
       <nav class="flex flex-col space-y-2 px-6 py-4">
-        <a href="home.html" class="hover:text-yellow-500 mobile-link" data-key="nav_home">홈</a>
-        <a href="#about" class="hover:text-yellow-500 mobile-link" data-key="nav_about">회사 소개</a>
-        <a href="#services" class="hover:text-yellow-500 mobile-link" data-key="nav_services">서비스</a>
-        <a href="tracking.html" class="hover:text-yellow-500 mobile-link" data-key="nav_track">배송 추적</a>
-        <a href="form.html" class="hover:text-yellow-500 mobile-link" data-key="nav_create">배송 생성</a>
-        <a href="#reach" class="hover:text-yellow-500 mobile-link" data-key="nav_reach">글로벌 네트워크</a>
-        <a href="#why" class="hover:text-yellow-500 mobile-link" data-key="nav_why">왜 우리인가</a>
-        <a href="#industries" class="hover:text-yellow-500 mobile-link" data-key="nav_industries">산업 분야</a>
-        <a href="#news" class="hover:text-yellow-500 mobile-link" data-key="nav_news">뉴스</a>
-        <a href="#testimonials" class="hover:text-yellow-500 mobile-link" data-key="nav_testimonials">고객 후기</a>
-        <a href="#contact" class="hover:text-yellow-500 mobile-link" data-key="nav_contact">연락처</a>
-        <a href="admin/login.html" class="hover:text-yellow-500 mobile-link" data-key="nav_login">로그인</a>
+        <a href="home.html" class="hover:text-skyblue mobile-link" data-key="nav_home">홈</a>
+        <a href="#about" class="hover:text-skyblue mobile-link" data-key="nav_about">회사 소개</a>
+        <a href="#services" class="hover:text-skyblue mobile-link" data-key="nav_services">서비스</a>
+        <a href="tracking.html" class="hover:text-skyblue mobile-link" data-key="nav_track">배송 추적</a>
+        <a href="form.html" class="hover:text-skyblue mobile-link" data-key="nav_create">배송 생성</a>
+        <a href="#reach" class="hover:text-skyblue mobile-link" data-key="nav_reach">글로벌 네트워크</a>
+        <a href="#why" class="hover:text-skyblue mobile-link" data-key="nav_why">왜 우리인가</a>
+        <a href="#industries" class="hover:text-skyblue mobile-link" data-key="nav_industries">산업 분야</a>
+        <a href="#news" class="hover:text-skyblue mobile-link" data-key="nav_news">뉴스</a>
+        <a href="#testimonials" class="hover:text-skyblue mobile-link" data-key="nav_testimonials">고객 후기</a>
+        <a href="#contact" class="hover:text-skyblue mobile-link" data-key="nav_contact">연락처</a>
+        <a href="admin/login.html" class="hover:text-skyblue mobile-link" data-key="nav_login">로그인</a>
       </nav>
     </div>
   </header>
 
   <!-- HERO -->
   <section id="home" class="relative bg-gray-900 text-white pt-28 pb-32 min-h-screen flex items-center overflow-hidden">
-    <!-- Slider (3 images) -->
     <div class="hero-slider">
       <div class="hero-slide active"><img src="images/ACL-Port-Scene.jpg" alt="화물선" data-key="hero_img1_alt"></div>
       <div class="hero-slide"><img src="images/truck-8656658_1280.jpg" alt="컨테이너 항구" data-key="hero_img2_alt"></div>
@@ -133,45 +146,44 @@
       <p class="text-lg md:text-xl mb-8 max-w-2xl mx-auto" data-key="hero_sub">전 세계 어디서든 신뢰할 수 있는 물류 솔루션을 제공합니다.</p>
 
       <div class="space-x-4">
-        <a href="tracking-form.html" class="hero-btn inline-block bg-yellow-500 text-white px-6 py-3 rounded-lg font-semibold shadow" data-key="hero_track">배송 추적</a>
-        <a href="#quote" class="hero-btn inline-block bg-white text-yellow-600 px-6 py-3 rounded-lg font-semibold shadow" data-key="hero_quote">견적 요청</a>
+        <a href="tracking-form.html" class="hero-btn inline-block bg-skyblue text-white px-6 py-3 rounded-lg font-semibold shadow" data-key="hero_track">배송 추적</a>
+        <a href="#quote" class="hero-btn inline-block bg-white text-sky-600 px-6 py-3 rounded-lg font-semibold shadow" data-key="hero_quote">견적 요청</a>
       </div>
     </div>
   </section>
 
   <!-- TRACKING FORM -->
-  <section class="py-16 bg-gray-50">
+  <section class="py-16 bg-gray-800">
     <div class="container mx-auto px-6 text-center">
       <h2 class="text-2xl font-bold mb-6" data-key="track_section_title">배송 추적</h2>
-            <form action="tracking.html" method="get" id="trackingForm" class="max-w-md mx-auto flex gap-2">
-              <input type="text" id="tracking_no" name="tracking_no" placeholder=""
-                 class="flex-1 p-3 border rounded-lg" required>
-               <button type="submit" class="bg-yellow-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-yellow-600">
-                 추적
-              </button>
-            </form>
-
+      <form action="tracking.html" method="get" id="trackingForm" class="max-w-md mx-auto flex gap-2">
+        <input type="text" id="tracking_no" name="tracking_no" placeholder="운송장 번호를 입력하세요"
+               class="flex-1 p-3 border rounded-lg" required>
+        <button type="submit" class="bg-skyblue text-white px-6 py-3 rounded-lg font-semibold hover:bg-sky-600">
+          추적
+        </button>
+      </form>
     </div>
   </section>
 
   <!-- SERVICES -->
-  <section id="services" class="py-20 bg-white">
+  <section id="services" class="py-20 bg-gray-800">
     <div class="container mx-auto px-6 text-center">
       <h3 class="text-3xl font-bold mb-12" data-aos="fade-up" data-key="services_title">우리의 서비스</h3>
       <div class="grid md:grid-cols-3 gap-10">
-        <div class="p-6 bg-gray-100 rounded-lg shadow" data-aos="fade-up" data-aos-delay="100">
+        <div class="p-6 bg-gray-700 rounded-lg shadow" data-aos="fade-up" data-aos-delay="100">
           <img src="images/aron-yigin-lNpAmLA_bvQ-unsplash.jpg" alt="컨테이너 운송" class="w-full h-48 object-cover rounded mb-4 mx-auto" data-key="service1_img_alt">
           <h4 class="text-xl font-semibold mb-2" data-key="service1_title">컨테이너 운송</h4>
           <p data-key="service1_text">글로벌 무역 경로를 통한 안전하고 효율적인 컨테이너 운송.</p>
         </div>
 
-        <div class="p-6 bg-gray-100 rounded-lg shadow" data-aos="fade-up" data-aos-delay="200">
+        <div class="p-6 bg-gray-700 rounded-lg shadow" data-aos="fade-up" data-aos-delay="200">
           <img src="images/bernd-dittrich-miHHRMLDDH8-unsplash.jpg" alt="RoRo" class="w-full h-48 object-cover rounded mb-4 mx-auto" data-key="service2_img_alt">
           <h4 class="text-xl font-semibold mb-2" data-key="service2_title">RoRo (롤온/롤오프)</h4>
           <p data-key="service2_text">차량 및 중장비를 위한 원활한 전세계 선적 서비스.</p>
         </div>
 
-        <div class="p-6 bg-gray-100 rounded-lg shadow" data-aos="fade-up" data-aos-delay="300">
+        <div class="p-6 bg-gray-700 rounded-lg shadow" data-aos="fade-up" data-aos-delay="300">
           <img src="images/roro_pov_scaled-1024x617.jpg" alt="특수 화물" class="w-full h-48 object-cover rounded mb-4 mx-auto" data-key="service3_img_alt">
           <h4 class="text-xl font-semibold mb-2" data-key="service3_title">특수 화물</h4>
           <p data-key="service3_text">대형 화물 및 긴급 화물 운송을 위한 맞춤형 솔루션.</p>
@@ -181,22 +193,22 @@
   </section>
 
   <!-- GLOBAL REACH -->
-  <section id="reach" class="py-20 bg-gray-50">
+  <section id="reach" class="py-20 bg-gray-800">
     <div class="container mx-auto text-center px-6">
       <h3 class="text-3xl font-bold mb-12" data-aos="fade-up" data-key="reach_title">글로벌 네트워크</h3>
-      <p class="mb-10 max-w-2xl mx-auto text-gray-600" data-key="reach_text">북미부터 아시아, 아프리카, 유럽, 남미까지 전 대륙에 걸쳐 서비스를 제공합니다.</p>
+      <p class="mb-10 max-w-2xl mx-auto text-gray-300" data-key="reach_text">북미부터 아시아, 아프리카, 유럽, 남미까지 전 대륙에 걸쳐 서비스를 제공합니다.</p>
       <div class="grid grid-cols-2 md:grid-cols-5 gap-10 global-reach">
-        <div data-aos="zoom-in"><img src="https://flagcdn.com/us.svg" alt="북미" class="mx-auto w-20 h-14"><p class="mt-3 font-semibold" data-key="reach_country_na">북미</p></div>
-        <div data-aos="zoom-in" data-aos-delay="100"><img src="https://flagcdn.com/br.svg" alt="남미" class="mx-auto w-20 h-14"><p class="mt-3 font-semibold" data-key="reach_country_sa">남미</p></div>
-        <div data-aos="zoom-in" data-aos-delay="200"><img src="https://flagcdn.com/de.svg" alt="유럽" class="mx-auto w-20 h-14"><p class="mt-3 font-semibold" data-key="reach_country_eu">유럽</p></div>
-        <div data-aos="zoom-in" data-aos-delay="300"><img src="https://flagcdn.com/kr.svg" alt="아시아" class="mx-auto w-20 h-14"><p class="mt-3 font-semibold" data-key="reach_country_as">아시아</p></div>
-        <div data-aos="zoom-in" data-aos-delay="400"><img src="https://flagcdn.com/ng.svg" alt="아프리카" class="mx-auto w-20 h-14"><p class="mt-3 font-semibold" data-key="reach_country_af">아프리카</p></div>
+        <div data-aos="zoom-in"><img src="https://flagcdn.com/us.svg" alt="북미" class="mx-auto w-20 h-14"><p class="mt-3 font-semibold text-skyblue" data-key="reach_country_na">북미</p></div>
+        <div data-aos="zoom-in" data-aos-delay="100"><img src="https://flagcdn.com/br.svg" alt="남미" class="mx-auto w-20 h-14"><p class="mt-3 font-semibold text-skyblue" data-key="reach_country_sa">남미</p></div>
+        <div data-aos="zoom-in" data-aos-delay="200"><img src="https://flagcdn.com/de.svg" alt="유럽" class="mx-auto w-20 h-14"><p class="mt-3 font-semibold text-skyblue" data-key="reach_country_eu">유럽</p></div>
+        <div data-aos="zoom-in" data-aos-delay="300"><img src="https://flagcdn.com/kr.svg" alt="아시아" class="mx-auto w-20 h-14"><p class="mt-3 font-semibold text-skyblue" data-key="reach_country_as">아시아</p></div>
+        <div data-aos="zoom-in" data-aos-delay="400"><img src="https://flagcdn.com/ng.svg" alt="아프리카" class="mx-auto w-20 h-14"><p class="mt-3 font-semibold text-skyblue" data-key="reach_country_af">아프리카</p></div>
       </div>
     </div>
   </section>
 
   <!-- ABOUT -->
-  <section id="about" class="py-20 bg-white">
+  <section id="about" class="py-20 bg-gray-800">
     <div class="container mx-auto grid md:grid-cols-2 gap-12 items-center px-6">
       <div data-aos="fade-right">
         <h3 class="text-3xl font-bold mb-6" data-key="about_title">회사 소개</h3>
@@ -210,19 +222,19 @@
   </section>
 
   <!-- WHY -->
-  <section id="why" class="py-20 bg-gray-50">
+  <section id="why" class="py-20 bg-gray-800">
     <div class="container mx-auto px-6 text-center">
       <h3 class="text-3xl font-bold mb-12" data-aos="fade-up" data-key="why_title">왜 우리를 선택해야 하나요</h3>
       <div class="grid md:grid-cols-3 gap-10">
-        <div class="p-6 bg-white shadow rounded" data-aos="flip-left">
+        <div class="p-6 bg-gray-700 shadow rounded" data-aos="flip-left">
           <h4 class="text-xl font-semibold mb-2" data-key="why_item1_title">경험</h4>
           <p data-key="why_item1_text">산업 전반에 걸친 수십 년의 글로벌 물류 전문성.</p>
         </div>
-        <div class="p-6 bg-white shadow rounded" data-aos="flip-left" data-aos-delay="100">
+        <div class="p-6 bg-gray-700 shadow rounded" data-aos="flip-left" data-aos-delay="100">
           <h4 class="text-xl font-semibold mb-2" data-key="why_item2_title">글로벌 네트워크</h4>
           <p data-key="why_item2_text">전 세계 항만, 운송사 및 창고와의 강력한 연결망.</p>
         </div>
-        <div class="p-6 bg-white shadow rounded" data-aos="flip-left" data-aos-delay="200">
+        <div class="p-6 bg-gray-700 shadow rounded" data-aos="flip-left" data-aos-delay="200">
           <h4 class="text-xl font-semibold mb-2" data-key="why_item3_title">고객 중심</h4>
           <p data-key="why_item3_text">맞춤형 솔루션, 투명한 추적 및 24/7 지원.</p>
         </div>
@@ -231,38 +243,38 @@
   </section>
 
   <!-- TESTIMONIALS -->
-  <section id="testimonials" class="bg-gray-50 py-20">
+  <section id="testimonials" class="bg-gray-800 py-20">
     <div class="container mx-auto px-6 text-center">
       <h2 class="text-3xl md:text-4xl font-bold mb-12" data-aos="fade-up" data-key="testimonials_title">고객의 소리</h2>
 
       <div class="grid md:grid-cols-3 gap-8">
         <!-- 1 -->
-        <div class="bg-white shadow-lg rounded-2xl p-6" data-aos="fade-up" data-aos-delay="100">
+        <div class="bg-gray-700 shadow-lg rounded-2xl p-6" data-aos="fade-up" data-aos-delay="100">
           <img src="images/istockphoto-157421781-612x612.jpg" alt="고객 1"
                class="w-full h-48 object-cover rounded-lg mx-auto mb-4" data-key="testimonial1_img_alt">
-          <div class="flex justify-center mb-3 text-yellow-500" aria-hidden="true"><span class="text-xl">⭐⭐⭐⭐⭐</span></div>
-          <p class="text-gray-600 italic mb-4" data-key="testimonial1_text">“AOL Logistics는 저의 배송을 세심하고 신속하게 처리해 주었습니다. 실시간 추적으로 항상 정보를 받을 수 있었습니다.”</p>
-          <h3 class="font-semibold text-yellow-600" data-key="testimonial1_name">Sarah Johnson</h3>
+          <div class="flex justify-center mb-3 text-skyblue" aria-hidden="true"><span class="text-xl">⭐⭐⭐⭐⭐</span></div>
+          <p class="text-gray-300 italic mb-4" data-key="testimonial1_text">“AOL Logistics는 저의 배송을 세심하고 신속하게 처리해 주었습니다. 실시간 추적으로 항상 정보를 받을 수 있었습니다.”</p>
+          <h3 class="font-semibold text-skyblue" data-key="testimonial1_name">Sarah Johnson</h3>
           <p class="text-sm text-gray-500" data-key="testimonial1_role">소상공인</p>
         </div>
 
         <!-- 2 -->
-        <div class="bg-white shadow-lg rounded-2xl p-6" data-aos="fade-up" data-aos-delay="200">
+        <div class="bg-gray-700 shadow-lg rounded-2xl p-6" data-aos="fade-up" data-aos-delay="200">
           <img src="images/stevedore-1636392_1280.jpg" alt="고객 2"
                class="w-full h-48 object-cover rounded-lg mx-auto mb-4" data-key="testimonial2_img_alt">
-          <div class="flex justify-center mb-3 text-yellow-500" aria-hidden="true"><span class="text-xl">⭐⭐⭐⭐⭐</span></div>
-          <p class="text-gray-600 italic mb-4" data-key="testimonial2_text">“빠르고 신뢰할 수 있으며 투명합니다. 저의 온라인 상점은 모든 배송을 AOL Logistics에 의존합니다.”</p>
-          <h3 class="font-semibold text-yellow-600" data-key="testimonial2_name">Michael Lee</h3>
+          <div class="flex justify-center mb-3 text-skyblue" aria-hidden="true"><span class="text-xl">⭐⭐⭐⭐⭐</span></div>
+          <p class="text-gray-300 italic mb-4" data-key="testimonial2_text">“빠르고 신뢰할 수 있으며 투명합니다. 저의 온라인 상점은 모든 배송을 AOL Logistics에 의존합니다.”</p>
+          <h3 class="font-semibold text-skyblue" data-key="testimonial2_name">Michael Lee</h3>
           <p class="text-sm text-gray-500" data-key="testimonial2_role">전자상거래 사업가</p>
         </div>
 
         <!-- 3 -->
-        <div class="bg-white shadow-lg rounded-2xl p-6" data-aos="fade-up" data-aos-delay="300">
+        <div class="bg-gray-700 shadow-lg rounded-2xl p-6" data-aos="fade-up" data-aos-delay="300">
           <img src="images/teacher-with-glasses-class.jpg" alt="고객 3"
                class="w-full h-48 object-cover rounded-lg mx-auto mb-4" data-key="testimonial3_img_alt">
-          <div class="flex justify-center mb-3 text-yellow-500" aria-hidden="true"><span class="text-xl">⭐⭐⭐⭐⭐</span></div>
-          <p class="text-gray-600 italic mb-4" data-key="testimonial3_text">“훌륭한 지원 팀, 원활한 프로세스 및 빠른 업데이트. AOL Logistics는 제가 화물을 맡길 수 있는 신뢰할 수 있는 파트너입니다.”</p>
-          <h3 class="font-semibold text-yellow-600" data-key="testimonial3_name">Amira Khan</h3>
+          <div class="flex justify-center mb-3 text-skyblue" aria-hidden="true"><span class="text-xl">⭐⭐⭐⭐⭐</span></div>
+          <p class="text-gray-300 italic mb-4" data-key="testimonial3_text">“훌륭한 지원 팀, 원활한 프로세스 및 빠른 업데이트. AOL Logistics는 제가 화물을 맡길 수 있는 신뢰할 수 있는 파트너입니다.”</p>
+          <h3 class="font-semibold text-skyblue" data-key="testimonial3_name">Amira Khan</h3>
           <p class="text-sm text-gray-500" data-key="testimonial3_role">자주 사용하는 발송자</p>
         </div>
       </div>
@@ -270,32 +282,32 @@
   </section>
 
   <!-- INDUSTRIES -->
-  <section id="industries" class="py-20 bg-gray-50">
+  <section id="industries" class="py-20 bg-gray-800">
     <div class="container mx-auto px-6 text-center">
       <h3 class="text-3xl font-bold mb-12" data-aos="fade-up" data-key="industries_title">우리가 제공하는 산업</h3>
       <div class="grid md:grid-cols-4 gap-10">
-        <div class="p-6 bg-white shadow rounded" data-aos="fade-up"><h4 class="font-semibold mb-2" data-key="industry1_title">자동차</h4><p data-key="industry1_text">자동차, 트럭 및 중장비를 위한 신뢰할 수 있는 RoRo 선적.</p></div>
-        <div class="p-6 bg-white shadow rounded" data-aos="fade-up" data-aos-delay="100"><h4 class="font-semibold mb-2" data-key="industry2_title">소매</h4><p data-key="industry2_text">매장 및 전자상거래 업체를 위한 빠른 공급망 솔루션.</p></div>
-        <div class="p-6 bg-white shadow rounded" data-aos="fade-up" data-aos-delay="200"><h4 class="font-semibold mb-2" data-key="industry3_title">에너지</h4><p data-key="industry3_text">석유, 가스 및 재생에너지 프로젝트용 장비의 안전한 운송.</p></div>
-        <div class="p-6 bg-white shadow rounded" data-aos="fade-up" data-aos-delay="300"><h4 class="font-semibold mb-2" data-key="industry4_title">의료</h4><p data-key="industry4_text">의약품 및 의료용품을 위한 온도 제어 배송.</p></div>
+        <div class="p-6 bg-gray-700 shadow rounded" data-aos="fade-up"><h4 class="font-semibold mb-2" data-key="industry1_title">자동차</h4><p data-key="industry1_text">자동차, 트럭 및 중장비를 위한 신뢰할 수 있는 RoRo 선적.</p></div>
+        <div class="p-6 bg-gray-700 shadow rounded" data-aos="fade-up" data-aos-delay="100"><h4 class="font-semibold mb-2" data-key="industry2_title">소매</h4><p data-key="industry2_text">매장 및 전자상거래 업체를 위한 빠른 공급망 솔루션.</p></div>
+        <div class="p-6 bg-gray-700 shadow rounded" data-aos="fade-up" data-aos-delay="200"><h4 class="font-semibold mb-2" data-key="industry3_title">에너지</h4><p data-key="industry3_text">석유, 가스 및 재생에너지 프로젝트용 장비의 안전한 운송.</p></div>
+        <div class="p-6 bg-gray-700 shadow rounded" data-aos="fade-up" data-aos-delay="300"><h4 class="font-semibold mb-2" data-key="industry4_title">의료</h4><p data-key="industry4_text">의약품 및 의료용품을 위한 온도 제어 배송.</p></div>
       </div>
     </div>
   </section>
 
   <!-- NEWS -->
-  <section id="news" class="py-20 bg-white">
+  <section id="news" class="py-20 bg-gray-800">
     <div class="container mx-auto px-6 text-center">
       <h3 class="text-3xl font-bold mb-12" data-aos="fade-up" data-key="news_title">최신 소식</h3>
       <div class="grid md:grid-cols-3 gap-10">
-        <div class="p-6 bg-gray-100 rounded shadow" data-aos="fade-up"><h4 class="font-semibold mb-2" data-key="news1_title">글로벌 배송 트렌드 2025</h4><p data-key="news1_text">글로벌 배송의 최신 과제와 혁신을 확인하세요.</p></div>
-        <div class="p-6 bg-gray-100 rounded shadow" data-aos="fade-up" data-aos-delay="100"><h4 class="font-semibold mb-2" data-key="news2_title">AOL의 RoRo 최적화 방법</h4><p data-key="news2_text">차량 및 기계류 선적을 간소화하는 방법을 알아보세요.</p></div>
-        <div class="p-6 bg-gray-100 rounded shadow" data-aos="fade-up" data-aos-delay="200"><h4 class="font-semibold mb-2" data-key="news3_title">물류의 기술</h4><p data-key="news3_text">AI 및 IoT가 화물 업계를 어떻게 변화시키는지 확인하세요.</p></div>
+        <div class="p-6 bg-gray-700 rounded shadow" data-aos="fade-up"><h4 class="font-semibold mb-2" data-key="news1_title">글로벌 배송 트렌드 2025</h4><p data-key="news1_text">글로벌 배송의 최신 과제와 혁신을 확인하세요.</p></div>
+        <div class="p-6 bg-gray-700 rounded shadow" data-aos="fade-up" data-aos-delay="100"><h4 class="font-semibold mb-2" data-key="news2_title">AOL의 RoRo 최적화 방법</h4><p data-key="news2_text">차량 및 기계류 선적을 간소화하는 방법을 알아보세요.</p></div>
+        <div class="p-6 bg-gray-700 rounded shadow" data-aos="fade-up" data-aos-delay="200"><h4 class="font-semibold mb-2" data-key="news3_title">물류의 기술</h4><p data-key="news3_text">AI 및 IoT가 화물 업계를 어떻게 변화시키는지 확인하세요.</p></div>
       </div>
     </div>
   </section>
 
   <!-- CONTACT -->
-  <section id="contact" class="py-20 bg-gray-50">
+  <section id="contact" class="py-20 bg-gray-800">
     <div class="container mx-auto px-6">
       <h3 class="text-3xl font-bold mb-8 text-center" data-aos="fade-up" data-key="contact_title">문의하기</h3>
       <div class="grid md:grid-cols-2 gap-12">
@@ -308,7 +320,7 @@
           <input type="text" placeholder="이름" class="w-full p-3 border rounded" data-key="contact_form_name_placeholder" required>
           <input type="email" placeholder="이메일" class="w-full p-3 border rounded" data-key="contact_form_email_placeholder" required>
           <textarea placeholder="메시지" rows="5" class="w-full p-3 border rounded" data-key="contact_form_message_placeholder" required></textarea>
-          <button type="submit" class="bg-yellow-500 text-white px-6 py-3 rounded font-semibold hover:bg-yellow-600" data-key="contact_form_button">메시지 보내기</button>
+          <button type="submit" class="bg-skyblue text-white px-6 py-3 rounded font-semibold hover:bg-sky-600" data-key="contact_form_button">메시지 보내기</button>
         </form>
       </div>
     </div>
@@ -324,19 +336,17 @@
       <div>
         <h4 class="text-xl font-bold mb-4">빠른 링크</h4>
         <ul class="space-y-2">
-          <li><a href="#home" class="hover:text-yellow-500" data-key="nav_home">홈</a></li>
-          <li><a href="#about" class="hover:text-yellow-500" data-key="nav_about">회사 소개</a></li>
-          <li><a href="#services" class="hover:text-yellow-500" data-key="nav_services">서비스</a></li>
-          <li><a href="tracking.html" class="hover:text-yellow-500" data-key="nav_track">배송 추적</a></li>
-          <li><a href="form.html" class="hover:text-yellow-500" data-key="nav_create">배송 생성</a></li>
-          <li><a href="admin/login.html" class="hover:text-yellow-500" data-key="nav_login">로그인</a></li>
+          <li><a href="#home" class="hover:text-skyblue" data-key="nav_home">홈</a></li>
+          <li><a href="#about" class="hover:text-skyblue" data-key="nav_about">회사 소개</a></li>
+          <li><a href="#services" class="hover:text-skyblue" data-key="nav_services">서비스</a></li>
+          <li><a href="tracking.html" class="hover:text-skyblue" data-key="nav_track">배송 추적</a></li>
+          <li><a href="form.html" class="hover:text-skyblue" data-key="nav_create">배송 생성</a></li>
+          <li><a href="admin/login.html" class="hover:text-skyblue" data-key="nav_login">로그인</a></li>
         </ul>
       </div>
       <div>
         <h4 class="text-xl font-bold mb-4" data-key="footer_contact_heading">연락처</h4>
         <p data-key="footer_email">이메일: support@aollogistics.com</p>
-        <p data-key="footer_phone">전화: +1 800 123 4567</p>
-        <p data-key="footer_address">주소: 123 Global Trade Road, New York, USA</p>
       </div>
     </div>
     <div class="text-center mt-8 border-t border-gray-700 pt-6">
@@ -378,7 +388,6 @@
     if (menuBtn) {
       menuBtn.addEventListener("click", () => {
         const isHidden = mobileMenu.classList.toggle("hidden");
-        // aria-expanded should be true when menu is visible
         menuBtn.setAttribute("aria-expanded", !isHidden);
       });
 
@@ -451,15 +460,15 @@
         why_item3_text: "Personalized solutions, transparent tracking and 24/7 support.",
         testimonials_title: "What Our Customers Say",
         testimonial1_img_alt: "Customer 1",
-        testimonial1_text: "“AOL Logistics handled my deliveries with such care and speed. I always felt informed with their real-time tracking.",
+        testimonial1_text: "“AOL Logistics handled my deliveries with such care and speed. I always felt informed with their real-time tracking.”",
         testimonial1_name: "Sarah Johnson",
         testimonial1_role: "Small Business Owner",
         testimonial2_img_alt: "Customer 2",
-        testimonial2_text: "“Fast, reliable, and transparent. My online store relies on AOL Logistics for every shipment — never been disappointed.",
+        testimonial2_text: "“Fast, reliable, and transparent. My online store relies on AOL Logistics for every shipment — never been disappointed.”",
         testimonial2_name: "Michael Lee",
         testimonial2_role: "E-commerce Entrepreneur",
         testimonial3_img_alt: "Customer 3",
-        testimonial3_text: "“Excellent support team, smooth process, and quick updates. AOL Logistics is a partner I fully trust with my cargo.",
+        testimonial3_text: "“Excellent support team, smooth process, and quick updates. AOL Logistics is a partner I fully trust with my cargo.”",
         testimonial3_name: "Amira Khan",
         testimonial3_role: "Frequent Shipper",
         industries_title: "Industries We Serve",
@@ -549,15 +558,15 @@
         why_item3_text: "맞춤형 솔루션, 투명한 추적 및 24/7 지원.",
         testimonials_title: "고객의 소리",
         testimonial1_img_alt: "고객 1",
-        testimonial1_text: "“AOL Logistics는 저의 배송을 세심하고 신속하게 처리해 주었습니다. 실시간 추적으로 항상 정보를 받을 수 있었습니다.",
+        testimonial1_text: "“AOL Logistics는 저의 배송을 세심하고 신속하게 처리해 주었습니다. 실시간 추적으로 항상 정보를 받을 수 있었습니다.”",
         testimonial1_name: "Sarah Johnson",
         testimonial1_role: "소상공인",
         testimonial2_img_alt: "고객 2",
-        testimonial2_text: "“빠르고 신뢰할 수 있으며 투명합니다. 저의 온라인 상점은 모든 배송을 AOL Logistics에 의존합니다.",
+        testimonial2_text: "“빠르고 신뢰할 수 있으며 투명합니다. 저의 온라인 상점은 모든 배송을 AOL Logistics에 의존합니다.”",
         testimonial2_name: "Michael Lee",
         testimonial2_role: "전자상거래 사업가",
         testimonial3_img_alt: "고객 3",
-        testimonial3_text: "“훌륭한 지원 팀, 원활한 프로세스 및 빠른 업데이트. AOL Logistics는 제가 화물을 맡길 수 있는 신뢰할 수 있는 파트너입니다.",
+        testimonial3_text: "“훌륭한 지원 팀, 원활한 프로세스 및 빠른 업데이트. AOL Logistics는 제가 화물을 맡길 수 있는 신뢰할 수 있는 파트너입니다.”",
         testimonial3_name: "Amira Khan",
         testimonial3_role: "자주 사용하는 발송자",
         industries_title: "우리가 제공하는 산업",
