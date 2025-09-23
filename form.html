@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Shipment - AOL LOGISTICS</title>
+  <title>배송 생성 - AOL LOGISTICS</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Supabase -->
@@ -15,49 +15,50 @@
   <header class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
     <div class="container mx-auto flex items-center justify-between px-6 py-4">
       <a href="home.html">
-        <h1 class="text-2xl font-bold text-yellow-500">AOL LOGISTICS</h1>
+        <h1 class="text-2xl font-bold text-sky-600">AOL LOGISTICS</h1>
       </a>
       <nav class="hidden md:flex space-x-6">
-        <a href="home.html" class="hover:text-yellow-500">Home</a>
-        <a href="form.html" class="hover:text-yellow-500">Create Shipment</a>
-        <a href="tracking-form.html" class="hover:text-yellow-500">Track Shipment</a>
+        <a href="home.html" class="hover:text-sky-600">홈</a>
+        <a href="form.html" class="hover:text-sky-600">배송 생성</a>
+        <a href="tracking-form.html" class="hover:text-sky-600">배송 추적</a>
       </nav>
+      <button id="langToggle" class="ml-4 bg-sky-600 text-white px-4 py-2 rounded">English</button>
     </div>
   </header>
 
   <!-- Shipment Form -->
   <section class="pt-32 pb-20">
     <div class="container mx-auto px-6">
-      <h2 class="text-3xl font-bold text-center mb-8">Receiver Information</h2>
+      <h2 class="text-3xl font-bold text-center mb-8">수령인 정보</h2>
 
       <form id="shipmentForm" class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-8 space-y-6">
         <div>
-          <label for="receiver_name" class="block font-semibold">Name</label>
+          <label for="receiver_name" class="block font-semibold">이름</label>
           <input type="text" id="receiver_name" class="w-full mt-2 p-3 border rounded" required>
         </div>
 
         <div>
-          <label for="receiver_email" class="block font-semibold">Email</label>
+          <label for="receiver_email" class="block font-semibold">이메일</label>
           <input type="email" id="receiver_email" class="w-full mt-2 p-3 border rounded" required>
         </div>
 
         <div>
-          <label for="receiver_address" class="block font-semibold">Address</label>
+          <label for="receiver_address" class="block font-semibold">주소</label>
           <textarea id="receiver_address" class="w-full mt-2 p-3 border rounded" required></textarea>
         </div>
 
         <div>
-          <label for="receiver_country" class="block font-semibold">Country</label>
+          <label for="receiver_country" class="block font-semibold">국가</label>
           <input type="text" id="receiver_country" class="w-full mt-2 p-3 border rounded" required>
         </div>
 
         <div>
-          <label for="receiver_phone" class="block font-semibold">Phone number</label>
+          <label for="receiver_phone" class="block font-semibold">전화번호</label>
           <input type="tel" id="receiver_phone" class="w-full mt-2 p-3 border rounded" required>
         </div>
 
-        <button type="submit" class="w-full bg-yellow-500 text-white py-3 rounded-lg font-semibold hover:bg-yellow-600">
-          Submit Shipment
+        <button type="submit" class="w-full bg-sky-600 text-white py-3 rounded-lg font-semibold hover:bg-sky-700">
+          배송 제출
         </button>
       </form>
 
@@ -93,7 +94,7 @@
       const formEl = document.getElementById("shipmentForm");
 
       btn.disabled = true;
-      btn.innerText = "Submitting...";
+      btn.innerText = "제출 중...";
 
       // Auto-generate numbers
       const trackingNo = generateTrackingNo();
@@ -104,7 +105,7 @@
 
       // Prepare data for user_info
       const shipment = {
-        tracking_no: trackingNo,        // ✅ fixed field name
+        tracking_no: trackingNo,
         tracking_link: trackingLink,
         receiver_name: document.getElementById("receiver_name").value,
         receiver_email: document.getElementById("receiver_email").value,
@@ -114,7 +115,7 @@
         asalu_no: asaluNo,
         delivery_code: deliveryCode,
         item_no: itemNo,
-        status: "Order Placed"
+        status: "주문 접수"
       };
 
       // Insert into user_info
@@ -124,10 +125,10 @@
         .select("id");
 
       if (userInfoError) {
-        console.error("❌ User info error:", userInfoError);
-        messageDiv.innerHTML = `<p class="text-red-600">❌ Failed: ${userInfoError.message}</p>`;
+        console.error("❌ 사용자 정보 오류:", userInfoError);
+        messageDiv.innerHTML = `<p class="text-red-600">❌ 실패: ${userInfoError.message}</p>`;
         btn.disabled = false;
-        btn.innerText = "Submit Shipment";
+        btn.innerText = "배송 제출";
         return;
       }
 
@@ -137,10 +138,10 @@
       const trackingUpdate = {
         shipment_id: shipmentId,
         tracking_no: trackingNo,
-        status: "Pending",
-        progress: "Order Placed",
+        status: "대기 중",
+        progress: "주문 접수",
         location: shipment.receiver_country,
-        note: "Shipment created"
+        note: "배송 생성됨"
       };
 
       const { error: trackingError } = await supabase
@@ -148,23 +149,58 @@
         .insert([trackingUpdate]);
 
       if (trackingError) {
-        console.error("❌ Tracking error:", trackingError);
-        messageDiv.innerHTML += `<p class="text-red-600">❌ Tracking insert failed: ${trackingError.message}</p>`;
+        console.error("❌ 추적 오류:", trackingError);
+        messageDiv.innerHTML += `<p class="text-red-600">❌ 추적 삽입 실패: ${trackingError.message}</p>`;
       }
 
       // Success message
       formEl.classList.add("hidden");
       messageDiv.innerHTML = `
         <div class="bg-white shadow-lg rounded-lg p-6">
-          <p class="text-green-600 font-semibold text-lg mb-4">✅ Shipment created successfully!</p>
-          <p><b>Tracking Number:</b> ${trackingNo}</p>
-          <p><b>Delivery Code:</b> ${deliveryCode}</p>
-          <p><a href="${trackingLink}" class="text-blue-600 underline">Track your shipment here</a></p>
+          <p class="text-green-600 font-semibold text-lg mb-4">✅ 배송이 성공적으로 생성되었습니다!</p>
+          <p><b>추적 번호:</b> ${trackingNo}</p>
+          <p><b>배송 코드:</b> ${deliveryCode}</p>
+          <p><a href="${trackingLink}" class="text-blue-600 underline">여기에서 배송을 추적하세요</a></p>
         </div>
       `;
 
       btn.disabled = false;
-      btn.innerText = "Submit Shipment";
+      btn.innerText = "배송 제출";
+    });
+
+    // Language toggle functionality
+    const langToggle = document.getElementById('langToggle');
+    langToggle.addEventListener('click', function() {
+      const currentLang = document.documentElement.lang;
+      if (currentLang === 'ko') {
+        document.documentElement.lang = 'en';
+        document.title = "Create Shipment - AOL LOGISTICS";
+        document.querySelector('h2').innerText = "Receiver Information";
+        document.querySelector('label[for="receiver_name"]').innerText = "Name";
+        document.querySelector('label[for="receiver_email"]').innerText = "Email";
+        document.querySelector('label[for="receiver_address"]').innerText = "Address";
+        document.querySelector('label[for="receiver_country"]').innerText = "Country";
+        document.querySelector('label[for="receiver_phone"]').innerText = "Phone number";
+        document.querySelector('button[type="submit"]').innerText = "Submit Shipment";
+        document.querySelector('a[href="home.html"]').innerText = "Home";
+        document.querySelector('a[href="form.html"]').innerText = "Create Shipment";
+        document.querySelector('a[href="tracking-form.html"]').innerText = "Track Shipment";
+        langToggle.innerText = "한국어";
+      } else {
+        document.documentElement.lang = 'ko';
+        document.title = "배송 생성 - AOL LOGISTICS";
+        document.querySelector('h2').innerText = "수령인 정보";
+        document.querySelector('label[for="receiver_name"]').innerText = "이름";
+        document.querySelector('label[for="receiver_email"]').innerText = "이메일";
+        document.querySelector('label[for="receiver_address"]').innerText = "주소";
+        document.querySelector('label[for="receiver_country"]').innerText = "국가";
+        document.querySelector('label[for="receiver_phone"]').innerText = "전화번호";
+        document.querySelector('button[type="submit"]').innerText = "배송 제출";
+        document.querySelector('a[href="home.html"]').innerText = "홈";
+        document.querySelector('a[href="form.html"]').innerText = "배송 생성";
+        document.querySelector('a[href="tracking-form.html"]').innerText = "배송 추적";
+        langToggle.innerText = "English";
+      }
     });
   </script>
 </body>
