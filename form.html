@@ -12,17 +12,37 @@
 <body class="bg-gray-50 text-gray-800">
 
   <!-- Navbar -->
-  <header class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
-    <div class="container mx-auto flex items-center justify-between px-6 py-4">
-      <a href="home.html">
-        <h1 class="text-2xl font-bold italic text-sky-600">AOL LOGISTICS</h1>
+  <header class="bg-gray-800 shadow-md fixed top-0 left-0 w-full z-50">
+    <div class="container mx-auto flex items-center justify-between px-6 py-2">
+      <a href="home.html" class="flex items-center space-x-2">
+        <img src="images/images (2).jpeg" alt="Logo" class="h-12 w-12 object-cover rounded-full hidden sm:block">
+        <div class="flex flex-col leading-tight">
+          <h1 class="text-lg md:text-xl font-bold text-sky-600 italic" data-key="brand">
+            AOL LOGISTICS
+          </h1>
+          <p class="text-xs italic text-gray-300 -mt-1 tracking-tight hidden sm:block">
+            delivery service at its finest
+          </p>
+        </div>
       </a>
+      
+      <!-- Desktop Nav -->
       <nav class="hidden md:flex space-x-6">
-        <a href="home.html" class="hover:text-sky-600">홈</a>
-        <a href="form.html" class="hover:text-sky-600">배송 생성</a>
-        <a href="tracking-form.html" class="hover:text-sky-600">배송 추적</a>
+        <a href="#about" class="hover:text-skyblue" data-key="nav_about">회사 소개</a>
+        <a href="#services" class="hover:text-skyblue" data-key="nav_services">서비스</a>
+        <a href="tracking.html" class="hover:text-skyblue" data-key="nav_track">배송 추적</a>
+        <a href="form.html" class="hover:text-skyblue" data-key="nav_create">배송 생성</a>
+        <a href="#news" class="hover:text-skyblue" data-key="nav_news">뉴스</a>
+        <a href="#contact" class="hover:text-skyblue" data-key="nav_contact">연락처</a>
+        <a href="admin/login.html" class="hover:text-skyblue" data-key="nav_login">로그인</a>
       </nav>
-      <button id="langToggle" class="ml-4 bg-sky-600 text-white px-4 py-2 rounded">English</button>
+
+      <div class="flex items-center">
+        <button id="langToggle" class="ml-4 bg-skyblue text-white px-4 py-2 rounded">English</button>
+        <button id="menuBtn" aria-expanded="false" aria-label="Open menu" class="md:hidden bg-skyblue text-white px-4 py-2 rounded ml-3" data-key="menu_text">
+          메뉴
+        </button>
+      </div>
     </div>
   </header>
 
@@ -69,7 +89,7 @@
   <!-- Supabase Script -->
   <script>
     const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // ⚠️ Replace with secure method
+    const SUPABASE_KEY = "YOUR_SUPABASE_KEY"; // ⚠️ Replace with secure method
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     // Auto generators
