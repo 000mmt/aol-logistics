@@ -13,88 +13,119 @@
     }
   </style>
 </head>
-<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
 
-  <!-- Header -->
-  <header class="bg-white shadow-md p-4 flex justify-between items-center">
-
-    
-    <a href="home.html" class="flex items-center space-x-2">
-      <img src="images/images (2).jpeg" alt="Logo" class="h-12 w-12 object-cover rounded-full hidden sm:block">
+  <!-- Header/Navbar -->
+  <header class="bg-gray-800 shadow-md sticky top-0 z-50">
+    <div class="container mx-auto flex justify-between items-center px-6 py-4">
+      <!-- Logo -->
+      <a href="home.html" class="flex items-center space-x-2">
+        <img src="images/images (2).jpeg" alt="Logo" class="h-12 w-12 object-cover rounded-full hidden sm:block">
         <div class="flex flex-col leading-tight">
-           <h1 class="text-lg md:text-xl font-bold text-sky-600 italic" data-key="brand">
+          <h1 class="text-lg md:text-xl font-bold text-sky-400 italic" data-key="brand">
             AOL LOGISTICS
-           </h1>
-           <p class="text-xs italic text-gray-300 -mt-1 tracking-tight hidden sm:block">
-           delivery service at its finest
-        </p>
-        </a>
+          </h1>
+          <p class="text-xs italic text-gray-300 -mt-1 tracking-tight hidden sm:block">
+            delivery service at its finest
+          </p>
+        </div>
+      </a>
 
-    
-    <div class="flex items-center space-x-4">
-      <button id="toggleLang" class="px-3 py-1 text-sm bg-yellow-500 text-white rounded-md hover:bg-yellow-600">English</button>
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex space-x-6 text-gray-200 font-medium">
+        <a href="home.html" class="hover:text-sky-400" data-key="home">Home</a>
+        <a href="tracking-form.html" class="hover:text-sky-400">Tracking</a>
+      </nav>
+
+      <!-- Right Side -->
+      <div class="flex items-center space-x-4">
+        <button id="toggleLang" class="px-3 py-1 text-sm bg-sky-500 text-white rounded-md hover:bg-sky-600">
+          English
+        </button>
+        <button id="menuBtn" class="md:hidden focus:outline-none">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor"
+               viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden md:hidden bg-gray-700">
+      <nav class="flex flex-col space-y-2 p-4">
+        <a href="home.html" class="block text-gray-200 hover:text-sky-400" data-key="home">Home</a>
+        <a href="tracking-form.html" class="block text-gray-200 hover:text-sky-400">Tracking</a>
+      </nav>
     </div>
   </header>
-
 
   <!-- Container -->
   <main class="flex-1 container mx-auto px-6 py-10">
 
     <!-- Shipment Summary -->
-    <div id="shipmentSummary" class="bg-white shadow-lg rounded-xl p-6 mb-10 hidden">
-      <h3 class="text-xl font-semibold mb-4" data-key="shipmentDetails">배송 세부 정보</h3>
+    <div id="shipmentSummary" class="bg-gray-800 shadow-lg rounded-xl p-6 mb-10 hidden">
+      <h3 class="text-xl font-semibold mb-4 text-sky-400" data-key="shipmentDetails">배송 세부 정보</h3>
       <div class="grid md:grid-cols-2 gap-4 text-sm">
         <p><strong data-key="trackingNo">운송장 번호:</strong> <span id="summaryTrackingNo"></span></p>
         <p><strong data-key="customer">고객:</strong> <span id="summaryCustomer"></span></p>
         <p><strong data-key="origin">출발지:</strong> <span id="summaryOrigin"></span></p>
         <p><strong data-key="destination">도착지:</strong> <span id="summaryDestination"></span></p>
-        <p><strong data-key="status">상태:</strong> <span id="summaryStatus" class="font-semibold text-yellow-600"></span></p>
-        <p><strong data-key="location">현재 위치:</strong> <span id="summaryLocation" class="font-semibold text-gray-700"></span></p>
+        <p><strong data-key="status">상태:</strong> <span id="summaryStatus" class="font-semibold text-sky-400"></span></p>
+        <p><strong data-key="location">현재 위치:</strong> <span id="summaryLocation" class="font-semibold text-gray-300"></span></p>
       </div>
     </div>
 
     <!-- Progress Bar -->
     <div id="progressSection" class="mb-10 hidden">
-      <h3 class="text-xl font-semibold mb-4" data-key="shipmentProgress">배송 진행 상황</h3>
+      <h3 class="text-xl font-semibold mb-4 text-sky-400" data-key="shipmentProgress">배송 진행 상황</h3>
       <div class="flex items-center justify-between relative">
-        <div class="absolute top-1/2 left-0 right-0 h-1 bg-gray-200 -z-10"></div>
+        <div class="absolute top-1/2 left-0 right-0 h-1 bg-gray-600 -z-10"></div>
         <div id="stepPending" class="flex flex-col items-center">
           <img src="https://cdn-icons-png.flaticon.com/512/861/861060.png" alt="Pending" class="progress-icon opacity-50">
-          <p class="mt-2 text-sm" data-key="orderPlaced">주문 접수</p>
+          <p class="mt-2 text-sm">주문 접수</p>
         </div>
         <div id="stepTransit" class="flex flex-col items-center">
           <img src="https://cdn-icons-png.flaticon.com/512/263/263142.png" alt="Preparing Shipment" class="progress-icon opacity-50">
-          <p class="mt-2 text-sm" data-key="preparing">준비 중</p>
+          <p class="mt-2 text-sm">준비 중</p>
         </div>
         <div id="stepShipped" class="flex flex-col items-center">
           <img src="https://cdn-icons-png.flaticon.com/512/1995/1995560.png" alt="Shipped" class="progress-icon opacity-50">
-          <p class="mt-2 text-sm" data-key="shipped">배송 중</p>
+          <p class="mt-2 text-sm">배송 중</p>
         </div>
         <div id="stepDelivered" class="flex flex-col items-center">
           <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="Delivered" class="progress-icon opacity-50">
-          <p class="mt-2 text-sm" data-key="delivered">배송 완료</p>
+          <p class="mt-2 text-sm">배송 완료</p>
         </div>
       </div>
     </div>
 
     <!-- Timeline -->
-    <div id="updatesTimeline" class="bg-white shadow-lg rounded-xl p-6 hidden">
-      <h3 class="text-xl font-semibold mb-6" data-key="trackingUpdates">배송 업데이트</h3>
-      <div id="timeline" class="relative border-l border-gray-300 pl-6 space-y-6"></div>
+    <div id="updatesTimeline" class="bg-gray-800 shadow-lg rounded-xl p-6 hidden">
+      <h3 class="text-xl font-semibold mb-6 text-sky-400" data-key="trackingUpdates">배송 업데이트</h3>
+      <div id="timeline" class="relative border-l border-gray-600 pl-6 space-y-6"></div>
     </div>
 
     <!-- Loading -->
-    <div id="message" class="text-center text-gray-600 mt-10"></div>
+    <div id="message" class="text-center text-gray-400 mt-10"></div>
   </main>
 
   <!-- Footer -->
-  <footer class="bg-gray-900 text-white text-center py-4">
+  <footer class="bg-gray-800 text-white text-center py-4">
     <p>&copy; 2025 AOL 물류. 모든 권리 보유.</p>
   </footer>
 
   <script>
+  // Mobile menu toggle
+  const menuBtn = document.getElementById("menuBtn");
+  const mobileMenu = document.getElementById("mobileMenu");
+  menuBtn.addEventListener("click", () => {
+    mobileMenu.classList.toggle("hidden");
+  });
+
   const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // ⚠️ replace with your real key
+  const SUPABASE_KEY = "YOUR_SUPABASE_KEY"; 
   const { createClient } = supabase;
   const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -107,7 +138,6 @@
   const timelineEl = document.getElementById("timeline");
   const messageEl = document.getElementById("message");
 
-  // Dictionary for translations
   const translations = {
     ko: {
       home: "홈",
@@ -119,10 +149,6 @@
       status: "상태:",
       location: "현재 위치:",
       shipmentProgress: "배송 진행 상황",
-      orderPlaced: "주문 접수",
-      preparing: "준비 중",
-      shipped: "배송 중",
-      delivered: "배송 완료",
       trackingUpdates: "배송 업데이트",
     },
     en: {
@@ -135,15 +161,11 @@
       status: "Status:",
       location: "Current Location:",
       shipmentProgress: "Shipment Progress",
-      orderPlaced: "Order Placed",
-      preparing: "Preparing",
-      shipped: "Shipped",
-      delivered: "Delivered",
       trackingUpdates: "Tracking Updates",
     }
   };
 
-  let currentLang = "ko"; // default Korean
+  let currentLang = "ko"; 
 
   function switchLanguage() {
     const elements = document.querySelectorAll("[data-key]");
@@ -159,18 +181,16 @@
     switchLanguage();
   });
 
-  // Initial translation load
   switchLanguage();
 
-async function loadTracking() {
+  async function loadTracking() {
     if (!trackingNo) {
-      window.location.href = "tracking-form.html"; // redirect if no tracking number
+      window.location.href = "tracking-form.html";
       return;
     }
 
     messageEl.textContent = "Loading shipment...";
 
-    // 1. Get shipment from DB
     const { data: shipment, error: shipmentError } = await supabaseClient
       .from("user_info")
       .select("*")
@@ -178,11 +198,10 @@ async function loadTracking() {
       .maybeSingle();
 
     if (shipmentError || !shipment) {
-      window.location.href = "tracking-form.html"; // if invalid, redirect back
+      window.location.href = "tracking-form.html";
       return;
     }
 
-    // 2. Get updates from DB
     const { data: updates, error: updatesError } = await supabaseClient
       .from("tracking_updates")
       .select("*")
@@ -196,7 +215,6 @@ async function loadTracking() {
 
     const latestUpdate = updates?.length > 0 ? updates[0] : null;
 
-    // Fill summary
     summaryEl.classList.remove("hidden");
     document.getElementById("summaryTrackingNo").textContent = shipment.tracking_no;
     document.getElementById("summaryCustomer").textContent = shipment.receiver_name || "-";
@@ -205,21 +223,19 @@ async function loadTracking() {
     document.getElementById("summaryStatus").textContent = latestUpdate?.progress || "Order Placed";
     document.getElementById("summaryLocation").textContent = latestUpdate?.location || "Not available";
 
-    // Progress bar
     progressEl.classList.remove("hidden");
     highlightStep(latestUpdate?.progress || "Order Placed");
 
-    // Timeline
     if (updates?.length > 0) {
       updatesEl.classList.remove("hidden");
       timelineEl.innerHTML = updates.map(update => `
         <div class="relative">
-          <div class="absolute -left-3 top-1 w-6 h-6 rounded-full bg-yellow-500 border-2 border-white"></div>
+          <div class="absolute -left-3 top-1 w-6 h-6 rounded-full bg-sky-500 border-2 border-gray-900"></div>
           <div class="ml-4">
-            <p class="font-semibold text-yellow-600">${update.progress}</p>
-            <p class="text-gray-700">${update.location || "Unknown"}</p>
-            <p class="text-sm text-gray-500">${new Date(update.created_at).toLocaleString()}</p>
-            ${update.note ? `<p class="mt-1 text-gray-600 italic">${update.note}</p>` : ""}
+            <p class="font-semibold text-sky-400">${update.progress}</p>
+            <p class="text-gray-300">${update.location || "Unknown"}</p>
+            <p class="text-sm text-gray-400">${new Date(update.created_at).toLocaleString()}</p>
+            ${update.note ? `<p class="mt-1 text-gray-400 italic">${update.note}</p>` : ""}
           </div>
         </div>
       `).join("");
@@ -239,13 +255,13 @@ async function loadTracking() {
     Object.values(steps).forEach(id => {
       const step = document.getElementById(id);
       step.querySelector("img").classList.add("opacity-50");
-      step.querySelector("p").classList.remove("font-bold");
+      step.querySelector("p").classList.remove("font-bold", "text-sky-400");
     });
 
     if (steps[progress]) {
       const step = document.getElementById(steps[progress]);
       step.querySelector("img").classList.remove("opacity-50");
-      step.querySelector("p").classList.add("font-bold");
+      step.querySelector("p").classList.add("font-bold", "text-sky-400");
     }
   }
 
