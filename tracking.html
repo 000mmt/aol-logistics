@@ -15,7 +15,7 @@
 </head>
 <body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
 
-  <!-- Header -->
+  <!-- NAVBAR -->
   <header class="bg-gray-800 shadow-md fixed top-0 left-0 w-full z-50">
     <div class="container mx-auto flex items-center justify-between px-6 py-2">
       <a href="home.html" class="flex items-center space-x-2">
@@ -30,7 +30,6 @@
         </div>
       </a>
       
-      <!-- Desktop Nav -->
       <nav class="hidden md:flex space-x-6">
         <a href="#about" class="hover:text-skyblue" data-key="nav_about">회사 소개</a>
         <a href="#services" class="hover:text-skyblue" data-key="nav_services">서비스</a>
@@ -48,10 +47,28 @@
         </button>
       </div>
     </div>
+
+    <!-- Mobile Dropdown -->
+    <div id="mobileMenu" class="hidden bg-gray-800 shadow-md md:hidden">
+      <nav class="flex flex-col space-y-2 px-6 py-4">
+        <a href="home.html" class="hover:text-skyblue mobile-link" data-key="nav_home">홈</a>
+        <a href="#about" class="hover:text-skyblue mobile-link" data-key="nav_about">회사 소개</a>
+        <a href="#services" class="hover:text-skyblue mobile-link" data-key="nav_services">서비스</a>
+        <a href="tracking.html" class="hover:text-skyblue mobile-link" data-key="nav_track">배송 추적</a>
+        <a href="form.html" class="hover:text-skyblue mobile-link" data-key="nav_create">배송 생성</a>
+        <a href="#reach" class="hover:text-skyblue mobile-link" data-key="nav_reach">글로벌 네트워크</a>
+        <a href="#why" class="hover:text-skyblue mobile-link" data-key="nav_why">왜 우리인가</a>
+        <a href="#industries" class="hover:text-skyblue mobile-link" data-key="nav_industries">산업 분야</a>
+        <a href="#news" class="hover:text-skyblue mobile-link" data-key="nav_news">뉴스</a>
+        <a href="#testimonials" class="hover:text-skyblue mobile-link" data-key="nav_testimonials">고객 후기</a>
+        <a href="#contact" class="hover:text-skyblue mobile-link" data-key="nav_contact">연락처</a>
+        <a href="admin/login.html" class="hover:text-skyblue mobile-link" data-key="nav_login">로그인</a>
+      </nav>
+    </div>
   </header>
 
   <!-- Container -->
-  <main class="flex-1 container mx-auto px-6 py-10 pt-28">
+  <main class="flex-1 container mx-auto px-6 py-10 mt-28">
 
     <!-- Shipment Summary -->
     <div id="shipmentSummary" class="bg-white shadow-lg rounded-xl p-6 mb-10 hidden">
