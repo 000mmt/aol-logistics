@@ -16,29 +16,42 @@
 <body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
 
   <!-- Header -->
-  <header class="bg-white shadow-md p-4 flex justify-between items-center">
-
-    
-    <a href="home.html" class="flex items-center space-x-2">
-      <img src="images/images (2).jpeg" alt="Logo" class="h-12 w-12 object-cover rounded-full hidden sm:block">
+  <header class="bg-gray-800 shadow-md fixed top-0 left-0 w-full z-50">
+    <div class="container mx-auto flex items-center justify-between px-6 py-2">
+      <a href="home.html" class="flex items-center space-x-2">
+        <img src="images/images (2).jpeg" alt="Logo" class="h-12 w-12 object-cover rounded-full hidden sm:block">
         <div class="flex flex-col leading-tight">
-           <h1 class="text-lg md:text-xl font-bold text-sky-600 italic" data-key="brand">
+          <h1 class="text-lg md:text-xl font-bold text-sky-600 italic" data-key="brand">
             AOL LOGISTICS
-           </h1>
-           <p class="text-xs italic text-gray-300 -mt-1 tracking-tight hidden sm:block">
-           delivery service at its finest
-        </p>
-        </a>
+          </h1>
+          <p class="text-xs italic text-gray-300 -mt-1 tracking-tight hidden sm:block">
+            delivery service at its finest
+          </p>
+        </div>
+      </a>
+      
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex space-x-6">
+        <a href="#about" class="hover:text-skyblue" data-key="nav_about">회사 소개</a>
+        <a href="#services" class="hover:text-skyblue" data-key="nav_services">서비스</a>
+        <a href="tracking.html" class="hover:text-skyblue" data-key="nav_track">배송 추적</a>
+        <a href="form.html" class="hover:text-skyblue" data-key="nav_create">배송 생성</a>
+        <a href="#news" class="hover:text-skyblue" data-key="nav_news">뉴스</a>
+        <a href="#contact" class="hover:text-skyblue" data-key="nav_contact">연락처</a>
+        <a href="admin/login.html" class="hover:text-skyblue" data-key="nav_login">로그인</a>
+      </nav>
 
-    
-    <div class="flex items-center space-x-4">
-      <button id="toggleLang" class="px-3 py-1 text-sm bg-yellow-500 text-white rounded-md hover:bg-yellow-600">English</button>
+      <div class="flex items-center">
+        <button id="langToggle" class="ml-4 bg-skyblue text-white px-4 py-2 rounded">English</button>
+        <button id="menuBtn" aria-expanded="false" aria-label="Open menu" class="md:hidden bg-skyblue text-white px-4 py-2 rounded ml-3" data-key="menu_text">
+          메뉴
+        </button>
+      </div>
     </div>
   </header>
 
-
   <!-- Container -->
-  <main class="flex-1 container mx-auto px-6 py-10">
+  <main class="flex-1 container mx-auto px-6 py-10 pt-28">
 
     <!-- Shipment Summary -->
     <div id="shipmentSummary" class="bg-white shadow-lg rounded-xl p-6 mb-10 hidden">
@@ -93,163 +106,163 @@
   </footer>
 
   <script>
-  const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // ⚠️ replace with your real key
-  const { createClient } = supabase;
-  const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+    const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // ⚠️ replace with your real key
+    const { createClient } = supabase;
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  const params = new URLSearchParams(window.location.search);
-  const trackingNo = params.get("tracking_no");
+    const params = new URLSearchParams(window.location.search);
+    const trackingNo = params.get("tracking_no");
 
-  const summaryEl = document.getElementById("shipmentSummary");
-  const updatesEl = document.getElementById("updatesTimeline");
-  const progressEl = document.getElementById("progressSection");
-  const timelineEl = document.getElementById("timeline");
-  const messageEl = document.getElementById("message");
+    const summaryEl = document.getElementById("shipmentSummary");
+    const updatesEl = document.getElementById("updatesTimeline");
+    const progressEl = document.getElementById("progressSection");
+    const timelineEl = document.getElementById("timeline");
+    const messageEl = document.getElementById("message");
 
-  // Dictionary for translations
-  const translations = {
-    ko: {
-      home: "홈",
-      shipmentDetails: "배송 세부 정보",
-      trackingNo: "운송장 번호:",
-      customer: "고객:",
-      origin: "출발지:",
-      destination: "도착지:",
-      status: "상태:",
-      location: "현재 위치:",
-      shipmentProgress: "배송 진행 상황",
-      orderPlaced: "주문 접수",
-      preparing: "준비 중",
-      shipped: "배송 중",
-      delivered: "배송 완료",
-      trackingUpdates: "배송 업데이트",
-    },
-    en: {
-      home: "Home",
-      shipmentDetails: "Shipment Details",
-      trackingNo: "Tracking No:",
-      customer: "Customer:",
-      origin: "Origin:",
-      destination: "Destination:",
-      status: "Status:",
-      location: "Current Location:",
-      shipmentProgress: "Shipment Progress",
-      orderPlaced: "Order Placed",
-      preparing: "Preparing",
-      shipped: "Shipped",
-      delivered: "Delivered",
-      trackingUpdates: "Tracking Updates",
-    }
-  };
-
-  let currentLang = "ko"; // default Korean
-
-  function switchLanguage() {
-    const elements = document.querySelectorAll("[data-key]");
-    elements.forEach(el => {
-      const key = el.getAttribute("data-key");
-      el.textContent = translations[currentLang][key];
-    });
-    document.getElementById("toggleLang").textContent = currentLang === "ko" ? "English" : "한국어";
-  }
-
-  document.getElementById("toggleLang").addEventListener("click", () => {
-    currentLang = currentLang === "ko" ? "en" : "ko";
-    switchLanguage();
-  });
-
-  // Initial translation load
-  switchLanguage();
-
-async function loadTracking() {
-    if (!trackingNo) {
-      window.location.href = "tracking-form.html"; // redirect if no tracking number
-      return;
-    }
-
-    messageEl.textContent = "Loading shipment...";
-
-    // 1. Get shipment from DB
-    const { data: shipment, error: shipmentError } = await supabaseClient
-      .from("user_info")
-      .select("*")
-      .eq("tracking_no", trackingNo)
-      .maybeSingle();
-
-    if (shipmentError || !shipment) {
-      window.location.href = "tracking-form.html"; // if invalid, redirect back
-      return;
-    }
-
-    // 2. Get updates from DB
-    const { data: updates, error: updatesError } = await supabaseClient
-      .from("tracking_updates")
-      .select("*")
-      .eq("shipment_id", shipment.id)
-      .order("created_at", { ascending: false });
-
-    if (updatesError) {
-      messageEl.textContent = "⚠️ Error loading updates.";
-      return;
-    }
-
-    const latestUpdate = updates?.length > 0 ? updates[0] : null;
-
-    // Fill summary
-    summaryEl.classList.remove("hidden");
-    document.getElementById("summaryTrackingNo").textContent = shipment.tracking_no;
-    document.getElementById("summaryCustomer").textContent = shipment.receiver_name || "-";
-    document.getElementById("summaryOrigin").textContent = shipment.origin || "-";
-    document.getElementById("summaryDestination").textContent = shipment.receiver_country || "-";
-    document.getElementById("summaryStatus").textContent = latestUpdate?.progress || "Order Placed";
-    document.getElementById("summaryLocation").textContent = latestUpdate?.location || "Not available";
-
-    // Progress bar
-    progressEl.classList.remove("hidden");
-    highlightStep(latestUpdate?.progress || "Order Placed");
-
-    // Timeline
-    if (updates?.length > 0) {
-      updatesEl.classList.remove("hidden");
-      timelineEl.innerHTML = updates.map(update => `
-        <div class="relative">
-          <div class="absolute -left-3 top-1 w-6 h-6 rounded-full bg-yellow-500 border-2 border-white"></div>
-          <div class="ml-4">
-            <p class="font-semibold text-yellow-600">${update.progress}</p>
-            <p class="text-gray-700">${update.location || "Unknown"}</p>
-            <p class="text-sm text-gray-500">${new Date(update.created_at).toLocaleString()}</p>
-            ${update.note ? `<p class="mt-1 text-gray-600 italic">${update.note}</p>` : ""}
-          </div>
-        </div>
-      `).join("");
-    }
-
-    messageEl.textContent = "";
-  }
-
-  function highlightStep(progress) {
-    const steps = {
-      "Order Placed": "stepPending",
-      "Preparing Shipment": "stepTransit",
-      "Shipped": "stepShipped",
-      "Delivered": "stepDelivered"
+    // Dictionary for translations
+    const translations = {
+      ko: {
+        home: "홈",
+        shipmentDetails: "배송 세부 정보",
+        trackingNo: "운송장 번호:",
+        customer: "고객:",
+        origin: "출발지:",
+        destination: "도착지:",
+        status: "상태:",
+        location: "현재 위치:",
+        shipmentProgress: "배송 진행 상황",
+        orderPlaced: "주문 접수",
+        preparing: "준비 중",
+        shipped: "배송 중",
+        delivered: "배송 완료",
+        trackingUpdates: "배송 업데이트",
+      },
+      en: {
+        home: "Home",
+        shipmentDetails: "Shipment Details",
+        trackingNo: "Tracking No:",
+        customer: "Customer:",
+        origin: "Origin:",
+        destination: "Destination:",
+        status: "Status:",
+        location: "Current Location:",
+        shipmentProgress: "Shipment Progress",
+        orderPlaced: "Order Placed",
+        preparing: "Preparing",
+        shipped: "Shipped",
+        delivered: "Delivered",
+        trackingUpdates: "Tracking Updates",
+      }
     };
 
-    Object.values(steps).forEach(id => {
-      const step = document.getElementById(id);
-      step.querySelector("img").classList.add("opacity-50");
-      step.querySelector("p").classList.remove("font-bold");
+    let currentLang = "ko"; // default Korean
+
+    function switchLanguage() {
+      const elements = document.querySelectorAll("[data-key]");
+      elements.forEach(el => {
+        const key = el.getAttribute("data-key");
+        el.textContent = translations[currentLang][key];
+      });
+      document.getElementById("toggleLang").textContent = currentLang === "ko" ? "English" : "한국어";
+    }
+
+    document.getElementById("toggleLang").addEventListener("click", () => {
+      currentLang = currentLang === "ko" ? "en" : "ko";
+      switchLanguage();
     });
 
-    if (steps[progress]) {
-      const step = document.getElementById(steps[progress]);
-      step.querySelector("img").classList.remove("opacity-50");
-      step.querySelector("p").classList.add("font-bold");
-    }
-  }
+    // Initial translation load
+    switchLanguage();
 
-  loadTracking();
+    async function loadTracking() {
+      if (!trackingNo) {
+        window.location.href = "tracking-form.html"; // redirect if no tracking number
+        return;
+      }
+
+      messageEl.textContent = "Loading shipment...";
+
+      // 1. Get shipment from DB
+      const { data: shipment, error: shipmentError } = await supabaseClient
+        .from("user_info")
+        .select("*")
+        .eq("tracking_no", trackingNo)
+        .maybeSingle();
+
+      if (shipmentError || !shipment) {
+        window.location.href = "tracking-form.html"; // if invalid, redirect back
+        return;
+      }
+
+      // 2. Get updates from DB
+      const { data: updates, error: updatesError } = await supabaseClient
+        .from("tracking_updates")
+        .select("*")
+        .eq("shipment_id", shipment.id)
+        .order("created_at", { ascending: false });
+
+      if (updatesError) {
+        messageEl.textContent = "⚠️ Error loading updates.";
+        return;
+      }
+
+      const latestUpdate = updates?.length > 0 ? updates[0] : null;
+
+      // Fill summary
+      summaryEl.classList.remove("hidden");
+      document.getElementById("summaryTrackingNo").textContent = shipment.tracking_no;
+      document.getElementById("summaryCustomer").textContent = shipment.receiver_name || "-";
+      document.getElementById("summaryOrigin").textContent = shipment.origin || "-";
+      document.getElementById("summaryDestination").textContent = shipment.receiver_country || "-";
+      document.getElementById("summaryStatus").textContent = latestUpdate?.progress || "Order Placed";
+      document.getElementById("summaryLocation").textContent = latestUpdate?.location || "Not available";
+
+      // Progress bar
+      progressEl.classList.remove("hidden");
+      highlightStep(latestUpdate?.progress || "Order Placed");
+
+      // Timeline
+      if (updates?.length > 0) {
+        updatesEl.classList.remove("hidden");
+        timelineEl.innerHTML = updates.map(update => `
+          <div class="relative">
+            <div class="absolute -left-3 top-1 w-6 h-6 rounded-full bg-yellow-500 border-2 border-white"></div>
+            <div class="ml-4">
+              <p class="font-semibold text-yellow-600">${update.progress}</p>
+              <p class="text-gray-700">${update.location || "Unknown"}</p>
+              <p class="text-sm text-gray-500">${new Date(update.created_at).toLocaleString()}</p>
+              ${update.note ? `<p class="mt-1 text-gray-600 italic">${update.note}</p>` : ""}
+            </div>
+          </div>
+        `).join("");
+      }
+
+      messageEl.textContent = "";
+    }
+
+    function highlightStep(progress) {
+      const steps = {
+        "Order Placed": "stepPending",
+        "Preparing Shipment": "stepTransit",
+        "Shipped": "stepShipped",
+        "Delivered": "stepDelivered"
+      };
+
+      Object.values(steps).forEach(id => {
+        const step = document.getElementById(id);
+        step.querySelector("img").classList.add("opacity-50");
+        step.querySelector("p").classList.remove("font-bold");
+      });
+
+      if (steps[progress]) {
+        const step = document.getElementById(steps[progress]);
+        step.querySelector("img").classList.remove("opacity-50");
+        step.querySelector("p").classList.add("font-bold");
+      }
+    }
+
+    loadTracking();
   </script>
 </body>
 </html>
