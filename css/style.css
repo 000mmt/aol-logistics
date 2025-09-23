@@ -1,58 +1,92 @@
-/* Hero Section */
-.hero-bg img {
+/* HERO SLIDER - fade transition */
+.hero-slider {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: 100vh; /* full viewport height */
+  height: 100%;
+  overflow: hidden;
+}
+
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out;
+}
+
+.hero-slide.active {
+  opacity: 1;
+}
+
+.hero-slide img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  object-position: center;
+  opacity: 0.45;
+  display: block;
 }
 
-.hero-title {
-  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+/* Overlay to improve text contrast */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.35));
+  pointer-events: none;
 }
 
-.hero-btn {
-  transition: transform 0.3s ease, background-color 0.3s ease;
+/* Small adjustments for hero text on small screens */
+@media (max-width: 640px) {
+  .hero-title { font-size: 1.8rem; }
+  .hero-btn { padding-left: 1rem; padding-right: 1rem; }
 }
 
-.hero-btn:hover {
-  transform: scale(1.05);
-  background-color: #facc15; /* Tailwind yellow-400 */
-  color: #1f2937; /* Tailwind gray-800 */
+/* Dark background for the page */
+body {
+  background-color: #1a202c; /* Dark background */
+  color: #e2e8f0; /* Light text color */
 }
 
-/* About Image */
-.about-img {
-  border-radius: 12px;
-  max-height: 480px;
-  object-fit: cover;
+/* Adjustments for mobile navbar items */
+.mobile-link {
+  padding: 10px; /* Adjusted padding for mobile links */
+  font-size: 1rem; /* Adjusted font size */
 }
 
-/* Service Card */
-.service-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+/* Change text color to skyblue */
+.text-skyblue {
+  color: #87CEEB; /* Skyblue color */
 }
 
-.service-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+.bg-skyblue {
+  background-color: #87CEEB; /* Skyblue background */
 }
 
-/* Global Reach */
-.global-reach img {
-  transition: transform 0.3s ease;
-  width: 120px;   /* bigger flags */
-  height: 80px;   /* maintain height */
-  object-fit: cover;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+/* Additional styles for sections */
+section {
+  padding: 20px 0;
 }
 
-.global-reach img:hover {
-  transform: scale(1.1);
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
 }
 
-/* Footer */
-footer {
-  margin-top: 60px; /* make page longer naturally */
-  padding-bottom: 40px;
+h1, h2, h3, h4 {
+  margin-bottom: 1rem;
+}
+
+p {
+  margin-bottom: 0.5rem;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Adjust the size and display of images in testimonials */
+.testimonial-img {
+  width: 100%; /* Full width */
+  height: auto; /* Maintain aspect ratio */
+  object-fit: cover; /* Cover the area without distorting */
 }
