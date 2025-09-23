@@ -66,6 +66,9 @@
         </button>
       </form>
 
+      <!-- Error message placeholder -->
+      <div id="errorMessage" class="mt-4 text-center text-red-600 font-medium hidden"></div>
+
       <!-- Back to Home link -->
       <div class="text-center mt-6">
         <a href="home.html" class="text-blue-600 hover:underline">← 홈으로 돌아가기</a>
@@ -79,10 +82,25 @@
       e.preventDefault();
       const trackingNo = document.getElementById('trackingNo').value.trim();
       if (trackingNo) {
-        // Redirect to tracking.html with tracking number in query string
         window.location.href = `tracking.html?tracking_no=${encodeURIComponent(trackingNo)}`;
       }
     });
+
+    // Show error if redirected back
+    const params = new URLSearchParams(window.location.search);
+    const error = params.get("error");
+    const code = params.get("code");
+    const errorMessageEl = document.getElementById("errorMessage");
+
+    if (error === "invalid") {
+      const currentLang = document.documentElement.lang;
+      if (currentLang === "ko") {
+        errorMessageEl.textContent = `유효하지 않은 운송장 코드입니다: ${code || ""}`;
+      } else {
+        errorMessageEl.textContent = `Invalid tracking code: ${code || ""}`;
+      }
+      errorMessageEl.classList.remove("hidden");
+    }
 
     // Language toggle functionality
     const langToggle = document.getElementById('langToggle');
@@ -97,6 +115,9 @@
         document.querySelector('button[type="submit"]').innerText = "Track Now";
         document.querySelector('a').innerText = "← Back to Home";
         langToggle.innerText = "한국어";
+        if (error === "invalid") {
+          errorMessageEl.textContent = `Invalid tracking code: ${code || ""}`;
+        }
       } else {
         document.documentElement.lang = 'ko';
         document.title = "배송 추적";
@@ -106,6 +127,9 @@
         document.querySelector('button[type="submit"]').innerText = "지금 추적";
         document.querySelector('a').innerText = "← 홈으로 돌아가기";
         langToggle.innerText = "English";
+        if (error === "invalid") {
+          errorMessageEl.textContent = `유효하지 않은 운송장 코드입니다: ${code || ""}`;
+        }
       }
     });
   </script>
