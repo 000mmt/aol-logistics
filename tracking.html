@@ -54,7 +54,6 @@
       <a href="home.html" class="flex items-center space-x-3">
         <img src="images/images (2).jpeg" alt="Logo" class="h-12 w-12 object-cover rounded-full">
         <div class="flex flex-col leading-tight min-w-0">
-          <!-- Brand should always be visible (no hidden) -->
           <h1 class="text-lg md:text-xl font-bold text-sky-400 italic truncate" data-key="brand">
             AOL LOGISTICS
           </h1>
@@ -113,40 +112,39 @@
     </div>
 
    <!-- Progress Bar -->
-<div id="progressSection" class="mb-8 hidden">
-  <h3 class="text-xl font-semibold mb-4 text-sky-400" data-key="shipmentProgress">배송 진행 상황</h3>
+   <div id="progressSection" class="mb-8 hidden">
+     <h3 class="text-xl font-semibold mb-4 text-sky-400" data-key="shipmentProgress">배송 진행 상황</h3>
 
-  <div class="relative flex items-center justify-between">
-    <!-- Base line (gray) -->
-    <div class="absolute top-1/2 inset-x-0 mx-auto h-1 bg-gray-600 -z-10 rounded w-[90%] sm:w-[80%]"></div>
+     <div class="relative flex items-center justify-between">
+       <!-- Base line (gray) -->
+       <div class="absolute top-1/2 inset-x-0 mx-auto h-1 bg-gray-600 -z-10 rounded w-full max-w-[90%]"></div>
 
-    <!-- Load (sky-blue) line -->
-    <div id="progressLine" class="absolute top-1/2 left-[5%] h-1 bg-sky-500 -z-10 rounded transition-all duration-500" style="width:0%;"></div>
+       <!-- Load (sky-blue) line -->
+       <div id="progressLine" class="absolute top-1/2 left-0 h-1 bg-sky-500 -z-10 rounded transition-all duration-500" style="width:0%;"></div>
 
-    <!-- Steps -->
-    <div id="stepPending" class="flex flex-col items-center relative z-10 w-1/4">
-      <img src="https://cdn-icons-png.flaticon.com/512/861/861060.png" alt="Pending" class="progress-icon opacity-50">
-      <p class="mt-2 text-sm" data-key="orderPlaced">주문 접수</p>
-    </div>
+       <!-- Steps -->
+       <div id="stepPending" class="flex flex-col items-center relative z-10 w-1/4">
+         <img src="https://cdn-icons-png.flaticon.com/512/861/861060.png" alt="Pending" class="progress-icon opacity-50">
+         <p class="mt-2 text-sm" data-key="orderPlaced">주문 접수</p>
+       </div>
 
-    <div id="stepTransit" class="flex flex-col items-center relative z-10 w-1/4">
-      <img src="https://cdn-icons-png.flaticon.com/512/263/263142.png" alt="Preparing Shipment" class="progress-icon opacity-50">
-      <p class="mt-2 text-sm" data-key="preparing">준비 중</p>
-    </div>
+       <div id="stepTransit" class="flex flex-col items-center relative z-10 w-1/4">
+         <img src="https://cdn-icons-png.flaticon.com/512/263/263142.png" alt="Preparing Shipment" class="progress-icon opacity-50">
+         <p class="mt-2 text-sm" data-key="preparing">준비 중</p>
+       </div>
 
-    <div id="stepShipped" class="flex flex-col items-center relative z-10 w-1/4">
-      <img src="https://cdn-icons-png.flaticon.com/512/1995/1995560.png" alt="Shipped" class="progress-icon opacity-50">
-      <p class="mt-2 text-sm" data-key="shipped">배송 중</p>
-    </div>
+       <div id="stepShipped" class="flex flex-col items-center relative z-10 w-1/4">
+         <img src="https://cdn-icons-png.flaticon.com/512/1995/1995560.png" alt="Shipped" class="progress-icon opacity-50">
+         <p class="mt-2 text-sm" data-key="shipped">배송 중</p>
+       </div>
 
-    <div id="stepDelivered" class="flex flex-col items-center relative z-10 w-1/4">
-      <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="Delivered" class="progress-icon opacity-50">
-      <p class="mt-2 text-sm" data-key="delivered">배송 완료</p>
-    </div>
-  </div>
-</div>
+       <div id="stepDelivered" class="flex flex-col items-center relative z-10 w-1/4">
+         <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="Delivered" class="progress-icon opacity-50">
+         <p class="mt-2 text-sm" data-key="delivered">배송 완료</p>
+       </div>
+     </div>
+   </div>
 
-    
     <!-- Timeline -->
     <div id="updatesTimeline" class="bg-gray-800 shadow-lg rounded-xl p-6 hidden">
       <h3 class="text-xl font-semibold mb-6 text-sky-400" data-key="trackingUpdates">배송 업데이트</h3>
@@ -395,8 +393,7 @@
         .maybeSingle();
 
       if (shipmentError || !shipment) {
-        // Redirect back to tracking form with an "invalid" flag and original code so the form can show the message
-        // This will allow tracking-form.html to read ?error=invalid and show an inline message like "Invalid code: XYZ"
+        // Redirect back to tracking form with an "invalid" flag and original code
         const q = new URLSearchParams({ error: "invalid", code: trackingNo });
         window.location.href = `tracking-form.html?${q.toString()}`;
         return;
@@ -420,7 +417,6 @@
 
       // show summary and sections
       summaryEl.classList.remove("hidden");
-      // render will fill the fields and timeline in the correct language
       renderDynamicContent();
 
       // reveal progress and timeline if present
@@ -437,7 +433,6 @@
 
   /***** highlight progress step & update progress line *****/
   function highlightStep(normalizedProgress) {
-    // normalizeProgress should return one of the canonical strings from orderStatuses
     const idx = orderStatuses.indexOf(normalizedProgress);
     const activeIndex = Math.max(0, idx === -1 ? 0 : idx);
 
@@ -468,9 +463,8 @@
       }
     }
 
-    // update progressLine width (use left/right padding accounted by left-4/right-4 in base)
+    // update progressLine width
     const percent = (activeIndex / (orderStatuses.length - 1)) * 100;
-    // ensure a little baseline if 0 => 0%, if final => 100%
     progressLine.style.width = `${percent}%`;
   }
 
