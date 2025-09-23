@@ -112,39 +112,41 @@
       </div>
     </div>
 
-    <!-- Progress Bar -->
-    <div id="progressSection" class="mb-8 hidden">
-      <h3 class="text-xl font-semibold mb-4 text-sky-400" data-key="shipmentProgress">배송 진행 상황</h3>
+   <!-- Progress Bar -->
+<div id="progressSection" class="mb-8 hidden">
+  <h3 class="text-xl font-semibold mb-4 text-sky-400" data-key="shipmentProgress">배송 진행 상황</h3>
 
-      <div class="relative flex flex-wrap items-center justify-between gap-y-6">
-        <!-- Base line (gray) -->
-        <div class="absolute top-1/2 left-4 right-4 h-1 bg-gray-600 -z-10 rounded"></div>
-        <!-- Load (sky-blue) line -->
-        <div id="progressLine" class="absolute top-1/2 left-4 h-1 bg-sky-500 -z-10 rounded transition-all duration-500" style="width:0%;"></div>
+  <div class="relative flex items-center justify-between">
+    <!-- Base line (gray) -->
+    <div class="absolute top-1/2 inset-x-0 mx-auto h-1 bg-gray-600 -z-10 rounded w-[90%] sm:w-[80%]"></div>
 
-        <!-- Steps (responsive: 50% width on small screens -> two per row) -->
-        <div id="stepPending" class="progress-step flex flex-col items-center relative z-10">
-          <img src="https://cdn-icons-png.flaticon.com/512/861/861060.png" alt="Pending" class="progress-icon opacity-50">
-          <p class="mt-2 text-sm" data-key="orderPlaced">주문 접수</p>
-        </div>
+    <!-- Load (sky-blue) line -->
+    <div id="progressLine" class="absolute top-1/2 left-[5%] h-1 bg-sky-500 -z-10 rounded transition-all duration-500" style="width:0%;"></div>
 
-        <div id="stepTransit" class="progress-step flex flex-col items-center relative z-10">
-          <img src="https://cdn-icons-png.flaticon.com/512/263/263142.png" alt="Preparing Shipment" class="progress-icon opacity-50">
-          <p class="mt-2 text-sm" data-key="preparing">준비 중</p>
-        </div>
-
-        <div id="stepShipped" class="progress-step flex flex-col items-center relative z-10">
-          <img src="https://cdn-icons-png.flaticon.com/512/1995/1995560.png" alt="Shipped" class="progress-icon opacity-50">
-          <p class="mt-2 text-sm" data-key="shipped">배송 중</p>
-        </div>
-
-        <div id="stepDelivered" class="progress-step flex flex-col items-center relative z-10">
-          <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="Delivered" class="progress-icon opacity-50">
-          <p class="mt-2 text-sm" data-key="delivered">배송 완료</p>
-        </div>
-      </div>
+    <!-- Steps -->
+    <div id="stepPending" class="flex flex-col items-center relative z-10 w-1/4">
+      <img src="https://cdn-icons-png.flaticon.com/512/861/861060.png" alt="Pending" class="progress-icon opacity-50">
+      <p class="mt-2 text-sm" data-key="orderPlaced">주문 접수</p>
     </div>
 
+    <div id="stepTransit" class="flex flex-col items-center relative z-10 w-1/4">
+      <img src="https://cdn-icons-png.flaticon.com/512/263/263142.png" alt="Preparing Shipment" class="progress-icon opacity-50">
+      <p class="mt-2 text-sm" data-key="preparing">준비 중</p>
+    </div>
+
+    <div id="stepShipped" class="flex flex-col items-center relative z-10 w-1/4">
+      <img src="https://cdn-icons-png.flaticon.com/512/1995/1995560.png" alt="Shipped" class="progress-icon opacity-50">
+      <p class="mt-2 text-sm" data-key="shipped">배송 중</p>
+    </div>
+
+    <div id="stepDelivered" class="flex flex-col items-center relative z-10 w-1/4">
+      <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="Delivered" class="progress-icon opacity-50">
+      <p class="mt-2 text-sm" data-key="delivered">배송 완료</p>
+    </div>
+  </div>
+</div>
+
+    
     <!-- Timeline -->
     <div id="updatesTimeline" class="bg-gray-800 shadow-lg rounded-xl p-6 hidden">
       <h3 class="text-xl font-semibold mb-6 text-sky-400" data-key="trackingUpdates">배송 업데이트</h3>
