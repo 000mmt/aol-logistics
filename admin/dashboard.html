@@ -25,10 +25,23 @@
     <div id="userList" class="space-y-6"></div>
   </main>
 
+  <!-- Delete Confirmation Modal -->
+  <div id="deleteModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+      <h2 class="text-lg font-bold text-yellow-500 mb-4">Confirm Deletion</h2>
+      <p class="text-gray-300">Are you sure you want to delete this user?</p>
+      <div class="mt-4 flex justify-end">
+        <button id="confirmDeleteBtn" class="px-4 py-2 bg-red-600 text-white rounded mr-2">Yes, Delete</button>
+        <button onclick="closeDeleteModal()" class="px-4 py-2 bg-gray-600 text-white rounded">Cancel</button>
+      </div>
+    </div>
+  </div>
+
 <script>
 const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // ⚠️ Replace securely
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let userIdToDelete = null; // Store the user ID to delete
 
 // Session check
 (async () => {
@@ -84,7 +97,7 @@ async function loadUsers() {
       <div class="mt-4 flex flex-wrap gap-2">
         <button onclick="toggleTab('${user.id}','tracking')" class="px-3 py-1 bg-yellow-600 text-white rounded">Tracking</button>
         <button onclick="toggleTab('${user.id}','details')" class="px-3 py-1 bg-gray-700 text-white rounded">Details Info</button>
-        <button onclick="deleteUser('${user.id}')" class="px-3 py-1 bg-red-600 text-white rounded">Delete User</button>
+        <button onclick="openDeleteModal('${user.id}')" class="px-3 py-1 bg-red-600 text-white rounded">Delete User</button>
       </div>
 
       <!-- Tracking Section -->
@@ -180,19 +193,32 @@ async function loadUsers() {
   `).join("");
 }
 
-// Close form function
-function closeForm(userId, section) {
-  document.getElementById(`${section}-${userId}`).classList.add("hidden");
+// Open delete confirmation modal
+function openDeleteModal(userId) {
+  userIdToDelete = userId; // Store the user ID to delete
+  document.getElementById("deleteModal").classList.remove("hidden"); // Show the modal
 }
 
-// Delete user
-async function deleteUser(userId) {
+// Close delete confirmation modal
+function closeDeleteModal() {
+  document.getElementById("deleteModal").classList.add("hidden"); // Hide the modal
+}
+
+// Confirm deletion
+document.getElementById("confirmDeleteBtn").addEventListener("click", async () => {
+  const userId = userIdToDelete; // Get the user ID
   const { error } = await supabase.from("user_info").delete().eq("id", userId);
   if (error) {
     alert("Error deleting user: " + error.message);
   } else {
-    loadUsers();
+    loadUsers(); // Reload users after deletion
   }
+  closeDeleteModal(); // Close the modal
+});
+
+// Close form function
+function closeForm(userId, section) {
+  document.getElementById(`${section}-${userId}`).classList.add("hidden");
 }
 
 // Save tracking update
