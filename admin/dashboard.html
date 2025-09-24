@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard - AOL Logistics</title>
-  <link rel="stylesheet" href="dashboard.css">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - AOL Logistics</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 </head>
 <body class="flex flex-col md:flex-row bg-gray-900">
 
@@ -70,7 +70,7 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let userIdToDelete = null; // Store the user ID to delete
 
 // Initialize EmailJS
-emailjs.init("YOUR_USER_ID"); // Replace with your User ID
+emailjs.init("PlzHImKJLSGxIfYy0"); // Replace with your User ID
 
 // Session check
 (async () => {
@@ -126,7 +126,7 @@ async function loadUsers() {
       <div class="mt-4 flex flex-wrap gap-2">
         <button onclick="toggleTab('${user.id}','tracking')" class="px-3 py-1 bg-yellow-600 text-white rounded">Tracking</button>
         <button onclick="toggleTab('${user.id}','details')" class="px-3 py-1 bg-gray-700 text-white rounded">Details Info</button>
-        <button onclick="openMailModal('${user.receiver_name}', '${user.receiver_phone}', '${user.receiver_address}')" class="px-3 py-1 bg-blue-600 text-white rounded">Send Mail</button>
+        <button onclick="openMailModal('${user.id}')" class="px-3 py-1 bg-blue-600 text-white rounded">Send Mail</button>
         <button onclick="openDeleteModal('${user.id}')" class="px-3 py-1 bg-red-600 text-white rounded">Delete User</button>
       </div>
 
@@ -308,11 +308,17 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
 
 // Open Mail Modal and fetch user info
 async function openMailModal(userId) {
-    const { data: userInfo } = await supabase
+    const { data: userInfo, error } = await supabase
         .from("user_info")
         .select("*")
         .eq("id", userId)
         .single();
+
+    if (error) {
+        console.error('Error fetching user info:', error);
+        alert('Could not fetch user information.');
+        return;
+    }
 
     if (userInfo) {
         document.getElementById('receiverName').value = userInfo.receiver_name || '';
@@ -344,7 +350,7 @@ document.getElementById('mailForm').addEventListener('submit', function(event) {
         current_year: new Date().getFullYear() // For the current year
     };
 
-    emailjs.send('service_g2b1nlw', 'template_15nr4yd', templateParams)
+    emailjs.send('service_g2b1nlw', 'template_l5nr4yd', templateParams)
         .then(function(response) {
             console.log('SUCCESS!', response.status, response.text);
             alert('Email sent successfully!');
