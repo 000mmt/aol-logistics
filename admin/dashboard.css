@@ -1,93 +1,145 @@
-/* dashboard.css */
-
-/* General */
+/* General Styles */
 body {
-  font-family: 'Inter', sans-serif;
-  margin: 0;
-  padding: 0;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #1a202c; /* Dark background */
+    color: #cbd5e0; /* Light text color */
+}
+
+h1, h2, h3, h4 {
+    color: #f6e05e; /* Yellow for headings */
 }
 
 /* Sidebar */
 aside {
-  background: #1f2937; /* Tailwind gray-800 */
-  border-right: 1px solid #374151; /* gray-700 */
+    background-color: #2d3748; /* Darker sidebar */
+    height: 100vh;
+    position: fixed;
+    transition: width 0.3s;
 }
 
 aside h2 {
-  letter-spacing: 1px;
+    margin-bottom: 2rem;
 }
 
-aside nav a {
-  display: block;
-  padding: 10px 12px;
-  border-radius: 6px;
-  transition: background 0.3s ease, color 0.3s ease;
+nav button {
+    background: none;
+    border: none;
+    color: #a0aec0; /* Light gray */
+    padding: 10px;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+    transition: color 0.3s;
 }
 
-aside nav a:hover {
-  background: #374151; /* gray-700 */
-  color: #facc15; /* yellow-400 */
+nav button:hover {
+    color: #f6e05e; /* Yellow on hover */
 }
 
-/* Main */
+/* Main Content */
 main {
-  background: #111827; /* gray-900 */
+    margin-left: 250px; /* Sidebar width */
+    padding: 20px;
+    overflow-y: auto;
+}
+
+main h1 {
+    margin-bottom: 1.5rem;
 }
 
 /* User Cards */
-#userList .bg-gray-800 {
-  border: 1px solid #374151; /* gray-700 */
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+.bg-gray-800 {
+    background-color: #2d3748; /* Dark gray for user cards */
 }
 
-#userList .bg-gray-800:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+.shadow {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Tabs */
-.tab {
-  border-top: 1px solid #374151;
-  padding-top: 1rem;
+.rounded-lg {
+    border-radius: 8px;
 }
 
-/* Buttons */
+/* Button Styles */
 button {
-  cursor: pointer;
-  font-weight: 600;
-  transition: background 0.2s ease, transform 0.1s ease;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.bg-yellow-600 {
+    background-color: #d69e2e;
+}
+
+.bg-blue-600 {
+    background-color: #3182ce;
+}
+
+.bg-red-600 {
+    background-color: #e53e3e;
+}
+
+.bg-green-500 {
+    background-color: #48bb78;
+}
+
+.bg-gray-600 {
+    background-color: #4a5568;
 }
 
 button:hover {
-  transform: scale(1.02);
+    opacity: 0.9;
 }
 
-/* Inputs */
-input, select, textarea {
-  outline: none;
-  border: 1px solid #374151;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+/* Modals */
+.fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
-input:focus, select:focus, textarea:focus {
-  border-color: #facc15; /* yellow-400 */
-  box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.3);
+.bg-gray-800 {
+    background-color: #2d3748;
 }
 
-/* Scrollbar (for dark mode aesthetic) */
-::-webkit-scrollbar {
-  width: 8px;
+/* Input Styles */
+input[type="text"], textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #4a5568;
+    border-radius: 5px;
+    background-color: #4a5568;
+    color: #cbd5e0;
 }
 
-::-webkit-scrollbar-track {
-  background: #1f2937;
+input:focus, textarea:focus {
+    outline: none;
+    border-color: #f6e05e; /* Yellow on focus */
 }
 
-::-webkit-scrollbar-thumb {
-  background: #374151;
-  border-radius: 4px;
+/* Notification Bar */
+#notificationBar {
+    display: none; /* Hidden by default */
+    margin-bottom: 1rem;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #4b5563;
+/* Responsive Styles */
+@media (max-width: 768px) {
+    main {
+        margin-left: 0; /* No sidebar on small screens */
+    }
+
+    aside {
+        display: none; /* Hide sidebar on small screens */
+    }
 }
