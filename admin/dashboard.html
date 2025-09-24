@@ -84,6 +84,7 @@ async function loadUsers() {
       <div class="mt-4 flex flex-wrap gap-2">
         <button onclick="toggleTab('${user.id}','tracking')" class="px-3 py-1 bg-yellow-600 text-white rounded">Tracking</button>
         <button onclick="toggleTab('${user.id}','details')" class="px-3 py-1 bg-gray-700 text-white rounded">Details Info</button>
+        <button onclick="deleteUser('${user.id}')" class="px-3 py-1 bg-red-600 text-white rounded">Delete User</button>
       </div>
 
       <!-- Tracking Section -->
@@ -175,6 +176,16 @@ async function loadUsers() {
       </div>
     </div>
   `).join("");
+}
+
+// Delete user
+async function deleteUser(userId) {
+  const { error } = await supabase.from("user_info").delete().eq("id", userId);
+  if (error) {
+    alert("Error deleting user: " + error.message);
+  } else {
+    loadUsers();
+  }
 }
 
 // Save tracking update
