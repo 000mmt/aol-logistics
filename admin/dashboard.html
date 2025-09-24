@@ -115,7 +115,7 @@
    CONFIG (replace values)
    ======================== */
 const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
-const SUPABASE_KEY = "YOUR_SUPABASE_KEY"; // Replace securely
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // <-- Replace securely
 const EMAILJS_PUBLIC_KEY = "PlzHImKJLSGxIfYy0"; // e.g. public_xxxxxxxxx
 const EMAILJS_SERVICE_ID = "service_g2b1nlw"; // e.g. service_g2b1nlw
 const EMAILJS_TEMPLATE_ID = "template_i9gwyek"; // e.g. template_l5nr4yd
@@ -287,7 +287,7 @@ async function loadUsers() {
             <input id="origin_${user.id}" type="text" value="${escapeAttr(user.origin || '')}" onchange="updateUser('${user.id}', { origin: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
 
             <label class="block text-gray-400 mt-2">Destination</label>
-            <input id="destination_${user.id}" type="text" value="${escapeAttr(user.destination || '')}" onchange="updateUser('${user.id}', { destination: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+            <input id="destination_${user.id}" type="text" value="${escapeAttr(user.destination || '')}" onchange="updateUser('${user.id}" class="w-full p-2 rounded bg-gray-700 text-white">
           </div>
         </div>
 
