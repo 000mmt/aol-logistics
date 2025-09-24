@@ -1,18 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - AOL Logistics</title>
-    <link rel="stylesheet" href="dashboard.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Dashboard - AOL Logistics</title>
+
+  <!-- Tailwind (you can keep your dashboard.css if you want) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="dashboard.css">
+
+  <!-- Supabase & EmailJS SDKs -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+  <style>
+    /* small tweaks for modals responsiveness */
+    .modal-inner { max-width: 920px; width: 100%; }
+  </style>
 </head>
-<body class="flex flex-col md:flex-row bg-gray-900">
+<body class="flex flex-col md:flex-row bg-gray-900 min-h-screen text-white">
 
   <!-- Sidebar -->
-  <aside class="w-full md:w-64 bg-gray-800 shadow-md h-auto md:h-screen p-6">
+  <aside class="w-full md:w-72 bg-gray-800 shadow-md h-auto md:h-screen p-6">
     <h2 class="text-2xl font-bold text-yellow-500 mb-6">Admin</h2>
     <nav class="space-y-4">
       <button id="dashboardBtn" class="block font-semibold text-gray-300 hover:text-yellow-500 w-full text-left">Dashboard</button>
@@ -23,91 +32,162 @@
 
   <!-- Main -->
   <main class="flex-1 p-4 md:p-8 overflow-y-auto">
-    <h1 class="text-2xl md:text-3xl font-bold text-white mb-6">User Shipments</h1>
-    <div id="notificationBar" class="bg-yellow-500 text-white p-4 rounded-md mb-4 hidden"></div>
-    <div id="userList" class="space-y-6"></div>
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="text-2xl md:text-3xl font-bold">User Shipments</h1>
+      <div>
+        <!-- A global "send manual mail" button if you want -->
+        <!-- <button id="openGlobalMail" class="bg-blue-600 text-white rounded px-4 py-2">Send Mail</button> -->
+      </div>
+    </div>
+
+    <div id="notificationBar" class="bg-yellow-500 text-black p-4 rounded-md mb-4 hidden"></div>
+
+    <div id="userList" class="space-y-6">
+      <!-- Users loaded here -->
+    </div>
   </main>
 
-  <!-- Delete Confirmation Modal -->
-  <div id="deleteModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
-      <h2 class="text-lg font-bold text-yellow-500 mb-4">Confirm Deletion</h2>
+  <!-- Delete Modal -->
+  <div id="deleteModal" class="fixed inset-0 hidden items-center justify-center bg-black bg-opacity-60 z-40">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg modal-inner mx-4">
+      <h2 class="text-lg font-bold text-yellow-500 mb-2">Confirm Deletion</h2>
       <p class="text-gray-300">Are you sure you want to delete this user?</p>
-      <div class="mt-4 flex justify-end">
-        <button id="confirmDeleteBtn" class="px-4 py-2 bg-red-600 text-white rounded mr-2">Yes, Delete</button>
-        <button onclick="closeDeleteModal()" class="px-4 py-2 bg-gray-600 text-white rounded">Cancel</button>
+      <div class="mt-4 flex justify-end gap-2">
+        <button id="confirmDeleteBtn" class="px-4 py-2 bg-red-600 rounded text-white">Yes, Delete</button>
+        <button onclick="closeDeleteModal()" class="px-4 py-2 bg-gray-600 rounded text-white">Cancel</button>
       </div>
     </div>
   </div>
 
-  <!-- Email Form Modal -->
-  <div id="mailModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
-      <h2 class="text-lg font-bold text-yellow-500 mb-4">Send Mail</h2>
-      <form id="mailForm">
-        <label class="block text-gray-400">Receiver Name</label>
-        <input type="text" id="receiverName" required class="border p-2 rounded w-full bg-gray-700 text-white mb-4">
+  <!-- Mail Modal -->
+  <div id="mailModal" class="fixed inset-0 hidden items-center justify-center bg-black bg-opacity-60 z-40">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg modal-inner mx-4 overflow-auto">
+      <h2 class="text-lg font-bold text-yellow-500 mb-4">Send Shipment Confirmation</h2>
 
-        <label class="block text-gray-400">Phone Number</label>
-        <input type="text" id="phoneNumber" required class="border p-2 rounded w-full bg-gray-700 text-white mb-4">
+      <form id="mailForm" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-gray-300 text-sm">Receiver Name</label>
+            <input id="receiverName" type="text" required class="w-full p-2 rounded bg-gray-700 text-white border">
 
-        <label class="block text-gray-400">Address</label>
-        <input type="text" id="address" required class="border p-2 rounded w-full bg-gray-700 text-white mb-4">
+            <label class="block text-gray-300 text-sm mt-3">Phone Number</label>
+            <input id="phoneNumber" type="text" required class="w-full p-2 rounded bg-gray-700 text-white border">
 
-        <label class="block text-gray-400">Note</label>
-        <textarea id="note" required class="border p-2 rounded w-full bg-gray-700 text-white mb-4"></textarea>
+            <label class="block text-gray-300 text-sm mt-3">Address</label>
+            <input id="address" type="text" required class="w-full p-2 rounded bg-gray-700 text-white border">
+          </div>
 
-        <label class="block text-gray-400">Tracking Number</label>
-        <input type="text" id="trackingNumber" required class="border p-2 rounded w-full bg-gray-700 text-white mb-4">
+          <div>
+            <label class="block text-gray-300 text-sm">Tracking Number</label>
+            <input id="trackingNumber" type="text" required class="w-full p-2 rounded bg-gray-700 text-white border">
 
-        <label class="block text-gray-400">Carrier Name</label>
-        <input type="text" id="carrierName" required class="border p-2 rounded w-full bg-gray-700 text-white mb-4">
+            <label class="block text-gray-300 text-sm mt-3">Carrier Name</label>
+            <input id="carrierName" type="text" required class="w-full p-2 rounded bg-gray-700 text-white border">
 
-        <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded">Send</button>
-        <button type="button" onclick="closeMailModal()" class="bg-red-500 text-white py-2 px-4 rounded">Cancel</button>
+            <label class="block text-gray-300 text-sm mt-3">Note</label>
+            <textarea id="note" class="w-full p-2 rounded bg-gray-700 text-white border"></textarea>
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center mt-2">
+          <div class="text-sm text-gray-400">Preview is shown after "Send" is clicked in console and preview block below</div>
+          <div class="flex gap-2">
+            <button type="button" onclick="closeMailModal()" class="px-4 py-2 bg-red-500 rounded">Cancel</button>
+            <button type="submit" class="px-4 py-2 bg-green-500 rounded text-white">Send</button>
+          </div>
+        </div>
       </form>
+
+      <!-- Preview -->
+      <div id="emailPreview" class="mt-6 p-4 bg-gray-700 rounded hidden">
+        <h3 class="text-lg font-semibold text-yellow-400 mb-2">Email Preview</h3>
+        <div class="text-gray-200 text-sm space-y-1">
+          <p><strong>To:</strong> <span id="prevReceiver"></span> — <span id="prevPhone"></span></p>
+          <p><strong>Tracking:</strong> <span id="prevTracking"></span></p>
+          <p><strong>Carrier:</strong> <span id="prevCarrier"></span></p>
+          <p><strong>Shipment Date:</strong> <span id="prevShipDate"></span></p>
+          <p><strong>Estimated Delivery:</strong> <span id="prevDelivery"></span></p>
+          <p><strong>Address:</strong> <span id="prevAddress"></span></p>
+          <p><strong>Note:</strong> <span id="prevNote"></span></p>
+        </div>
+      </div>
     </div>
   </div>
 
 <script>
+/* ========================
+   CONFIG (replace values)
+   ======================== */
 const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // ⚠️ Replace securely
+const SUPABASE_KEY = "YOUR_SUPABASE_KEY"; // <-- Replace with your Supabase anon/public key (keep secret in production)
+const EMAILJS_PUBLIC_KEY = "YOUR_EMAILJS_PUBLIC_KEY"; // e.g. public_xxxxxxxxx
+const EMAILJS_SERVICE_ID = "YOUR_EMAILJS_SERVICE_ID"; // e.g. service_g2b1nlw
+const EMAILJS_TEMPLATE_ID = "YOUR_EMAILJS_TEMPLATE_ID"; // e.g. template_l5nr4yd
+
+/* ========================
+   SETUP
+   ======================== */
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-let userIdToDelete = null; // Store the user ID to delete
 
 // Initialize EmailJS
-emailjs.init("PlzHImKJLSGxIfYy0"); // Replace with your User ID
-
-// Session check
-(async () => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) {
-    window.location.replace("login.html");
-    return;
+if (typeof emailjs !== "undefined") {
+  try {
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+    console.log("EmailJS initialized with public key:", EMAILJS_PUBLIC_KEY);
+  } catch (err) {
+    console.warn("emailjs.init failed (SDK may be missing or invalid key)", err);
   }
-  loadUsers();
+} else {
+  console.warn("EmailJS SDK not found on page.");
+}
+
+let userIdToDelete = null;
+
+/* ========================
+   SESSION CHECK & LOAD
+   ======================== */
+(async () => {
+  try {
+    const { data } = await supabase.auth.getSession();
+    const session = data?.session ?? null;
+    if (!session) {
+      // Not logged in
+      console.warn("No session found. Redirecting to login.");
+      // window.location.replace("login.html"); // uncomment if you want auto-redirect
+      return;
+    }
+    await loadUsers();
+  } catch (err) {
+    console.error("Error getting session:", err);
+    // window.location.replace("login.html");
+  }
 })();
 
-// Load users with tracking
+/* ========================
+   LOAD USERS + TRACKING
+   ======================== */
 async function loadUsers() {
+  const container = document.getElementById("userList");
+  container.innerHTML = `<p class="text-gray-400">Loading...</p>`;
+
   const { data: users, error: userError } = await supabase
     .from("user_info")
     .select("*")
     .order("created_at", { ascending: false });
 
-  const container = document.getElementById("userList");
-
   if (userError) {
-    container.innerHTML = `<p class="text-red-600">Error: ${userError.message}</p>`;
+    console.error("Error loading users:", userError);
+    container.innerHTML = `<p class="text-red-500">Error: ${userError.message}</p>`;
     return;
   }
-  if (!users.length) {
+
+  if (!users || users.length === 0) {
     container.innerHTML = `<p class="text-gray-400">No shipments yet.</p>`;
     return;
   }
 
-  // Fetch tracking updates
-  const userTrackingPromises = users.map(async (user) => {
+  // For each user fetch latest tracking update
+  const usersWithTracking = await Promise.all(users.map(async user => {
     const { data: trackingUpdates } = await supabase
       .from("tracking_updates")
       .select("*")
@@ -115,43 +195,47 @@ async function loadUsers() {
       .order("created_at", { ascending: false })
       .limit(1);
     return { ...user, latestUpdate: trackingUpdates?.[0] || null };
-  });
+  }));
 
-  const usersWithTracking = await Promise.all(userTrackingPromises);
-
+  // Build HTML
   container.innerHTML = usersWithTracking.map(user => `
     <div class="bg-gray-800 shadow rounded-lg p-6">
-      <h2 class="text-lg md:text-xl font-bold text-yellow-500 mb-2">
-        ${user.receiver_name || "N/A"} 
-        <span class="text-sm text-gray-300">(${user.tracking_no})</span>
-      </h2>
-      <p class="text-sm text-gray-400">${user.receiver_email || "N/A"} | ${user.receiver_phone || "N/A"}</p>
-      <p class="text-sm text-gray-400"><b>Current Location:</b> ${user.latestUpdate?.location || 'N/A'}</p>
-      <p class="text-sm text-gray-400"><b>Tracking Link:</b> <a href="${user.tracking_link}" class="text-yellow-400 break-all" target="_blank">${user.tracking_link}</a></p>
-      <p class="text-sm text-gray-400"><b>Status:</b> ${user.latestUpdate?.status || "Pending"}</p>
-      <div class="mt-4 flex flex-wrap gap-2">
-        <button onclick="toggleTab('${user.id}','tracking')" class="px-3 py-1 bg-yellow-600 text-white rounded">Tracking</button>
-        <button onclick="toggleTab('${user.id}','details')" class="px-3 py-1 bg-gray-700 text-white rounded">Details Info</button>
-        <button onclick="openMailModal('${user.id}')" class="px-3 py-1 bg-blue-600 text-white rounded">Send Mail</button>
-        <button onclick="openDeleteModal('${user.id}')" class="px-3 py-1 bg-red-600 text-white rounded">Delete User</button>
+      <div class="md:flex md:justify-between md:items-start">
+        <div>
+          <h2 class="text-lg md:text-xl font-bold text-yellow-500 mb-2">
+            ${escapeHtml(user.receiver_name || "N/A")}
+            <span class="text-sm text-gray-300">(${escapeHtml(user.tracking_no || "N/A")})</span>
+          </h2>
+          <p class="text-sm text-gray-400">${escapeHtml(user.receiver_email || "N/A")} | ${escapeHtml(user.receiver_phone || "N/A")}</p>
+          <p class="text-sm text-gray-400"><b>Current Location:</b> ${escapeHtml(user.latestUpdate?.location || 'N/A')}</p>
+          <p class="text-sm text-gray-400"><b>Status:</b> ${escapeHtml(user.latestUpdate?.status || 'Pending')}</p>
+          <p class="text-sm text-gray-400"><b>Tracking Link:</b> <a href="${escapeAttr(user.tracking_link || '#')}" class="text-yellow-400 break-all" target="_blank">${escapeHtml(user.tracking_link || "N/A")}</a></p>
+        </div>
+
+        <div class="mt-4 md:mt-0 md:text-right space-x-2">
+          <button onclick="toggleTab('${user.id}', 'tracking')" class="px-3 py-1 bg-yellow-600 rounded text-white">Tracking</button>
+          <button onclick="toggleTab('${user.id}', 'details')" class="px-3 py-1 bg-gray-700 rounded text-white">Details</button>
+          <button onclick="openMailModal('${user.id}')" class="px-3 py-1 bg-blue-600 rounded text-white">Send Mail</button>
+          <button onclick="openDeleteModal('${user.id}')" class="px-3 py-1 bg-red-600 rounded text-white">Delete</button>
+        </div>
       </div>
 
       <!-- Tracking Section -->
       <div id="tracking-${user.id}" class="tab mt-4 hidden">
         <h3 class="font-semibold text-white mb-2">Shipment Tracking</h3>
-        <p class="text-gray-300"><b>Tracking No:</b> ${user.tracking_no}</p>
-        <p class="text-gray-300"><b>Customer:</b> ${user.receiver_name}</p>
-        <p class="text-gray-300"><b>Status:</b> ${user.latestUpdate?.status || "Pending"}</p>
-        <p class="text-gray-300"><b>Progress:</b> ${user.latestUpdate?.progress || "N/A"}</p>
-        <p class="text-gray-300"><b>Location:</b> ${user.latestUpdate?.location || "N/A"}</p>
+        <p class="text-gray-300"><b>Tracking No:</b> ${escapeHtml(user.tracking_no || '')}</p>
+        <p class="text-gray-300"><b>Customer:</b> ${escapeHtml(user.receiver_name || '')}</p>
+        <p class="text-gray-300"><b>Status:</b> ${escapeHtml(user.latestUpdate?.status || 'Pending')}</p>
+        <p class="text-gray-300"><b>Progress:</b> ${escapeHtml(user.latestUpdate?.progress || 'N/A')}</p>
+        <p class="text-gray-300"><b>Location:</b> ${escapeHtml(user.latestUpdate?.location || 'N/A')}</p>
 
-        <!-- Edit tracking -->
         <div class="mt-4" id="trackingForm-${user.id}">
           <h4 class="font-semibold text-white">Edit Tracking Info</h4>
-          <label class="block mb-1 text-gray-400">Status</label>
-          <input type="text" id="statusInput-${user.id}" value="${user.latestUpdate?.status || ""}" class="border p-2 rounded bg-gray-700 text-white w-full">
 
-          <label class="block mb-1 text-gray-400">Progress</label>
+          <label class="block mb-1 text-gray-400">Status</label>
+          <input type="text" id="statusInput-${user.id}" value="${escapeAttr(user.latestUpdate?.status || '')}" class="border p-2 rounded bg-gray-700 text-white w-full">
+
+          <label class="block mb-1 text-gray-400 mt-2">Progress</label>
           <select id="progressSelect-${user.id}" class="border p-2 rounded bg-gray-700 text-white w-full">
             <option ${user.latestUpdate?.progress === "Order Placed" ? "selected" : ""}>Order Placed</option>
             <option ${user.latestUpdate?.progress === "Preparing Shipment" ? "selected" : ""}>Preparing Shipment</option>
@@ -159,220 +243,354 @@ async function loadUsers() {
             <option ${user.latestUpdate?.progress === "Delivered" ? "selected" : ""}>Delivered</option>
           </select>
 
-          <label class="block mb-1 text-gray-400">Location</label>
-          <input type="text" id="locationInput-${user.id}" value="${user.latestUpdate?.location || ""}" class="border p-2 rounded bg-gray-700 text-white w-full">
+          <label class="block mb-1 text-gray-400 mt-2">Location</label>
+          <input type="text" id="locationInput-${user.id}" value="${escapeAttr(user.latestUpdate?.location || '')}" class="border p-2 rounded bg-gray-700 text-white w-full">
 
-          <label class="block mb-1 text-gray-400">Note</label>
-          <textarea id="noteInput-${user.id}" class="border p-2 rounded bg-gray-700 text-white w-full">${user.latestUpdate?.note || ""}</textarea>
+          <label class="block mb-1 text-gray-400 mt-2">Note</label>
+          <textarea id="noteInput-${user.id}" class="border p-2 rounded bg-gray-700 text-white w-full">${escapeHtml(user.latestUpdate?.note || '')}</textarea>
 
-          <button onclick="saveTrackingUpdate('${user.id}')" class="mt-2 bg-yellow-500 text-white px-4 py-2 rounded w-full">Save Tracking Info</button>
-          <button onclick="closeForm('${user.id}', 'tracking')" class="mt-2 bg-gray-600 text-white px-4 py-2 rounded w-full">Close Form</button>
+          <div class="mt-3 flex gap-2">
+            <button onclick="saveTrackingUpdate('${user.id}')" class="bg-yellow-500 text-white px-4 py-2 rounded">Save Tracking Info</button>
+            <button onclick="closeForm('${user.id}','tracking')" class="bg-gray-600 text-white px-4 py-2 rounded">Close</button>
+          </div>
         </div>
       </div>
 
       <!-- Details Section -->
       <div id="details-${user.id}" class="tab mt-4 hidden">
         <h3 class="font-semibold text-white mb-2">Receiver, Customer & Shipment Details</h3>
-        
+
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <label class="block text-gray-400">Receiver Name
-            <input type="text" value="${user.receiver_name || ''}" onchange="updateUser('${user.id}', { receiver_name: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
-          </label>
-          <label class="block text-gray-400">Receiver Email
-            <input type="text" value="${user.receiver_email || ''}" onchange="updateUser('${user.id}', { receiver_email: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
-          </label>
-          <label class="block text-gray-400">Receiver Phone
-            <input type="text" value="${user.receiver_phone || ''}" onchange="updateUser('${user.id}', { receiver_phone: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
-          </label>
-          <label class="block text-gray-400">Receiver Address
-            <input type="text" value="${user.receiver_address || ''}" onchange="updateUser('${user.id}', { receiver_address: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
-          </label>
-          <label class="block text-gray-400">Receiver Country
-            <input type="text" value="${user.receiver_country || ''}" onchange="updateUser('${user.id}', { receiver_country: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
-          </label>
+          <div>
+            <label class="block text-gray-400">Receiver Name</label>
+            <input id="receiver_name_${user.id}" type="text" value="${escapeAttr(user.receiver_name || '')}" onchange="updateUser('${user.id}', { receiver_name: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+
+            <label class="block text-gray-400 mt-2">Receiver Email</label>
+            <input id="receiver_email_${user.id}" type="text" value="${escapeAttr(user.receiver_email || '')}" onchange="updateUser('${user.id}', { receiver_email: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+
+            <label class="block text-gray-400 mt-2">Receiver Phone</label>
+            <input id="receiver_phone_${user.id}" type="text" value="${escapeAttr(user.receiver_phone || '')}" onchange="updateUser('${user.id}', { receiver_phone: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+
+            <label class="block text-gray-400 mt-2">Receiver Address</label>
+            <input id="receiver_address_${user.id}" type="text" value="${escapeAttr(user.receiver_address || '')}" onchange="updateUser('${user.id}', { receiver_address: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+
+            <label class="block text-gray-400 mt-2">Receiver Country</label>
+            <input id="receiver_country_${user.id}" type="text" value="${escapeAttr(user.receiver_country || '')}" onchange="updateUser('${user.id}', { receiver_country: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+          </div>
+
+          <div>
+            <label class="block text-gray-400">Customer Name</label>
+            <input id="customer_name_${user.id}" type="text" value="${escapeAttr(user.customer_name || '')}" onchange="updateUser('${user.id}', { customer_name: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+
+            <label class="block text-gray-400 mt-2">Customer Email</label>
+            <input id="customer_email_${user.id}" type="text" value="${escapeAttr(user.email || '')}" onchange="updateUser('${user.id}', { email: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+
+            <label class="block text-gray-400 mt-2">Customer Phone</label>
+            <input id="customer_phone_${user.id}" type="text" value="${escapeAttr(user.phone || '')}" onchange="updateUser('${user.id}', { phone: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+
+            <label class="block text-gray-400 mt-2">Origin</label>
+            <input id="origin_${user.id}" type="text" value="${escapeAttr(user.origin || '')}" onchange="updateUser('${user.id}', { origin: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+
+            <label class="block text-gray-400 mt-2">Destination</label>
+            <input id="destination_${user.id}" type="text" value="${escapeAttr(user.destination || '')}" onchange="updateUser('${user.id}', { destination: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+          </div>
         </div>
 
-        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <label class="block text-gray-400">Customer Name
-            <input type="text" value="${user.customer_name || ''}" onchange="updateUser('${user.id}', { customer_name: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
-          </label>
-          <label class="block text-gray-400">Customer Email
-            <input type="text" value="${user.email || ''}" onchange="updateUser('${user.id}', { email: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
-          </label>
-          <label class="block text-gray-400">Customer Phone
-            <input type="text" value="${user.phone || ''}" onchange="updateUser('${user.id}', { phone: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
-          </label>
-          <label class="block text-gray-400">Origin
-            <input type="text" value="${user.origin || ''}" onchange="updateUser('${user.id}', { origin: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
-          </label>
-          <label class="block text-gray-400">Destination
-            <input type="text" value="${user.destination || ''}" onchange="updateUser('${user.id}', { destination: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
-          </label>
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <input id="asalu_no_${user.id}" placeholder="ASALU No" value="${escapeAttr(user.asalu_no || '')}" onchange="updateUser('${user.id}', { asalu_no: this.value })" class="p-2 rounded bg-gray-700 text-white">
+          <input id="delivery_code_${user.id}" placeholder="Delivery Code" value="${escapeAttr(user.delivery_code || '')}" onchange="updateUser('${user.id}', { delivery_code: this.value })" class="p-2 rounded bg-gray-700 text-white">
+          <input id="item_no_${user.id}" placeholder="Item No" value="${escapeAttr(user.item_no || '')}" onchange="updateUser('${user.id}', { item_no: this.value })" class="p-2 rounded bg-gray-700 text-white">
         </div>
 
-        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <label class="block text-gray-400">ASALU No
-            <input type="text" value="${user.asalu_no || ''}" onchange="updateUser('${user.id}', { asalu_no: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
-          </label>
-          <label class="block text-gray-400">Delivery Code
-            <input type="text" value="${user.delivery_code || ''}" onchange="updateUser('${user.id}', { delivery_code: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
-          </label>
-          <label class="block text-gray-400">Item No
-            <input type="text" value="${user.item_no || ''}" onchange="updateUser('${user.id}', { item_no: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
-          </label>
+        <div class="mt-4 flex gap-2">
+          <button onclick="updateUser('${user.id}')" class="bg-yellow-500 text-white px-4 py-2 rounded w-full">Save Details</button>
+          <button onclick="closeForm('${user.id}','details')" class="bg-gray-600 text-white px-4 py-2 rounded w-full">Close</button>
         </div>
-        
-        <button onclick="updateUser('${user.id}')" class="mt-2 bg-yellow-500 text-white px-4 py-2 rounded w-full">Save Details</button>
-        <button onclick="closeForm('${user.id}', 'details')" class="mt-2 bg-gray-600 text-white px-4 py-2 rounded w-full">Close Form</button>
       </div>
     </div>
   `).join("");
 }
 
-// Open delete confirmation modal
+/* ========================
+   Helper: escape for safety
+   ======================== */
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+function escapeAttr(str) {
+  return escapeHtml(str).replaceAll('`','&#96;');
+}
+
+/* ========================
+   Delete user
+   ======================== */
 function openDeleteModal(userId) {
-  userIdToDelete = userId; // Store the user ID to delete
-  document.getElementById("deleteModal").classList.remove("hidden"); // Show the modal
+  userIdToDelete = userId;
+  document.getElementById("deleteModal").classList.remove("hidden");
 }
-
-// Close delete confirmation modal
 function closeDeleteModal() {
-  document.getElementById("deleteModal").classList.add("hidden"); // Hide the modal
+  document.getElementById("deleteModal").classList.add("hidden");
 }
-
-// Confirm deletion
 document.getElementById("confirmDeleteBtn").addEventListener("click", async () => {
-  const userId = userIdToDelete; // Get the user ID
-  const { error } = await supabase.from("user_info").delete().eq("id", userId);
+  if (!userIdToDelete) return;
+  const { error } = await supabase.from("user_info").delete().eq("id", userIdToDelete);
   if (error) {
     alert("Error deleting user: " + error.message);
   } else {
-    loadUsers(); // Reload users after deletion
-    showNotification(`User with ID ${userId} has been deleted.`);
+    showNotification(`User with ID ${userIdToDelete} deleted.`);
+    await loadUsers();
   }
-  closeDeleteModal(); // Close the modal
+  closeDeleteModal();
 });
 
-// Show notification
+/* ========================
+   Notifications
+   ======================== */
 function showNotification(message) {
-  const notificationBar = document.getElementById("notificationBar");
-  notificationBar.innerText = message;
-  notificationBar.classList.remove("hidden");
-  setTimeout(() => {
-    notificationBar.classList.add("hidden");
-  }, 5000); // Hide after 5 seconds
+  const bar = document.getElementById("notificationBar");
+  bar.textContent = message;
+  bar.classList.remove("hidden");
+  setTimeout(()=> bar.classList.add("hidden"), 5000);
 }
 
-// Close form function
+/* ========================
+   Close a tab/form
+   ======================== */
 function closeForm(userId, section) {
-  document.getElementById(`${section}-${userId}`).classList.add("hidden");
+  const el = document.getElementById(`${section}-${userId}`);
+  if (el) el.classList.add("hidden");
 }
 
-// Save tracking update
+/* ========================
+   Save tracking update
+   ======================== */
 async function saveTrackingUpdate(userId) {
   const progress = document.querySelector(`#progressSelect-${userId}`).value;
   const status = document.querySelector(`#statusInput-${userId}`).value;
   const location = document.querySelector(`#locationInput-${userId}`).value;
   const note = document.querySelector(`#noteInput-${userId}`).value;
 
-  const { data: userInfo } = await supabase
-    .from("user_info")
-    .select("tracking_no")
-    .eq("id", userId)
-    .single();
+  // get tracking_no from user_info
+  const { data: userInfo, error: getErr } = await supabase
+    .from("user_info").select("tracking_no").eq("id", userId).single();
 
-  await supabase.from("tracking_updates").insert([{
+  if (getErr) {
+    console.error("Failed to fetch user for tracking:", getErr);
+    alert("Failed to save tracking update.");
+    return;
+  }
+
+  const insert = {
     shipment_id: userId,
-    tracking_no: userInfo.tracking_no,
+    tracking_no: userInfo?.tracking_no || null,
     status,
     progress,
     location,
     note
-  }]);
+  };
 
-  loadUsers();
-  showNotification(`New tracking info saved for user with ID ${userId}.`);
+  const { error } = await supabase.from("tracking_updates").insert([insert]);
+  if (error) {
+    console.error("Insert tracking error:", error);
+    alert("Failed to save tracking update.");
+    return;
+  }
+
+  showNotification("Tracking update saved.");
+  await loadUsers();
 }
 
-// Update user
-async function updateUser(id, updates = {}) {
-  await supabase.from("user_info").update(updates).eq("id", id);
-  loadUsers();
+/* ========================
+   Update user details
+   - If updates object provided -> update those fields only
+   - Else -> collect all known input fields inside details-{id} and update
+   ======================== */
+async function updateUser(id, updates = null) {
+  try {
+    let payload = {};
+    if (updates && Object.keys(updates).length) {
+      payload = updates;
+    } else {
+      // Collect known fields by id
+      const fields = [
+        'receiver_name','receiver_email','receiver_phone','receiver_address','receiver_country',
+        'customer_name','email','phone','origin','destination',
+        'asalu_no','delivery_code','item_no'
+      ];
+      fields.forEach(f => {
+        const el = document.getElementById(`${f}_${id}`) || document.getElementById(`${f.replace('email','_email')}_${id}`); // fallback
+        // Some fields use different IDs above; check both
+        const found = document.getElementById(`${f}_${id}`);
+        if (found) payload[f] = found.value;
+      });
+
+      // Alternative: read specific known IDs used above
+      // receiver_name_{id}, receiver_email_{id}, receiver_phone_{id}, receiver_address_{id}, receiver_country_{id}
+      // customer_name_{id}, customer_email_{id}, customer_phone_{id}, origin_{id}, destination_{id}
+      // asalu_no_{id}, delivery_code_{id}, item_no_{id}
+      const mapping = {
+        receiver_name: `receiver_name_${id}`,
+        receiver_email: `receiver_email_${id}`,
+        receiver_phone: `receiver_phone_${id}`,
+        receiver_address: `receiver_address_${id}`,
+        receiver_country: `receiver_country_${id}`,
+        customer_name: `customer_name_${id}`,
+        email: `customer_email_${id}`,
+        phone: `customer_phone_${id}`,
+        origin: `origin_${id}`,
+        destination: `destination_${id}`,
+        asalu_no: `asalu_no_${id}`,
+        delivery_code: `delivery_code_${id}`,
+        item_no: `item_no_${id}`
+      };
+      Object.entries(mapping).forEach(([k, elId]) => {
+        const el = document.getElementById(elId);
+        if (el) payload[k] = el.value;
+      });
+    }
+
+    // Nothing to update
+    if (!payload || Object.keys(payload).length === 0) {
+      showNotification("No changes detected.");
+      return;
+    }
+
+    const { error } = await supabase.from("user_info").update(payload).eq("id", id);
+    if (error) {
+      console.error("Update user error:", error);
+      alert("Failed to update user details: " + error.message);
+      return;
+    }
+    showNotification("User details updated.");
+    await loadUsers();
+  } catch (err) {
+    console.error("updateUser exception:", err);
+    alert("Failed to update user.");
+  }
 }
 
-// Tab toggle function
+/* ========================
+   Toggle tab (tracking/details)
+   ======================== */
 function toggleTab(userId, tab) {
-  document.querySelectorAll(`#tracking-${userId}, #details-${userId}`).forEach(el => el.classList.add("hidden"));
-  document.getElementById(`${tab}-${userId}`).classList.remove("hidden");
+  const tEl = document.getElementById(`tracking-${userId}`);
+  const dEl = document.getElementById(`details-${userId}`);
+  if (tEl) tEl.classList.add("hidden");
+  if (dEl) dEl.classList.add("hidden");
+  const showEl = document.getElementById(`${tab}-${userId}`);
+  if (showEl) showEl.classList.remove("hidden");
 }
 
-// Logout
+/* ========================
+   Logout
+   ======================== */
 document.getElementById("logoutBtn").addEventListener("click", async () => {
-  await supabase.auth.signOut();
-  window.location.href = "login.html";
+  try {
+    await supabase.auth.signOut();
+    showNotification("Logged out.");
+    // redirect if needed:
+    // window.location.href = "login.html";
+  } catch (err) {
+    console.error("Logout failed:", err);
+  }
 });
 
-// Open Mail Modal and fetch user info
+/* ========================
+   Open Mail Modal: prefill from user_info
+   ======================== */
 async function openMailModal(userId) {
+  try {
     const { data: userInfo, error } = await supabase
-        .from("user_info")
-        .select("*")
-        .eq("id", userId)
-        .single();
+      .from("user_info")
+      .select("*")
+      .eq("id", userId)
+      .single();
 
     if (error) {
-        console.error('Error fetching user info:', error);
-        alert('Could not fetch user information.');
-        return;
+      console.error("Error fetching user info:", error);
+      alert("Could not fetch user info.");
+      return;
     }
 
-    if (userInfo) {
-        document.getElementById('receiverName').value = userInfo.receiver_name || '';
-        document.getElementById('phoneNumber').value = userInfo.receiver_phone || '';
-        document.getElementById('address').value = userInfo.receiver_address || '';
-        document.getElementById('note').value = ''; // Clear existing note
-        document.getElementById('trackingNumber').value = userInfo.tracking_no || ''; // Set tracking number
-        document.getElementById('carrierName').value = ''; // Editable field for carrier name
-        document.getElementById('mailModal').classList.remove('hidden');
-    }
+    // Pre-fill modal fields
+    document.getElementById('receiverName').value = userInfo.receiver_name || "";
+    document.getElementById('phoneNumber').value = userInfo.receiver_phone || "";
+    document.getElementById('address').value = userInfo.receiver_address || "";
+    document.getElementById('trackingNumber').value = userInfo.tracking_no || "";
+    document.getElementById('carrierName').value = (userInfo.carrier_name || '');
+    document.getElementById('note').value = "";
+
+    document.getElementById('emailPreview').classList.add('hidden');
+    document.getElementById('mailModal').classList.remove('hidden');
+  } catch (err) {
+    console.error("openMailModal error:", err);
+  }
 }
-
-// Close Mail Modal
 function closeMailModal() {
-    document.getElementById('mailModal').classList.add('hidden');
+  document.getElementById('mailModal').classList.add('hidden');
 }
 
-// Handle Email Form Submission
-document.getElementById('mailForm').addEventListener('submit', async function(event) {
-    event.preventDefault();
+/* ========================
+   Send Email (EmailJS)
+   - debug logs included
+   ======================== */
+document.getElementById('mailForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
 
-    // Calculate shipment and estimated delivery dates
-    const shipmentDate = new Date();
-    shipmentDate.setDate(shipmentDate.getDate() + 3); // Set shipment date to 3 days from now
-    const estimatedDeliveryDate = new Date();
-    estimatedDeliveryDate.setDate(estimatedDeliveryDate.getDate() + 7); // Set estimated delivery date to 7 days from now
+  const shipmentDate = new Date().toLocaleDateString();
+  const estimatedDeliveryDateObj = new Date();
+  estimatedDeliveryDateObj.setDate(estimatedDeliveryDateObj.getDate() + 5);
+  const estimatedDeliveryDate = estimatedDeliveryDateObj.toLocaleDateString();
 
-    const templateParams = {
-        receiver_name: document.getElementById('receiverName').value,
-        phone_number: document.getElementById('phoneNumber').value,
-        address: document.getElementById('address').value,
-        note: document.getElementById('note').value,
-        tracking_number: document.getElementById('trackingNumber').value, // Get tracking number from input
-        carrier_name: document.getElementById('carrierName').value, // Get carrier name from input
-        shipment_date: shipmentDate.toLocaleDateString(), // Format date for display
-        estimated_delivery_date: estimatedDeliveryDate.toLocaleDateString(), // Format date for display
-        current_year: 2025 // Set current year to 2025
-    };
+  const templateParams = {
+    receiver_name: document.getElementById('receiverName').value,
+    phone_number: document.getElementById('phoneNumber').value,
+    address: document.getElementById('address').value,
+    note: document.getElementById('note').value,
+    tracking_number: document.getElementById('trackingNumber').value,
+    carrier_name: document.getElementById('carrierName').value,
+    shipment_date: shipmentDate,
+    estimated_delivery_date: estimatedDeliveryDate,
+    current_year: new Date().getFullYear()
+  };
 
-    emailjs.send('service_g2b1nlw', 'template_l5nr4yd', templateParams)
-        .then(function(response) {
-            console.log('SUCCESS!', response.status, response.text);
-            alert('Email sent successfully!');
-            closeMailModal(); // Close the modal after sending
-        }, function(error) {
-            console.error('FAILED...', error);
-            alert('Failed to send email, please try again later.');
-        });
+  // Show preview
+  document.getElementById('prevReceiver').textContent = templateParams.receiver_name;
+  document.getElementById('prevPhone').textContent = templateParams.phone_number;
+  document.getElementById('prevAddress').textContent = templateParams.address;
+  document.getElementById('prevTracking').textContent = templateParams.tracking_number;
+  document.getElementById('prevCarrier').textContent = templateParams.carrier_name;
+  document.getElementById('prevShipDate').textContent = templateParams.shipment_date;
+  document.getElementById('prevDelivery').textContent = templateParams.estimated_delivery_date;
+  document.getElementById('prevNote').textContent = templateParams.note;
+  document.getElementById('emailPreview').classList.remove('hidden');
+
+  console.log("EmailJS send — templateParams:", templateParams);
+
+  if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
+    console.error("EmailJS credentials are missing. Set EMAILJS_PUBLIC_KEY, EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID at the top of the file.");
+    alert("EmailJS credentials missing - check console.");
+    return;
+  }
+
+  // Attempt send
+  try {
+    const resp = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+    console.log("EmailJS SUCCESS:", resp);
+    alert("Email sent successfully!");
+    closeMailModal();
+  } catch (err) {
+    console.error("EmailJS FAILED:", err);
+    // EmailJS errors sometimes include .status or .text
+    const errMsg = err?.text || err?.status || JSON.stringify(err);
+    alert("Failed to send email. See console for details: " + errMsg);
+  }
 });
 </script>
 </body>
