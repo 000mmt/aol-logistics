@@ -14,7 +14,8 @@
   <aside class="w-full md:w-64 bg-gray-800 shadow-md h-auto md:h-screen p-6">
     <h2 class="text-2xl font-bold text-yellow-500 mb-6">Admin</h2>
     <nav class="space-y-4">
-      <a href="#" class="block font-semibold text-gray-300 hover:text-yellow-500">Dashboard</a>
+      <button id="dashboardBtn" class="block font-semibold text-gray-300 hover:text-yellow-500 w-full text-left">Dashboard</button>
+      <button id="notificationsBtn" class="block font-semibold text-gray-300 hover:text-yellow-500 w-full text-left">Notifications</button>
       <button id="logoutBtn" class="w-full mt-6 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600">Logout</button>
     </nav>
   </aside>
@@ -22,6 +23,7 @@
   <!-- Main -->
   <main class="flex-1 p-4 md:p-8 overflow-y-auto">
     <h1 class="text-2xl md:text-3xl font-bold text-white mb-6">User Shipments</h1>
+    <div id="notificationBar" class="bg-yellow-500 text-white p-4 rounded-md mb-4 hidden"></div>
     <div id="userList" class="space-y-6"></div>
   </main>
 
@@ -212,9 +214,20 @@ document.getElementById("confirmDeleteBtn").addEventListener("click", async () =
     alert("Error deleting user: " + error.message);
   } else {
     loadUsers(); // Reload users after deletion
+    showNotification(`User with ID ${userId} has been deleted.`);
   }
   closeDeleteModal(); // Close the modal
 });
+
+// Show notification
+function showNotification(message) {
+  const notificationBar = document.getElementById("notificationBar");
+  notificationBar.innerText = message;
+  notificationBar.classList.remove("hidden");
+  setTimeout(() => {
+    notificationBar.classList.add("hidden");
+  }, 5000); // Hide after 5 seconds
+}
 
 // Close form function
 function closeForm(userId, section) {
@@ -244,6 +257,7 @@ async function saveTrackingUpdate(userId) {
   }]);
 
   loadUsers();
+  showNotification(`New tracking info saved for user with ID ${userId}.`);
 }
 
 // Update user
@@ -263,6 +277,16 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
   await supabase.auth.signOut();
   window.location.href = "login.html";
 });
+
+// New user registration simulation
+async function registerNewUser(userName, userId) {
+  // Simulate new user registration (replace with actual registration logic)
+  showNotification(`New user registered: ${userName} (ID: ${userId})`);
+  loadUsers(); // Load users to see the new user
+}
+
+// Call this function to simulate a new user registration (for testing purposes)
+// registerNewUser("John Doe", "12345");
 </script>
 </body>
 </html>
