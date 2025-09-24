@@ -148,7 +148,7 @@ let userIdToDelete = null;
     const session = data?.session ?? null;
     if (!session) {
       console.warn("No session found. Redirecting to login.");
-      // window.location.replace("login.html"); // uncomment if you want auto-redirect
+        window.location.replace("login.html"); // uncomment if you want auto-redirect
       return;
     }
     await loadUsers();
