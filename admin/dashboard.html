@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="dashboard.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 </head>
 <body class="flex flex-col md:flex-row bg-gray-900">
 
@@ -39,11 +40,37 @@
     </div>
   </div>
 
+  <!-- Email Form Modal -->
+  <div id="mailModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+      <h2 class="text-lg font-bold text-yellow-500 mb-4">Send Mail</h2>
+      <form id="mailForm">
+        <label class="block text-gray-400">Receiver Name</label>
+        <input type="text" id="receiverName" required class="border p-2 rounded w-full bg-gray-700 text-white mb-4">
+
+        <label class="block text-gray-400">Phone Number</label>
+        <input type="text" id="phoneNumber" required class="border p-2 rounded w-full bg-gray-700 text-white mb-4">
+
+        <label class="block text-gray-400">Address</label>
+        <input type="text" id="address" required class="border p-2 rounded w-full bg-gray-700 text-white mb-4">
+
+        <label class="block text-gray-400">Note</label>
+        <textarea id="note" required class="border p-2 rounded w-full bg-gray-700 text-white mb-4"></textarea>
+
+        <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded">Send</button>
+        <button type="button" onclick="closeMailModal()" class="bg-red-500 text-white py-2 px-4 rounded">Cancel</button>
+      </form>
+    </div>
+  </div>
+
 <script>
 const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // ⚠️ Replace securely
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let userIdToDelete = null; // Store the user ID to delete
+
+// Initialize EmailJS
+emailjs.init("YOUR_USER_ID"); // Replace with your User ID
 
 // Session check
 (async () => {
@@ -99,6 +126,7 @@ async function loadUsers() {
       <div class="mt-4 flex flex-wrap gap-2">
         <button onclick="toggleTab('${user.id}','tracking')" class="px-3 py-1 bg-yellow-600 text-white rounded">Tracking</button>
         <button onclick="toggleTab('${user.id}','details')" class="px-3 py-1 bg-gray-700 text-white rounded">Details Info</button>
+        <button onclick="openMailModal('${user.receiver_name}', '${user.receiver_phone}', '${user.receiver_address}')" class="px-3 py-1 bg-blue-600 text-white rounded">Send Mail</button>
         <button onclick="openDeleteModal('${user.id}')" class="px-3 py-1 bg-red-600 text-white rounded">Delete User</button>
       </div>
 
@@ -278,15 +306,54 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
   window.location.href = "login.html";
 });
 
-// New user registration simulation
-async function registerNewUser(userName, userId) {
-  // Simulate new user registration (replace with actual registration logic)
-  showNotification(`New user registered: ${userName} (ID: ${userId})`);
-  loadUsers(); // Load users to see the new user
+// Open Mail Modal and fetch user info
+async function openMailModal(userId) {
+    const { data: userInfo } = await supabase
+        .from("user_info")
+        .select("*")
+        .eq("id", userId)
+        .single();
+
+    if (userInfo) {
+        document.getElementById('receiverName').value = userInfo.receiver_name || '';
+        document.getElementById('phoneNumber').value = userInfo.receiver_phone || '';
+        document.getElementById('address').value = userInfo.receiver_address || '';
+        document.getElementById('note').value = ''; // Clear existing note
+        document.getElementById('mailModal').classList.remove('hidden');
+    }
 }
 
-// Call this function to simulate a new user registration (for testing purposes)
-// registerNewUser("John Doe", "12345");
+// Close Mail Modal
+function closeMailModal() {
+    document.getElementById('mailModal').classList.add('hidden');
+}
+
+// Handle Email Form Submission
+document.getElementById('mailForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const templateParams = {
+        receiver_name: document.getElementById('receiverName').value,
+        phone_number: document.getElementById('phoneNumber').value,
+        address: document.getElementById('address').value,
+        note: document.getElementById('note').value,
+        tracking_number: 'YOUR_TRACKING_NUMBER', // Replace with actual tracking number
+        carrier_name: 'YOUR_CARRIER_NAME', // Replace with actual carrier name
+        shipment_date: new Date().toLocaleDateString(),
+        estimated_delivery_date: 'YOUR_ESTIMATED_DELIVERY_DATE', // Replace with actual date
+        current_year: new Date().getFullYear() // For the current year
+    };
+
+    emailjs.send('service_g2b1nlw', 'template_15nr4yd', templateParams)
+        .then(function(response) {
+            console.log('SUCCESS!', response.status, response.text);
+            alert('Email sent successfully!');
+            closeMailModal(); // Close the modal after sending
+        }, function(error) {
+            console.error('FAILED...', error);
+            alert('Failed to send email, please try again later.');
+        });
+});
 </script>
 </body>
 </html>
