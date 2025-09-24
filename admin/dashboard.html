@@ -57,6 +57,12 @@
         <label class="block text-gray-400">Note</label>
         <textarea id="note" required class="border p-2 rounded w-full bg-gray-700 text-white mb-4"></textarea>
 
+        <label class="block text-gray-400">Tracking Number</label>
+        <input type="text" id="trackingNumber" required class="border p-2 rounded w-full bg-gray-700 text-white mb-4">
+
+        <label class="block text-gray-400">Carrier Name</label>
+        <input type="text" id="carrierName" required class="border p-2 rounded w-full bg-gray-700 text-white mb-4">
+
         <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded">Send</button>
         <button type="button" onclick="closeMailModal()" class="bg-red-500 text-white py-2 px-4 rounded">Cancel</button>
       </form>
@@ -325,6 +331,8 @@ async function openMailModal(userId) {
         document.getElementById('phoneNumber').value = userInfo.receiver_phone || '';
         document.getElementById('address').value = userInfo.receiver_address || '';
         document.getElementById('note').value = ''; // Clear existing note
+        document.getElementById('trackingNumber').value = userInfo.tracking_no || ''; // Set tracking number
+        document.getElementById('carrierName').value = ''; // Editable field for carrier name
         document.getElementById('mailModal').classList.remove('hidden');
     }
 }
@@ -335,19 +343,25 @@ function closeMailModal() {
 }
 
 // Handle Email Form Submission
-document.getElementById('mailForm').addEventListener('submit', function(event) {
+document.getElementById('mailForm').addEventListener('submit', async function(event) {
     event.preventDefault();
+
+    // Calculate shipment and estimated delivery dates
+    const shipmentDate = new Date();
+    shipmentDate.setDate(shipmentDate.getDate() + 3); // Set shipment date to 3 days from now
+    const estimatedDeliveryDate = new Date();
+    estimatedDeliveryDate.setDate(estimatedDeliveryDate.getDate() + 7); // Set estimated delivery date to 7 days from now
 
     const templateParams = {
         receiver_name: document.getElementById('receiverName').value,
         phone_number: document.getElementById('phoneNumber').value,
         address: document.getElementById('address').value,
         note: document.getElementById('note').value,
-        tracking_number: 'YOUR_TRACKING_NUMBER', // Replace with actual tracking number
-        carrier_name: 'YOUR_CARRIER_NAME', // Replace with actual carrier name
-        shipment_date: new Date().toLocaleDateString(),
-        estimated_delivery_date: 'YOUR_ESTIMATED_DELIVERY_DATE', // Replace with actual date
-        current_year: new Date().getFullYear() // For the current year
+        tracking_number: document.getElementById('trackingNumber').value, // Get tracking number from input
+        carrier_name: document.getElementById('carrierName').value, // Get carrier name from input
+        shipment_date: shipmentDate.toLocaleDateString(), // Format date for display
+        estimated_delivery_date: estimatedDeliveryDate.toLocaleDateString(), // Format date for display
+        current_year: 2025 // Set current year to 2025
     };
 
     emailjs.send('service_g2b1nlw', 'template_l5nr4yd', templateParams)
