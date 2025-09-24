@@ -1,145 +1,78 @@
+/* dashboard.css */
+
 /* General Styles */
 body {
     font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #1a202c; /* Dark background */
-    color: #cbd5e0; /* Light text color */
 }
 
-h1, h2, h3, h4 {
-    color: #f6e05e; /* Yellow for headings */
-}
-
-/* Sidebar */
+/* Sidebar Styles */
 aside {
-    background-color: #2d3748; /* Darker sidebar */
-    height: 100vh;
-    position: fixed;
-    transition: width 0.3s;
+    background-color: #2D3748; /* Gray-800 */
+    transition: width 0.3s ease;
 }
 
 aside h2 {
-    margin-bottom: 2rem;
+    color: #F6E05E; /* Yellow-500 */
 }
 
-nav button {
-    background: none;
-    border: none;
-    color: #a0aec0; /* Light gray */
-    padding: 10px;
-    text-align: left;
-    width: 100%;
-    cursor: pointer;
-    transition: color 0.3s;
-}
-
-nav button:hover {
-    color: #f6e05e; /* Yellow on hover */
-}
-
-/* Main Content */
+/* Main Content Styles */
 main {
-    margin-left: 250px; /* Sidebar width */
-    padding: 20px;
-    overflow-y: auto;
+    background-color: #1A202C; /* Gray-900 */
+    padding: 1rem; /* Padding for the main content */
+    overflow-y: auto; /* Allows scrolling */
 }
 
-main h1 {
-    margin-bottom: 1.5rem;
+/* Notification Bar */
+#notificationBar {
+    transition: opacity 0.5s ease;
 }
 
-/* User Cards */
-.bg-gray-800 {
-    background-color: #2d3748; /* Dark gray for user cards */
+/* Modal Styles */
+.modal-inner {
+    max-width: 920px;
+    width: 100%;
 }
 
-.shadow {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.modal-inner h2 {
+    color: #F6E05E; /* Yellow-500 */
 }
 
-.rounded-lg {
-    border-radius: 8px;
+.modal-inner p {
+    color: #D1D5DB; /* Gray-300 */
+}
+
+/* Input Styles */
+input[type="text"],
+textarea {
+    background-color: #4A5568; /* Gray-700 */
+    color: #FFFFFF; /* White text */
+    border: 1px solid #A0AEC0; /* Gray-400 */
+}
+
+input[type="text"]:focus,
+textarea:focus {
+    outline: none;
+    border-color: #F6E05E; /* Yellow-500 */
 }
 
 /* Button Styles */
 button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.bg-yellow-600 {
-    background-color: #d69e2e;
-}
-
-.bg-blue-600 {
-    background-color: #3182ce;
-}
-
-.bg-red-600 {
-    background-color: #e53e3e;
-}
-
-.bg-green-500 {
-    background-color: #48bb78;
-}
-
-.bg-gray-600 {
-    background-color: #4a5568;
 }
 
 button:hover {
     opacity: 0.9;
 }
 
-/* Modals */
-.fixed {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(0, 0, 0, 0.5);
-}
-
-.bg-gray-800 {
-    background-color: #2d3748;
-}
-
-/* Input Styles */
-input[type="text"], textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #4a5568;
-    border-radius: 5px;
-    background-color: #4a5568;
-    color: #cbd5e0;
-}
-
-input:focus, textarea:focus {
-    outline: none;
-    border-color: #f6e05e; /* Yellow on focus */
-}
-
-/* Notification Bar */
-#notificationBar {
-    display: none; /* Hidden by default */
-    margin-bottom: 1rem;
-}
-
-/* Responsive Styles */
-@media (max-width: 768px) {
-    main {
-        margin-left: 0; /* No sidebar on small screens */
+/* Responsive Modals */
+@media (max-width: 640px) {
+    .modal-inner {
+        padding: 1rem; /* Reduce padding on smaller screens */
     }
 
+    /* Adjust sidebar for smaller screens */
     aside {
-        display: none; /* Hide sidebar on small screens */
+        width: 100%; /* Full width on mobile */
+        position: relative; /* Ensure it doesn't overlap */
     }
 }
