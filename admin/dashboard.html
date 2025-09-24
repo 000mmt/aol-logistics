@@ -34,10 +34,6 @@
   <main class="flex-1 p-4 md:p-8 overflow-y-auto">
     <div class="flex items-center justify-between mb-6">
       <h1 class="text-2xl md:text-3xl font-bold">User Shipments</h1>
-      <div>
-        <!-- A global "send manual mail" button if you want -->
-        <!-- <button id="openGlobalMail" class="bg-blue-600 text-white rounded px-4 py-2">Send Mail</button> -->
-      </div>
     </div>
 
     <div id="notificationBar" class="bg-yellow-500 text-black p-4 rounded-md mb-4 hidden"></div>
@@ -119,7 +115,7 @@
    CONFIG (replace values)
    ======================== */
 const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // <-- Replace with your Supabase anon/public key (keep secret in production)
+const SUPABASE_KEY = "YOUR_SUPABASE_KEY"; // Replace securely
 const EMAILJS_PUBLIC_KEY = "PlzHImKJLSGxIfYy0"; // e.g. public_xxxxxxxxx
 const EMAILJS_SERVICE_ID = "service_g2b1nlw"; // e.g. service_g2b1nlw
 const EMAILJS_TEMPLATE_ID = "template_i9gwyek"; // e.g. template_l5nr4yd
@@ -151,7 +147,6 @@ let userIdToDelete = null;
     const { data } = await supabase.auth.getSession();
     const session = data?.session ?? null;
     if (!session) {
-      // Not logged in
       console.warn("No session found. Redirecting to login.");
       // window.location.replace("login.html"); // uncomment if you want auto-redirect
       return;
@@ -408,8 +403,6 @@ async function saveTrackingUpdate(userId) {
 
 /* ========================
    Update user details
-   - If updates object provided -> update those fields only
-   - Else -> collect all known input fields inside details-{id} and update
    ======================== */
 async function updateUser(id, updates = null) {
   try {
@@ -417,7 +410,6 @@ async function updateUser(id, updates = null) {
     if (updates && Object.keys(updates).length) {
       payload = updates;
     } else {
-      // Collect known fields by id
       const fields = [
         'receiver_name','receiver_email','receiver_phone','receiver_address','receiver_country',
         'customer_name','email','phone','origin','destination',
@@ -425,37 +417,11 @@ async function updateUser(id, updates = null) {
       ];
       fields.forEach(f => {
         const el = document.getElementById(`${f}_${id}`) || document.getElementById(`${f.replace('email','_email')}_${id}`); // fallback
-        // Some fields use different IDs above; check both
         const found = document.getElementById(`${f}_${id}`);
         if (found) payload[f] = found.value;
       });
-
-      // Alternative: read specific known IDs used above
-      // receiver_name_{id}, receiver_email_{id}, receiver_phone_{id}, receiver_address_{id}, receiver_country_{id}
-      // customer_name_{id}, customer_email_{id}, customer_phone_{id}, origin_{id}, destination_{id}
-      // asalu_no_{id}, delivery_code_{id}, item_no_{id}
-      const mapping = {
-        receiver_name: `receiver_name_${id}`,
-        receiver_email: `receiver_email_${id}`,
-        receiver_phone: `receiver_phone_${id}`,
-        receiver_address: `receiver_address_${id}`,
-        receiver_country: `receiver_country_${id}`,
-        customer_name: `customer_name_${id}`,
-        email: `customer_email_${id}`,
-        phone: `customer_phone_${id}`,
-        origin: `origin_${id}`,
-        destination: `destination_${id}`,
-        asalu_no: `asalu_no_${id}`,
-        delivery_code: `delivery_code_${id}`,
-        item_no: `item_no_${id}`
-      };
-      Object.entries(mapping).forEach(([k, elId]) => {
-        const el = document.getElementById(elId);
-        if (el) payload[k] = el.value;
-      });
     }
 
-    // Nothing to update
     if (!payload || Object.keys(payload).length === 0) {
       showNotification("No changes detected.");
       return;
@@ -538,7 +504,6 @@ function closeMailModal() {
 
 /* ========================
    Send Email (EmailJS)
-   - debug logs included
    ======================== */
 document.getElementById('mailForm').addEventListener('submit', async function(e) {
   e.preventDefault();
@@ -587,7 +552,6 @@ document.getElementById('mailForm').addEventListener('submit', async function(e)
     closeMailModal();
   } catch (err) {
     console.error("EmailJS FAILED:", err);
-    // EmailJS errors sometimes include .status or .text
     const errMsg = err?.text || err?.status || JSON.stringify(err);
     alert("Failed to send email. See console for details: " + errMsg);
   }
