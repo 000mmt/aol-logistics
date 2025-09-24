@@ -117,6 +117,7 @@ async function loadUsers() {
           <textarea id="noteInput-${user.id}" class="border p-2 rounded bg-gray-700 text-white w-full">${user.latestUpdate?.note || ""}</textarea>
 
           <button onclick="saveTrackingUpdate('${user.id}')" class="mt-2 bg-yellow-500 text-white px-4 py-2 rounded w-full">Save Tracking Info</button>
+          <button onclick="closeForm('${user.id}', 'tracking')" class="mt-2 bg-gray-600 text-white px-4 py-2 rounded w-full">Close Form</button>
         </div>
       </div>
 
@@ -173,9 +174,15 @@ async function loadUsers() {
         </div>
         
         <button onclick="updateUser('${user.id}')" class="mt-2 bg-yellow-500 text-white px-4 py-2 rounded w-full">Save Details</button>
+        <button onclick="closeForm('${user.id}', 'details')" class="mt-2 bg-gray-600 text-white px-4 py-2 rounded w-full">Close Form</button>
       </div>
     </div>
   `).join("");
+}
+
+// Close form function
+function closeForm(userId, section) {
+  document.getElementById(`${section}-${userId}`).classList.add("hidden");
 }
 
 // Delete user
