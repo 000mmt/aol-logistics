@@ -184,7 +184,7 @@
   <script>
   /***** CONFIG (replace with your real values if needed) *****/
   const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // <-- replace if you prefer a different key
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // <-- replace with your key
 
   /***** INIT supabase client *****/
   const { createClient } = supabase;
@@ -230,11 +230,7 @@
       loadingShipment: "배송 정보를 불러오는 중...",
       invalidCodeMessage: "유효하지 않은 운송장 코드입니다.",
       notAvailable: "사용 불가",
-      unknown: "알 수 없음",
-      step_order: "주문 접수",
-      step_prep: "준비 중",
-      step_shipped: "배송 중",
-      step_delivered: "배송 완료"
+      unknown: "알 수 없음"
     },
     en: {
       brand: "AOL LOGISTICS",
@@ -258,11 +254,7 @@
       loadingShipment: "Loading shipment...",
       invalidCodeMessage: "Invalid tracking code.",
       notAvailable: "Not available",
-      unknown: "Unknown",
-      step_order: "Order Placed",
-      step_prep: "Preparing Shipment",
-      step_shipped: "Shipped",
-      step_delivered: "Delivered"
+      unknown: "Unknown"
     }
   };
 
@@ -273,38 +265,7 @@
     "Shipped": { key: "shipped", stepId: "stepShipped" },
     "Delivered": { key: "delivered", stepId: "stepDelivered" }
   };
-  const orderStatuses = Object.keys(statusMapping); // ['Order Placed','Preparing Shipment','Shipped','Delivered']
-
-  // normalize different language / variations into the canonical English keys above
-  function normalizeProgress(raw) {
-    if (!raw) return "Order Placed";
-    const trimmed = String(raw).trim();
-
-    // direct matches (English)
-    if (orderStatuses.includes(trimmed)) return trimmed;
-
-    // Korean matches
-    const koMap = {
-      "주문 접수": "Order Placed",
-      "접수": "Order Placed",
-      "준비 중": "Preparing Shipment",
-      "준비": "Preparing Shipment",
-      "배송 중": "Shipped",
-      "배송": "Shipped",
-      "배송 완료": "Delivered",
-      "완료": "Delivered"
-    };
-    if (koMap[trimmed]) return koMap[trimmed];
-
-    // fuzzy checks
-    const lower = trimmed.toLowerCase();
-    if (lower.includes("order") || lower.includes("placed") || lower.includes("접수")) return "Order Placed";
-    if (lower.includes("prepare") || lower.includes("preparing") || lower.includes("준비")) return "Preparing Shipment";
-    if (lower.includes("ship") && !lower.includes("deliver")) return "Shipped";
-    if (lower.includes("deliver") || lower.includes("완료")) return "Delivered";
-
-    return "Order Placed";
-  }
+  const orderStatuses = Object.keys(statusMapping);
 
   /***** language state and rendering *****/
   let currentLang = localStorage.getItem('site_lang') || 'ko';
@@ -317,7 +278,6 @@
     document.querySelectorAll('[data-key]').forEach(el => {
       const key = el.getAttribute('data-key');
       if (!key) return;
-      // If translations don't have that key, don't override
       if (translations[lang] && translations[lang][key]) {
         el.textContent = translations[lang][key];
       }
@@ -327,7 +287,6 @@
     toggleLangBtn.textContent = (lang === 'ko') ? 'English' : '한국어';
     toggleLangBtn.setAttribute('aria-pressed', String(lang === 'en'));
 
-    // re-render dynamic content in the chosen language
     renderDynamicContent();
   }
 
@@ -336,227 +295,78 @@
   let fetchedUpdates = [];
 
   function renderDynamicContent() {
-    // message text (loading) if present
     if (messageEl.dataset.loading === "true") {
       messageEl.textContent = translations[currentLang].loadingShipment || "Loading...";
     }
 
     if (!fetchedShipment) return;
 
-    // summary fields
     document.getElementById("summaryTrackingNo").textContent = fetchedShipment.tracking_no || "-";
     document.getElementById("summaryCustomer").textContent = fetchedShipment.receiver_name || "-";
     document.getElementById("summaryOrigin").textContent = fetchedShipment.origin || "-";
-    // prefer receiver_country or destination
     document.getElementById("summaryDestination").textContent = fetchedShipment.receiver_country || fetchedShipment.destination || "-";
 
-    // latest update (first)
     const latest = (fetchedUpdates && fetchedUpdates.length) ? fetchedUpdates[0] : null;
     const normalized = normalizeProgress(latest?.progress || fetchedShipment.status || "Order Placed");
     const statusKey = statusMapping[normalized]?.key || 'orderPlaced';
     const localizedStatus = translations[currentLang][statusKey] || normalized;
     document.getElementById("summaryStatus").textContent = localizedStatus;
-    document.getElementById("summaryLocation").textContent = (latest?.location || fetchedShipment.location_text || fetchedShipment.location || translations[currentLang].notAvailable || "Not available");
+    document.getElementById("summaryLocation").textContent = (latest?.location || translations[currentLang].notAvailable || "Not available");
 
-    // progress visuals
+    // Update the map
+    if (latest?.location) {
+      updateMapTo(latest.location);
+    }
+
     highlightStep(normalized);
-
-    // timeline rendering (from updates array)
-    if (fetchedUpdates && fetchedUpdates.length) {
-      updatesEl.classList.remove("hidden");
-      timelineEl.innerHTML = fetchedUpdates.map(update => {
-        const norm = normalizeProgress(update.progress);
-        const statusKey2 = statusMapping[norm]?.key || 'orderPlaced';
-        const displayStatus = translations[currentLang][statusKey2] || norm;
-        const displayLocation = update.location || translations[currentLang].unknown || "Unknown";
-        const timeStr = update.created_at ? new Date(update.created_at).toLocaleString() : "";
-        const noteHtml = update.note ? `<p class="mt-1 text-gray-400 italic">${escapeHtml(update.note)}</p>` : "";
-        return `
-          <div class="relative">
-            <div class="absolute -left-3 top-1 w-6 h-6 rounded-full bg-sky-500 border-2 border-gray-900"></div>
-            <div class="ml-4">
-              <p class="font-semibold text-sky-400">${escapeHtml(displayStatus)}</p>
-              <p class="text-gray-300">${escapeHtml(displayLocation)}</p>
-              <p class="text-sm text-gray-400">${escapeHtml(timeStr)}</p>
-              ${noteHtml}
-            </div>
-          </div>
-        `;
-      }).join("");
-    } else {
-      timelineEl.innerHTML = `<p class="text-gray-400">${translations[currentLang].notAvailable}</p>`;
-    }
-
-    applyTranslations(currentLang);
-  }
-
-  /***** toggle mobile menu with animation (open/close) *****/
-  let menuOpen = false;
-  menuBtn.addEventListener('click', () => {
-    menuOpen = !menuOpen;
-    if (menuOpen) {
-      mobileMenu.classList.add('open');
-      mobileMenu.classList.remove('hidden');
-    } else {
-      mobileMenu.classList.remove('open');
-    }
-    menuBtn.setAttribute('aria-expanded', String(menuOpen));
-  });
-
-  /***** language toggle button *****/
-  toggleLangBtn.addEventListener('click', () => {
-    const next = (currentLang === 'ko') ? 'en' : 'ko';
-    setLanguage(next);
-  });
-
-  // initial language set
-  setLanguage(currentLang);
-
-  /***** Sanitizer helper *****/
-  function escapeHtml(str = "") {
-    return String(str)
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;");
   }
 
   /***** Map-related logic *****/
   let mapInstance = null;
-  let mapMarker = null;
-  async function updateMapTo(lat, lng, popupText = "") {
-    if (!lat || !lng) return;
-    if (!mapInstance) {
-      mapInstance = L.map('map', { zoomControl: true, attributionControl: true }).setView([lat, lng], 11);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-      }).addTo(mapInstance);
-      mapMarker = L.marker([lat, lng]).addTo(mapInstance).bindPopup(popupText || '');
-      mapEl.classList.remove('hidden');
-    } else {
-      mapInstance.setView([lat, lng], mapInstance.getZoom() || 11);
-      if (mapMarker) {
-        mapMarker.setLatLng([lat, lng]).setPopupContent(popupText || '');
-      } else {
-        mapMarker = L.marker([lat, lng]).addTo(mapInstance).bindPopup(popupText || '');
-      }
-    }
-  }
+  function updateMapTo(location) {
+    if (!location) return;
 
-  // Try to derive coordinates from record or update and fallback to geocoding if only text location present
-  async function deriveCoordinates(shipment, latestUpdate) {
-    // 1) explicit numeric fields on user_info
-    const numericFields = [
-      ['location_lat','location_lng'],
-      ['lat','lng'],
-      ['current_lat','current_lng'],
-      ['latitude','longitude']
-    ];
-    for (const [latKey, lngKey] of numericFields) {
-      if (shipment[latKey] !== undefined && shipment[lngKey] !== undefined && shipment[latKey] !== null && shipment[lngKey] !== null) {
-        return [Number(shipment[latKey]), Number(shipment[lngKey]), 'user_info.' + latKey];
-      }
-      if (latestUpdate && latestUpdate[latKey] !== undefined && latestUpdate[lngKey] !== undefined && latestUpdate[latKey] !== null && latestUpdate[lngKey] !== null) {
-        return [Number(latestUpdate[latKey]), Number(latestUpdate[lngKey]), 'tracking_updates.' + latKey];
-      }
-    }
+    // Use geocoding to get coordinates from the location string if needed
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(location)}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.length > 0) {
+          const lat = data[0].lat;
+          const lng = data[0].lon;
 
-    // 2) shipment.location may be object {lat,lng}
-    if (shipment.location && typeof shipment.location === 'object' && shipment.location.lat && shipment.location.lng) {
-      return [Number(shipment.location.lat), Number(shipment.location.lng), 'user_info.location object'];
-    }
-    if (latestUpdate && latestUpdate.location && typeof latestUpdate.location === 'object' && latestUpdate.location.lat && latestUpdate.location.lng) {
-      return [Number(latestUpdate.location.lat), Number(latestUpdate.location.lng), 'tracking_updates.location object'];
-    }
+          if (!mapInstance) {
+            mapInstance = L.map('map').setView([lat, lng], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              maxZoom: 19,
+              attribution: '© OpenStreetMap'
+            }).addTo(mapInstance);
+          } else {
+            mapInstance.setView([lat, lng]);
+          }
 
-    // 3) location string with 'lat,lng'
-    const stringCandidates = [
-      shipment.location,
-      shipment.location_text,
-      latestUpdate ? latestUpdate.location : null
-    ].filter(Boolean);
-
-    for (const s of stringCandidates) {
-      if (typeof s === 'string') {
-        const parts = s.split(',').map(p => p.trim());
-        if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-          return [Number(parts[0]), Number(parts[1]), 'parsed lat,lng string'];
+          L.marker([lat, lng]).addTo(mapInstance).bindPopup(location);
+          mapEl.classList.remove('hidden');
+        } else {
+          mapEl.classList.add('hidden');
         }
-      }
-    }
-
-    // 4) geocode fallback: try to geocode shipment.location or latestUpdate.location text using Nominatim
-    const geocodeCandidate = shipment.location_text || shipment.location || (latestUpdate ? latestUpdate.location : null);
-    if (geocodeCandidate && typeof geocodeCandidate === 'string' && geocodeCandidate.trim().length > 2) {
-      try {
-        const q = encodeURIComponent(geocodeCandidate);
-        // Nominatim usage (client-side). This is a free service — respect usage limits.
-        const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${q}`;
-        const resp = await fetch(url, { headers: { 'Accept': 'application/json' } });
-        if (!resp.ok) throw new Error('Geocode failed');
-        const j = await resp.json();
-        if (Array.isArray(j) && j.length > 0) {
-          return [Number(j[0].lat), Number(j[0].lon), 'nominatim'];
-        }
-      } catch (err) {
-        console.warn('Geocode error', err);
-      }
-    }
-
-    // nothing found
-    return [null, null, null];
+      })
+      .catch(error => {
+        console.error('Geocoding error:', error);
+        mapEl.classList.add('hidden');
+      });
   }
 
-  /***** highlight progress step & update progress line *****/
-  function highlightStep(normalizedProgress) {
-    const idx = orderStatuses.indexOf(normalizedProgress);
-    const activeIndex = Math.max(0, idx === -1 ? 0 : idx);
-
-    // reset all steps
-    ["stepPending","stepTransit","stepShipped","stepDelivered"].forEach(id => {
-      const step = document.getElementById(id);
-      if (!step) return;
-      const img = step.querySelector("img");
-      const p = step.querySelector("p");
-      if (img) img.classList.add("opacity-50");
-      if (p) {
-        p.classList.remove("font-bold");
-        p.classList.remove("text-sky-400");
-      }
-    });
-
-    // activate up to activeIndex
-    for (let i = 0; i <= activeIndex; i++) {
-      const id = ["stepPending","stepTransit","stepShipped","stepDelivered"][i];
-      const step = document.getElementById(id);
-      if (!step) continue;
-      const img = step.querySelector("img");
-      const p = step.querySelector("p");
-      if (img) img.classList.remove("opacity-50");
-      if (p) {
-        p.classList.add("font-bold");
-        p.classList.add("text-sky-400");
-      }
-    }
-
-    // update progressLine width
-    const percent = (activeIndex / (orderStatuses.length - 1)) * 100;
-    progressLine.style.width = `${percent}%`;
-  }
-
-  /***** Core: load tracking data, map, and updates *****/
+  /***** Load tracking data *****/
   async function loadTracking() {
-    // redirect back if no tracking code
     if (!trackingNo) {
       window.location.href = "tracking-form.html";
       return;
     }
 
-    // show loading
     messageEl.dataset.loading = "true";
     messageEl.textContent = translations[currentLang].loadingShipment || "Loading shipment...";
 
     try {
-      // Fetch shipment record
       const { data: shipment, error: shipmentError } = await supabaseClient
         .from("user_info")
         .select("*")
@@ -564,13 +374,11 @@
         .maybeSingle();
 
       if (shipmentError || !shipment) {
-        // Redirect back to tracking form with an "invalid" flag and original code
         const q = new URLSearchParams({ error: "invalid", code: trackingNo });
         window.location.href = `tracking-form.html?${q.toString()}`;
         return;
       }
 
-      // fetch updates (latest first)
       const { data: updates, error: updatesError } = await supabaseClient
         .from("tracking_updates")
         .select("*")
@@ -581,27 +389,21 @@
         console.warn('updates error', updatesError);
       }
 
-      // assign to global variables
       fetchedShipment = shipment;
       fetchedUpdates = updates || [];
 
-      // Render summary and timeline
       summaryEl.classList.remove("hidden");
       renderDynamicContent();
 
-      // Map: derive coordinates & show marker
+    // Show the map based on the latest update location
       const latestUpdate = fetchedUpdates.length ? fetchedUpdates[0] : null;
-      const [lat, lng, source] = await deriveCoordinates(fetchedShipment, latestUpdate);
-
-      if (lat && lng) {
-        // update map view and marker
-        await updateMapTo(lat, lng, `<strong>${escapeHtml(fetchedShipment.receiver_name || 'Package')}</strong><br>${escapeHtml(fetchedShipment.location_text || fetchedShipment.location || (latestUpdate ? latestUpdate.location : ''))}`);
+      if (latestUpdate && latestUpdate.location) {
+        updateMapTo(latestUpdate.location);
       } else {
-        // hide map if we can't determine a location
-        mapEl.classList.add('hidden');
+        mapEl.classList.add('hidden'); // Hide map if no location is available
       }
 
-      // show progress/timeline sections
+      // Show progress and timeline sections
       progressEl.classList.remove("hidden");
       if (fetchedUpdates.length) updatesEl.classList.remove("hidden");
 
@@ -613,71 +415,9 @@
     }
   }
 
-  /***** Refresh helper: polls for updates and updates map/summary if changed *****/
-  let refreshTimer = null;
-  async function refreshTrackingIfChanged() {
-    if (!fetchedShipment) return;
-    try {
-      const { data: shipmentFresh, error: err } = await supabaseClient
-        .from("user_info")
-        .select("*")
-        .eq("id", fetchedShipment.id)
-        .maybeSingle();
-      if (err || !shipmentFresh) return;
+  // Start loading tracking data when the page is ready
+  loadTracking();
 
-      // quick shallow compare: location fields or status changed
-      const wasChanged =
-        shipmentFresh.location !== fetchedShipment.location ||
-        shipmentFresh.location_text !== fetchedShipment.location_text ||
-        shipmentFresh.location_lat !== fetchedShipment.location_lat ||
-        shipmentFresh.location_lng !== fetchedShipment.location_lng ||
-        shipmentFresh.status !== fetchedShipment.status ||
-        shipmentFresh.receiver_name !== fetchedShipment.receiver_name;
-
-      if (wasChanged) {
-        // replace cached shipment and re-render
-        fetchedShipment = shipmentFresh;
-        // also re-fetch updates
-        const { data: updatesFresh } = await supabaseClient
-          .from("tracking_updates")
-          .select("*")
-          .eq("shipment_id", fetchedShipment.id)
-          .order("created_at", { ascending: false });
-        fetchedUpdates = updatesFresh || [];
-        renderDynamicContent();
-        // update map coordinates if available
-        const latestUpdate = fetchedUpdates.length ? fetchedUpdates[0] : null;
-        const [lat, lng] = await deriveCoordinates(fetchedShipment, latestUpdate);
-        if (lat && lng) {
-          updateMapTo(lat, lng, `<strong>${escapeHtml(fetchedShipment.receiver_name || 'Package')}</strong><br>${escapeHtml(fetchedShipment.location_text || fetchedShipment.location || (latestUpdate ? latestUpdate.location : ''))}`);
-        }
-      }
-    } catch (err) {
-      console.warn('refresh error', err);
-    }
-  }
-
-  // start initial load and polling
-  loadTracking().then(() => {
-    // Poll every 15 seconds to pick up manual updates from dashboard
-    if (refreshTimer) clearInterval(refreshTimer);
-    refreshTimer = setInterval(refreshTrackingIfChanged, 15000);
-  });
-
-  /***** apply translations to any data-key elements not yet applied *****/
-  function applyTranslations(lang) {
-    document.querySelectorAll('[data-key]').forEach(el => {
-      const key = el.getAttribute('data-key');
-      if (key && translations[lang] && translations[lang][key]) {
-        el.textContent = translations[lang][key];
-      }
-    });
-  }
-
-  /***** small accessibility / cleanup on unload *****/
-  window.addEventListener('beforeunload', () => {
-    if (refreshTimer) clearInterval(refreshTimer);
-  });
   </script>
 </body>
 </html>
