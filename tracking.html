@@ -163,7 +163,7 @@
   <script>
   /***** CONFIG (replace with your real values) *****/
   const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // <-- put your anon/public key here
 
   /***** INIT supabase client *****/
   const { createClient } = supabase;
@@ -239,12 +239,17 @@
     "Shipped": { key: "shipped", stepId: "stepShipped" },
     "Delivered": { key: "delivered", stepId: "stepDelivered" }
   };
-  const orderStatuses = Object.keys(statusMapping);
+  const orderStatuses = Object.keys(statusMapping); // ['Order Placed','Preparing Shipment','Shipped','Delivered']
 
+  // normalize different language / variations into the canonical English keys above
   function normalizeProgress(raw) {
     if (!raw) return "Order Placed";
     const trimmed = String(raw).trim();
+
+    // direct matches (English)
     if (orderStatuses.includes(trimmed)) return trimmed;
+
+    // Korean matches
     const koMap = {
       "주문 접수": "Order Placed",
       "접수": "Order Placed",
@@ -256,11 +261,14 @@
       "완료": "Delivered"
     };
     if (koMap[trimmed]) return koMap[trimmed];
+
+    // fuzzy checks
     const lower = trimmed.toLowerCase();
     if (lower.includes("order") || lower.includes("placed") || lower.includes("접수")) return "Order Placed";
-    if (lower.includes("prepare") || lower.includes("준비")) return "Preparing Shipment";
+    if (lower.includes("prepare") || lower.includes("preparing") || lower.includes("준비")) return "Preparing Shipment";
     if (lower.includes("ship") && !lower.includes("deliver")) return "Shipped";
     if (lower.includes("deliver") || lower.includes("완료")) return "Delivered";
+
     return "Order Placed";
   }
 
@@ -270,37 +278,53 @@
   function setLanguage(lang) {
     currentLang = lang;
     localStorage.setItem('site_lang', lang);
+
+    // set static text from data-key attributes
     document.querySelectorAll('[data-key]').forEach(el => {
       const key = el.getAttribute('data-key');
       if (!key) return;
+      // If translations don't have that key, don't override
       if (translations[lang] && translations[lang][key]) {
         el.textContent = translations[lang][key];
       }
     });
+
+    // toggle language button label shows the *other* language (consistent with previous behavior)
     toggleLangBtn.textContent = (lang === 'ko') ? 'English' : '한국어';
     toggleLangBtn.setAttribute('aria-pressed', String(lang === 'en'));
+
+    // re-render dynamic content (summary, timeline) in the chosen language
     renderDynamicContent();
   }
 
+  // store fetched data to allow re-render when language changes
   let fetchedShipment = null;
   let fetchedUpdates = null;
 
   function renderDynamicContent() {
+    // message text (loading) if present
     if (messageEl.dataset.loading === "true") {
       messageEl.textContent = translations[currentLang].loadingShipment || "Loading...";
     }
+
     if (fetchedShipment) {
+      // summary fields
       document.getElementById("summaryTrackingNo").textContent = fetchedShipment.tracking_no;
       document.getElementById("summaryCustomer").textContent = fetchedShipment.receiver_name || "-";
       document.getElementById("summaryOrigin").textContent = fetchedShipment.origin || "-";
       document.getElementById("summaryDestination").textContent = fetchedShipment.receiver_country || "-";
+
       const latest = (fetchedUpdates && fetchedUpdates.length) ? fetchedUpdates[0] : null;
       const normalized = normalizeProgress(latest?.progress || "Order Placed");
       const statusKey = statusMapping[normalized]?.key || 'orderPlaced';
       const localizedStatus = translations[currentLang][statusKey] || normalized;
       document.getElementById("summaryStatus").textContent = localizedStatus;
       document.getElementById("summaryLocation").textContent = latest?.location || (translations[currentLang].notAvailable || "Not available");
+
+      // progress visuals
       highlightStep(normalized);
+
+      // timeline
       if (fetchedUpdates && fetchedUpdates.length) {
         updatesEl.classList.remove("hidden");
         timelineEl.innerHTML = fetchedUpdates.map(update => {
@@ -326,13 +350,14 @@
     }
   }
 
-  /***** toggle mobile menu *****/
+  /***** toggle mobile menu with animation (open/close) *****/
   let menuOpen = false;
   menuBtn.addEventListener('click', () => {
     menuOpen = !menuOpen;
     if (menuOpen) {
       mobileMenu.classList.add('open');
-      mobileMenu.classList.remove('hidden');
+      mobileMenu.classList.add('open'); // ensure class present
+      mobileMenu.classList.remove('hidden'); // safe: ensure it's visible (max-height handles collapse)
     } else {
       mobileMenu.classList.remove('open');
     }
@@ -344,88 +369,107 @@
     const next = (currentLang === 'ko') ? 'en' : 'ko';
     setLanguage(next);
   });
+
+  // initial language
   setLanguage(currentLang);
 
   /***** tracking loader *****/
   async function loadTracking() {
+    // redirect back if no tracking code
     if (!trackingNo) {
       window.location.href = "tracking-form.html";
       return;
     }
+
     messageEl.dataset.loading = "true";
     messageEl.textContent = translations[currentLang].loadingShipment || "Loading shipment...";
+
+    // Fetch shipment
     try {
       const { data: shipment, error: shipmentError } = await supabaseClient
         .from("user_info")
         .select("*")
         .eq("tracking_no", trackingNo)
         .maybeSingle();
+
       if (shipmentError || !shipment) {
+        // Redirect back to tracking form with an "invalid" flag and original code
         const q = new URLSearchParams({ error: "invalid", code: trackingNo });
         window.location.href = `tracking-form.html?${q.toString()}`;
         return;
       }
+
+      // fetch updates
       const { data: updates, error: updatesError } = await supabaseClient
         .from("tracking_updates")
         .select("*")
-        .eq("tracking_no", trackingNo)
+        .eq("shipment_id", shipment.id)
         .order("created_at", { ascending: false });
+
       if (updatesError) {
-        console.error(updatesError);
-        messageEl.textContent = "Error loading updates";
+        messageEl.textContent = "⚠️ Error loading updates.";
         return;
       }
-      messageEl.dataset.loading = "false";
-      messageEl.textContent = "";
-      summaryEl.classList.remove("hidden");
-      progressEl.classList.remove("hidden");
+
+      // store fetched data and render (with translations)
       fetchedShipment = shipment;
-      fetchedUpdates = updates;
+      fetchedUpdates = updates || [];
+
+      // show summary and sections
+      summaryEl.classList.remove("hidden");
       renderDynamicContent();
+
+      // reveal progress and timeline if present
+      progressEl.classList.remove("hidden");
+      if (fetchedUpdates.length) updatesEl.classList.remove("hidden");
+
+      messageEl.textContent = "";
+      delete messageEl.dataset.loading;
     } catch (err) {
       console.error(err);
-      messageEl.dataset.loading = "false";
-      messageEl.textContent = "Unexpected error";
+      messageEl.textContent = "⚠️ Error loading shipment.";
     }
   }
 
-  /***** highlight step and progress line *****/
-  function highlightStep(status) {
-    const normalized = normalizeProgress(status);
-    const order = orderStatuses.indexOf(normalized);
-    const stepIds = ["stepPending", "stepTransit", "stepShipped", "stepDelivered"];
-    stepIds.forEach((id, i) => {
-      const stepEl = document.getElementById(id).querySelector("img");
-      if (!stepEl) return;
-      if (i <= order) {
-        stepEl.classList.remove("opacity-50");
-        stepEl.classList.add("opacity-100");
-      } else {
-        stepEl.classList.add("opacity-50");
-        stepEl.classList.remove("opacity-100");
+  /***** highlight progress step & update progress line *****/
+  function highlightStep(normalizedProgress) {
+    const idx = orderStatuses.indexOf(normalizedProgress);
+    const activeIndex = Math.max(0, idx === -1 ? 0 : idx);
+
+    // reset all steps
+    ["stepPending","stepTransit","stepShipped","stepDelivered"].forEach(id => {
+      const step = document.getElementById(id);
+      if (!step) return;
+      const img = step.querySelector("img");
+      const p = step.querySelector("p");
+      if (img) img.classList.add("opacity-50");
+      if (p) {
+        p.classList.remove("font-bold");
+        p.classList.remove("text-sky-400");
       }
     });
-    const percentage = ((order + 1) / stepIds.length) * 100;
-    progressLine.style.width = percentage + "%";
+
+    // activate up to activeIndex
+    for (let i = 0; i <= activeIndex; i++) {
+      const id = ["stepPending","stepTransit","stepShipped","stepDelivered"][i];
+      const step = document.getElementById(id);
+      if (!step) continue;
+      const img = step.querySelector("img");
+      const p = step.querySelector("p");
+      if (img) img.classList.remove("opacity-50");
+      if (p) {
+        p.classList.add("font-bold");
+        p.classList.add("text-sky-400");
+      }
+    }
+
+    // update progressLine width
+    const percent = (activeIndex / (orderStatuses.length - 1)) * 100;
+    progressLine.style.width = `${percent}%`;
   }
 
-  /***** auto-refresh every 15s *****/
-  let refreshInterval;
-  function startAutoRefresh(code) {
-    if (refreshInterval) clearInterval(refreshInterval);
-    refreshInterval = setInterval(() => loadTracking(), 15000);
-  }
-
-  /***** cleanup on unload *****/
-  window.addEventListener("beforeunload", () => {
-    if (refreshInterval) clearInterval(refreshInterval);
-  });
-
-  /***** run load *****/
-  if (trackingNo) {
-    loadTracking();
-    startAutoRefresh(trackingNo);
-  }
+  // start loader
+  loadTracking();
   </script>
 </body>
 </html>
