@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Admin Dashboard - AOL Logistics</title>
 
   <!-- Tailwind (you can keep your dashboard.css if you want) -->
@@ -16,6 +16,9 @@
   <style>
     /* small tweaks for modals responsiveness */
     .modal-inner { max-width: 920px; width: 100%; }
+    @media (max-width: 640px) {
+      .modal-inner { padding: 20px; }
+    }
   </style>
 </head>
 <body class="flex flex-col md:flex-row bg-gray-900 min-h-screen text-white">
