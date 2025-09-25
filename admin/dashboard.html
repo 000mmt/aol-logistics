@@ -16,6 +16,86 @@
   <style>
     /* small tweaks for modals responsiveness */
     .modal-inner { max-width: 920px; width: 100%; }
+
+
+    /* General Styles */
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Sidebar */
+aside {
+    transition: width 0.2s ease;
+}
+
+/* Main Content */
+main {
+    transition: background-color 0.2s ease;
+}
+
+/* Buttons */
+button {
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+/* Modal Styles */
+.modal-inner {
+    max-width: 920px;
+    width: 100%;
+    border-radius: 0.5rem;
+}
+
+.modal-inner h2 {
+    font-size: 1.5rem;
+}
+
+/* Input Fields */
+input, textarea {
+    border: 1px solid #4B5563; /* Gray-600 */
+    background-color: #374151; /* Gray-700 */
+    color: #ffffff;
+    transition: border-color 0.2s ease;
+}
+
+input:focus, textarea:focus {
+    border-color: #FBBF24; /* Yellow-400 */
+    outline: none;
+}
+
+/* Notification Bar */
+#notificationBar {
+    transition: opacity 0.5s ease;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 640px) {
+    .modal-inner {
+        padding: 20px;
+    }
+
+    aside {
+        width: 100%;
+    }
+
+    main {
+        padding: 1rem;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    button {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+
+    
   </style>
 </head>
 <body class="flex flex-col md:flex-row bg-gray-900 min-h-screen text-white">
