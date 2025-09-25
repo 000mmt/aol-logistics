@@ -9,8 +9,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Supabase client -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <!-- Leaflet (map) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
   <style>
     /* icons size */
     .progress-icon {
@@ -44,20 +43,6 @@
         width: auto;
       }
     }
-
-    /* Map styling and spacing to prevent it from hugging the details */
-    #map {
-      height: 420px;
-      width: 100%;
-      border-radius: 10px;
-      margin: 20px 0;
-      box-shadow: 0 6px 20px rgba(2,6,23,0.6);
-      border: 1px solid rgba(255,255,255,0.03);
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    }
-
-    /* small helper for timeline items */
-    .timeline-item { padding-left: 0.75rem; border-left-width: 2px; border-left-color: rgba(14,165,233,0.85); }
   </style>
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
@@ -114,7 +99,7 @@
   <main class="flex-1 container mx-auto px-4 md:px-6 py-8 md:py-10">
 
     <!-- Shipment Summary -->
-    <div id="shipmentSummary" class="bg-gray-800 shadow-lg rounded-xl p-6 mb-4 hidden">
+    <div id="shipmentSummary" class="bg-gray-800 shadow-lg rounded-xl p-6 mb-8 hidden">
       <h3 class="text-xl font-semibold mb-4 text-sky-400" data-key="shipmentDetails">배송 세부 정보</h3>
       <div class="grid md:grid-cols-2 gap-4 text-sm">
         <p><strong data-key="trackingNo">운송장 번호:</strong> <span id="summaryTrackingNo"></span></p>
@@ -125,9 +110,6 @@
         <p><strong data-key="location">현재 위치:</strong> <span id="summaryLocation" class="font-semibold text-gray-300"></span></p>
       </div>
     </div>
-
-    <!-- Map: placed after shipment details and before progress -->
-    <div id="map" class="hidden" aria-hidden="true"></div>
 
    <!-- Progress Bar -->
    <div id="progressSection" class="mb-8 hidden">
@@ -178,250 +160,272 @@
     <p>&copy; 2025 AOL 물류. 모든 권리 보유.</p>
   </footer>
 
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
   <script>
-     // Supabase configuration
-const SUPABASE_URL = "https://ozoiqsoabqjcdyjsvrmb.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im96b2lxc29hYnFqY2R5anN2cm1iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM3NDM1MjEsImV4cCI6MjA0OTMxOTUyMX0.wGHnL7MsoNUvh8mrlPI2Z7Za2hlMYvmhxlaPyd07_9U";
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  /***** CONFIG (replace with your real values) *****/
+  const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY";
 
-// Escape HTML to prevent XSS
-function escapeHtml(str = "") {
-  return String(str)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
+  /***** INIT supabase client *****/
+  const { createClient } = supabase;
+  const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Handle mobile menu toggle
-const menuToggle = document.getElementById("menu-toggle");
-const mobileMenu = document.getElementById("mobile-menu");
-let menuOpen = false;
+  /***** DOM refs *****/
+  const menuBtn = document.getElementById("menuBtn");
+  const mobileMenu = document.getElementById("mobileMenu");
+  const toggleLangBtn = document.getElementById("toggleLang");
 
-if (menuToggle && mobileMenu) {
-  menuToggle.addEventListener("click", () => {
-    menuOpen = !menuOpen;
-    if (menuOpen) {
-      mobileMenu.classList.remove("hidden");
-      setTimeout(() => mobileMenu.classList.add("open"), 10);
-    } else {
-      mobileMenu.classList.remove("open");
-      setTimeout(() => {
-        if (!menuOpen) mobileMenu.classList.add("hidden");
-      }, 300);
+  const params = new URLSearchParams(window.location.search);
+  const trackingNo = params.get("tracking_no");
+
+  const summaryEl = document.getElementById("shipmentSummary");
+  const updatesEl = document.getElementById("updatesTimeline");
+  const progressEl = document.getElementById("progressSection");
+  const timelineEl = document.getElementById("timeline");
+  const messageEl = document.getElementById("message");
+  const progressLine = document.getElementById("progressLine");
+
+  /***** Translations (keys used as data-key in the page) *****/
+  const translations = {
+    ko: {
+      brand: "AOL LOGISTICS",
+      nav_home: "홈",
+      nav_tracking: "배송 추적",
+      nav_home_mobile: "홈",
+      nav_tracking_mobile: "배송 추적",
+      shipmentDetails: "배송 세부 정보",
+      trackingNo: "운송장 번호:",
+      customer: "고객:",
+      origin: "출발지:",
+      destination: "도착지:",
+      status: "상태:",
+      location: "현재 위치:",
+      shipmentProgress: "배송 진행 상황",
+      orderPlaced: "주문 접수",
+      preparing: "준비 중",
+      shipped: "배송 중",
+      delivered: "배송 완료",
+      trackingUpdates: "배송 업데이트",
+      loadingShipment: "배송 정보를 불러오는 중...",
+      invalidCodeMessage: "유효하지 않은 운송장 코드입니다."
+    },
+    en: {
+      brand: "AOL LOGISTICS",
+      nav_home: "Home",
+      nav_tracking: "Track Shipment",
+      nav_home_mobile: "Home",
+      nav_tracking_mobile: "Track Shipment",
+      shipmentDetails: "Shipment Details",
+      trackingNo: "Tracking No:",
+      customer: "Customer:",
+      origin: "Origin:",
+      destination: "Destination:",
+      status: "Status:",
+      location: "Current Location:",
+      shipmentProgress: "Shipment Progress",
+      orderPlaced: "Order Placed",
+      preparing: "Preparing",
+      shipped: "Shipped",
+      delivered: "Delivered",
+      trackingUpdates: "Tracking Updates",
+      loadingShipment: "Loading shipment...",
+      invalidCodeMessage: "Invalid tracking code."
     }
-  });
-}
+  };
 
-// Language support
-const translations = {
-  en: {
-    tracking_title: "Shipment Tracking",
-    tracking_input_placeholder: "Enter your tracking number",
-    track_button: "Track",
-    error_invalid: "Invalid tracking number",
-    current_status: "Current Status",
-    tracking_history: "Tracking History",
-    delivered: "Delivered",
-    in_transit: "In Transit",
-    preparing: "Preparing Shipment",
-    order_placed: "Order Placed",
-    map_title: "Delivery Location"
-  },
-  ko: {
-    tracking_title: "배송 추적",
-    tracking_input_placeholder: "송장 번호를 입력하세요",
-    track_button: "추적",
-    error_invalid: "잘못된 송장 번호입니다",
-    current_status: "현재 상태",
-    tracking_history: "배송 내역",
-    delivered: "배송 완료",
-    in_transit: "배송 중",
-    preparing: "배송 준비중",
-    order_placed: "주문 완료",
-    map_title: "배송 위치"
+  /***** status mapping helpers *****/
+  const statusMapping = {
+    "Order Placed": { key: "orderPlaced", stepId: "stepPending" },
+    "Preparing Shipment": { key: "preparing", stepId: "stepTransit" },
+    "Shipped": { key: "shipped", stepId: "stepShipped" },
+    "Delivered": { key: "delivered", stepId: "stepDelivered" }
+  };
+  const orderStatuses = Object.keys(statusMapping);
+
+  function normalizeProgress(raw) {
+    if (!raw) return "Order Placed";
+    const trimmed = String(raw).trim();
+    if (orderStatuses.includes(trimmed)) return trimmed;
+    const koMap = {
+      "주문 접수": "Order Placed",
+      "접수": "Order Placed",
+      "준비 중": "Preparing Shipment",
+      "준비": "Preparing Shipment",
+      "배송 중": "Shipped",
+      "배송": "Shipped",
+      "배송 완료": "Delivered",
+      "완료": "Delivered"
+    };
+    if (koMap[trimmed]) return koMap[trimmed];
+    const lower = trimmed.toLowerCase();
+    if (lower.includes("order") || lower.includes("placed") || lower.includes("접수")) return "Order Placed";
+    if (lower.includes("prepare") || lower.includes("준비")) return "Preparing Shipment";
+    if (lower.includes("ship") && !lower.includes("deliver")) return "Shipped";
+    if (lower.includes("deliver") || lower.includes("완료")) return "Delivered";
+    return "Order Placed";
   }
-};
 
-let currentLang = "en";
+  /***** language state and rendering *****/
+  let currentLang = localStorage.getItem('site_lang') || 'ko';
 
-function applyTranslations(lang) {
-  currentLang = lang;
-  document.querySelectorAll("[data-key]").forEach(el => {
-    const key = el.getAttribute("data-key");
-    if (translations[lang][key]) {
-      if (el.tagName === "INPUT") {
-        el.placeholder = translations[lang][key];
-      } else {
+  function setLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('site_lang', lang);
+    document.querySelectorAll('[data-key]').forEach(el => {
+      const key = el.getAttribute('data-key');
+      if (!key) return;
+      if (translations[lang] && translations[lang][key]) {
         el.textContent = translations[lang][key];
       }
+    });
+    toggleLangBtn.textContent = (lang === 'ko') ? 'English' : '한국어';
+    toggleLangBtn.setAttribute('aria-pressed', String(lang === 'en'));
+    renderDynamicContent();
+  }
+
+  let fetchedShipment = null;
+  let fetchedUpdates = null;
+
+  function renderDynamicContent() {
+    if (messageEl.dataset.loading === "true") {
+      messageEl.textContent = translations[currentLang].loadingShipment || "Loading...";
     }
+    if (fetchedShipment) {
+      document.getElementById("summaryTrackingNo").textContent = fetchedShipment.tracking_no;
+      document.getElementById("summaryCustomer").textContent = fetchedShipment.receiver_name || "-";
+      document.getElementById("summaryOrigin").textContent = fetchedShipment.origin || "-";
+      document.getElementById("summaryDestination").textContent = fetchedShipment.receiver_country || "-";
+      const latest = (fetchedUpdates && fetchedUpdates.length) ? fetchedUpdates[0] : null;
+      const normalized = normalizeProgress(latest?.progress || "Order Placed");
+      const statusKey = statusMapping[normalized]?.key || 'orderPlaced';
+      const localizedStatus = translations[currentLang][statusKey] || normalized;
+      document.getElementById("summaryStatus").textContent = localizedStatus;
+      document.getElementById("summaryLocation").textContent = latest?.location || (translations[currentLang].notAvailable || "Not available");
+      highlightStep(normalized);
+      if (fetchedUpdates && fetchedUpdates.length) {
+        updatesEl.classList.remove("hidden");
+        timelineEl.innerHTML = fetchedUpdates.map(update => {
+          const norm = normalizeProgress(update.progress);
+          const statusKey2 = statusMapping[norm]?.key || 'orderPlaced';
+          const displayStatus = translations[currentLang][statusKey2] || norm;
+          const displayLocation = update.location || translations[currentLang].unknown || "Unknown";
+          const timeStr = update.created_at ? new Date(update.created_at).toLocaleString() : "";
+          const noteHtml = update.note ? `<p class="mt-1 text-gray-400 italic">${update.note}</p>` : "";
+          return `
+            <div class="relative">
+              <div class="absolute -left-3 top-1 w-6 h-6 rounded-full bg-sky-500 border-2 border-gray-900"></div>
+              <div class="ml-4">
+                <p class="font-semibold text-sky-400">${displayStatus}</p>
+                <p class="text-gray-300">${displayLocation}</p>
+                <p class="text-sm text-gray-400">${timeStr}</p>
+                ${noteHtml}
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+    }
+  }
+
+  /***** toggle mobile menu *****/
+  let menuOpen = false;
+  menuBtn.addEventListener('click', () => {
+    menuOpen = !menuOpen;
+    if (menuOpen) {
+      mobileMenu.classList.add('open');
+      mobileMenu.classList.remove('hidden');
+    } else {
+      mobileMenu.classList.remove('open');
+    }
+    menuBtn.setAttribute('aria-expanded', String(menuOpen));
   });
-}
 
-document.querySelectorAll("[data-lang]").forEach(btn => {
-  btn.addEventListener("click", () => applyTranslations(btn.getAttribute("data-lang")));
-});
+  /***** language toggle button *****/
+  toggleLangBtn.addEventListener('click', () => {
+    const next = (currentLang === 'ko') ? 'en' : 'ko';
+    setLanguage(next);
+  });
+  setLanguage(currentLang);
 
-// Tracking logic
-const form = document.getElementById("tracking-form");
-const input = document.getElementById("tracking-number");
-const result = document.getElementById("tracking-result");
-
-let map, marker;
-function initMap(lat, lng) {
-  const mapEl = document.getElementById("map");
-  if (!lat || !lng) {
-    if (mapEl) mapEl.classList.add("hidden");
-    return;
-  }
-  if (!map) {
-    map = L.map("map").setView([lat, lng], 13);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: "© OpenStreetMap"
-    }).addTo(map);
-    marker = L.marker([lat, lng]).addTo(map);
-  } else {
-    map.setView([lat, lng], 13);
-    marker.setLatLng([lat, lng]);
-  }
-  if (mapEl) mapEl.classList.remove("hidden");
-}
-
-const statusMapping = {
-  order_placed: "Order Placed",
-  preparing: "Preparing Shipment",
-  in_transit: "In Transit",
-  delivered: "Delivered"
-};
-
-async function fetchTracking(code) {
-  result.innerHTML =
-    `<div class="text-center py-4">Loading...</div>`;
-  try {
-    const { data: shipment, error } = await supabaseClient
-      .from("shipments")
-      .select("*")
-      .eq("tracking_code", code)
-      .maybeSingle();
-    if (error || !shipment) {
-      result.innerHTML =
-        `<div class="text-red-500 text-center">${translations[currentLang].error_invalid}</div>`;
+  /***** tracking loader *****/
+  async function loadTracking() {
+    if (!trackingNo) {
+      window.location.href = "tracking-form.html";
       return;
     }
-
-    const { data: updates, error: updatesError } = await supabaseClient
-      .from("tracking_updates")
-      .select("*")
-      .eq("shipment_id", shipment.id)
-      .order("created_at", { ascending: false });
-    if (updatesError) throw updatesError;
-
-    let currentStep = Object.keys(statusMapping).indexOf(shipment.status);
-    let progressSteps = Object.keys(statusMapping)
-      .map((key, i) =>
-        `<div class="progress-step ${i <= currentStep ? "active" : ""} w-1/4">${translations[currentLang][key]}</div>`
-      )
-      .join("");
-
-    let historyHtml = updates
-      .map(
-        update => `
-      <div class="bg-gray-50 p-3 rounded">
-        <div class="font-medium">${escapeHtml(update.status)}</div>
-        <div class="text-sm text-gray-600">${escapeHtml(update.location || "")}</div>
-        <div class="text-xs text-gray-400">${new Date(update.created_at).toLocaleString(currentLang === "ko" ? "ko-KR" : "en-US")}</div>
-        <div class="text-sm">${escapeHtml(update.note || "")}</div>
-      </div>`
-      )
-      .join("");
-
-    result.innerHTML = `
-      <div class="space-y-4">
-        <div class="tracking-progress flex items-center">${progressSteps}</div>
-        <div class="bg-white p-4 rounded shadow">
-          <h3 class="font-bold mb-2">${translations[currentLang].current_status}: ${translations[currentLang][shipment.status]}</h3>
-          <p>Tracking Code: ${escapeHtml(shipment.tracking_code)}</p>
-        </div>
-        <div>
-          <h3 class="font-bold mb-2">${translations[currentLang].tracking_history}</h3>
-          <div class="space-y-2">${historyHtml}</div>
-        </div>
-        <div>
-          <h3 class="font-bold mb-2">${translations[currentLang].map_title}</h3>
-          <div id="map" class="h-64 rounded shadow"></div>
-        </div>
-      </div>
-    `;
-
-    if (updates.length && updates[0].location) {
-      let coords = updates[0].location;
-      if (typeof coords === "string" && coords.includes(",")) {
-        let [lat, lng] = coords.split(",").map(Number);
-        initMap(lat, lng);
-      } else if (typeof coords === "object" && coords.lat && coords.lng) {
-        initMap(coords.lat, coords.lng);
-      } else {
-        try {
-          const res = await fetch(
-            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(coords)}`
-          );
-          const data = await res.json();
-          if (data.length) initMap(parseFloat(data[0].lat), parseFloat(data[0].lon));
-          else initMap(null, null);
-        } catch {
-          initMap(null, null);
-        }
+    messageEl.dataset.loading = "true";
+    messageEl.textContent = translations[currentLang].loadingShipment || "Loading shipment...";
+    try {
+      const { data: shipment, error: shipmentError } = await supabaseClient
+        .from("user_info")
+        .select("*")
+        .eq("tracking_no", trackingNo)
+        .maybeSingle();
+      if (shipmentError || !shipment) {
+        const q = new URLSearchParams({ error: "invalid", code: trackingNo });
+        window.location.href = `tracking-form.html?${q.toString()}`;
+        return;
       }
-    } else {
-      initMap(null, null);
+      const { data: updates, error: updatesError } = await supabaseClient
+        .from("tracking_updates")
+        .select("*")
+        .eq("tracking_no", trackingNo)
+        .order("created_at", { ascending: false });
+      if (updatesError) {
+        console.error(updatesError);
+        messageEl.textContent = "Error loading updates";
+        return;
+      }
+      messageEl.dataset.loading = "false";
+      messageEl.textContent = "";
+      summaryEl.classList.remove("hidden");
+      progressEl.classList.remove("hidden");
+      fetchedShipment = shipment;
+      fetchedUpdates = updates;
+      renderDynamicContent();
+    } catch (err) {
+      console.error(err);
+      messageEl.dataset.loading = "false";
+      messageEl.textContent = "Unexpected error";
     }
-  } catch (err) {
-    console.error(err);
-    result.innerHTML =
-      `<div class="text-red-500 text-center">Error loading tracking</div>`;
   }
-}
 
-form.addEventListener("submit", e => {
-  e.preventDefault();
-  fetchTracking(input.value.trim());
-});
-
-// Auto refresh
-let refreshInterval;
-function startAutoRefresh(code) {
-  if (refreshInterval) clearInterval(refreshInterval);
-  refreshInterval = setInterval(() => fetchTracking(code), 15000);
-}
-
-form.addEventListener("submit", e => {
-  e.preventDefault();
-  let code = input.value.trim();
-  if (!code) return;
-  fetchTracking(code);
-  startAutoRefresh(code);
-});
-
-// Accessibility: close menu with Esc
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape" && menuOpen) {
-    menuToggle.click();
+  /***** highlight step and progress line *****/
+  function highlightStep(status) {
+    const normalized = normalizeProgress(status);
+    const order = orderStatuses.indexOf(normalized);
+    const stepIds = ["stepPending", "stepTransit", "stepShipped", "stepDelivered"];
+    stepIds.forEach((id, i) => {
+      const stepEl = document.getElementById(id).querySelector("img");
+      if (!stepEl) return;
+      if (i <= order) {
+        stepEl.classList.remove("opacity-50");
+        stepEl.classList.add("opacity-100");
+      } else {
+        stepEl.classList.add("opacity-50");
+        stepEl.classList.remove("opacity-100");
+      }
+    });
+    const percentage = ((order + 1) / stepIds.length) * 100;
+    progressLine.style.width = percentage + "%";
   }
-});
 
-/***** small accessibility / cleanup on unload *****/
-window.addEventListener("beforeunload", () => {
-  if (refreshInterval) clearInterval(refreshInterval);
-});
+  /***** auto-refresh every 15s *****/
+  let refreshInterval;
+  function startAutoRefresh(code) {
+    if (refreshInterval) clearInterval(refreshInterval);
+    refreshInterval = setInterval(() => loadTracking(), 15000);
+  }
 
-// Initialize default language
-applyTranslations(currentLang);
+  /***** cleanup on unload *****/
+  window.addEventListener("beforeunload", () => {
+    if (refreshInterval) clearInterval(refreshInterval);
+  });
 
+  /***** run load *****/
+  if (trackingNo) {
+    loadTracking();
+    startAutoRefresh(trackingNo);
+  }
   </script>
 </body>
 </html>
