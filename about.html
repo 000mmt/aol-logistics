@@ -1,132 +1,150 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AOL 물류 - 회사 소개</title>
-
-  <!-- Tailwind -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Company</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- AOS -->
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
-
-  <style>
-    body { background-color: #1a202c; color: #e2e8f0; }
-    .text-skyblue { color: #87CEEB; }
-    .bg-skyblue { background-color: #87CEEB; }
-    header { background-color: #2d3748; }
-    footer { background-color: #1f2937; }
-    .section-img { border-radius: 0.5rem; object-fit: cover; }
-  </style>
 </head>
-<body>
+<body class="bg-gray-100 font-sans">
 
-  <!-- NAVBAR -->
-  <header class="fixed top-0 left-0 w-full z-50 shadow-md">
-    <div class="container mx-auto flex items-center justify-between px-6 py-2">
-      <a href="home.html" class="flex items-center space-x-2">
-        <img src="images/images (2).jpeg" alt="Logo" class="h-12 w-12 object-cover rounded-full">
-        <h1 class="text-lg md:text-xl font-bold text-sky-600 italic">AOL LOGISTICS</h1>
-      </a>
-      <nav class="hidden md:flex space-x-6">
-        <a href="home.html" class="hover:text-skyblue">홈</a>
-        <a href="about.html" class="hover:text-skyblue font-semibold">회사 소개</a>
-        <a href="#services" class="hover:text-skyblue">서비스</a>
-        <a href="tracking.html" class="hover:text-skyblue">배송 추적</a>
-        <a href="form.html" class="hover:text-skyblue">배송 생성</a>
-        <a href="#contact" class="hover:text-skyblue">연락처</a>
-      </nav>
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md p-4 flex justify-center items-center relative">
+    <div class="absolute left-4">
+      <button id="langToggle" class="bg-blue-500 text-white px-4 py-2 rounded">English</button>
     </div>
-  </header>
+    <div class="flex space-x-6 text-gray-800 font-semibold text-lg">
+      <a href="#" data-key="home">홈</a>
+      <a href="#" data-key="about">회사소개</a>
+      <a href="#" data-key="services">서비스</a>
+      <a href="#" data-key="contact">연락처</a>
+    </div>
+  </nav>
 
-  <!-- HERO -->
-  <section class="pt-28 pb-16 text-center bg-gray-900">
-    <h1 class="text-4xl md:text-5xl font-bold mb-4" data-aos="fade-down">회사 소개</h1>
-    <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto" data-aos="fade-up">
-      AOL LOGISTICS는 글로벌 물류 업계에서 신뢰받는 이름입니다. 고객에게 안전하고 효율적인 배송 솔루션을 제공합니다.
+  <!-- Hero Section -->
+  <section class="bg-blue-100 py-16 text-center">
+    <h1 class="text-4xl font-bold mb-4" data-key="heroTitle">우리 회사에 오신 것을 환영합니다</h1>
+    <p class="text-lg max-w-2xl mx-auto" data-key="heroText">
+      혁신과 신뢰를 기반으로, 고객에게 최고의 솔루션을 제공합니다.
     </p>
   </section>
 
-  <!-- ABOUT US DETAILS -->
-  <section class="py-20 bg-gray-800">
-    <div class="container mx-auto grid md:grid-cols-2 gap-12 items-center px-6">
-      <div data-aos="fade-right">
-        <h2 class="text-3xl font-bold mb-6">우리의 이야기</h2>
-        <p class="mb-4">AOL LOGISTICS는 수십 년간 전 세계 해운 및 물류 분야에서 경험을 쌓아온 신뢰할 수 있는 기업입니다.</p>
-        <p class="mb-4">우리는 기업과 고객을 대륙 간에 연결하며 국제 무역을 원활하게 만드는 것을 사명으로 합니다.</p>
-        <p>고객 중심의 서비스, 안전한 운송, 최신 기술 활용으로 글로벌 물류 솔루션을 제공합니다.</p>
-      </div>
-      <div data-aos="fade-left">
-        <img src="images/sunset-4913611_1280.jpg" alt="회사 소개 이미지" class="w-full h-64 md:h-auto section-img shadow-lg">
-      </div>
-    </div>
+  <!-- About Section -->
+  <section class="py-16 px-6 max-w-5xl mx-auto">
+    <h2 class="text-3xl font-bold mb-6 text-center" data-key="aboutTitle">회사 소개</h2>
+    <p class="text-gray-700 mb-4" data-key="aboutText">
+      우리 회사는 2010년 설립되어, 지속적인 성장과 혁신을 통해 다양한 산업에 걸쳐 최고의 서비스를 제공하고 있습니다. 고객 중심의 철학과 뛰어난 전문성을 바탕으로, 신뢰받는 파트너가 되기 위해 노력하고 있습니다.
+    </p>
+    <p class="text-gray-700" data-key="aboutText2">
+      최신 기술과 전문 인력을 활용하여, 고객의 비즈니스 성공을 지원하고 사회적 가치 창출에 기여합니다. 우리는 단순한 서비스를 넘어, 지속 가능한 솔루션을 제공하는 것을 목표로 합니다.
+    </p>
   </section>
 
-  <!-- MISSION & VISION -->
-  <section class="py-20 bg-gray-900">
-    <div class="container mx-auto px-6 text-center">
-      <h2 class="text-3xl font-bold mb-12" data-aos="fade-up">미션과 비전</h2>
-      <div class="grid md:grid-cols-3 gap-10">
-        <div class="p-6 bg-gray-700 rounded shadow" data-aos="fade-up" data-aos-delay="100">
-          <h3 class="text-xl font-semibold mb-2">미션</h3>
-          <p>기업과 고객을 연결하고 신뢰할 수 있는 글로벌 물류 서비스를 제공합니다.</p>
-        </div>
-        <div class="p-6 bg-gray-700 rounded shadow" data-aos="fade-up" data-aos-delay="200">
-          <h3 class="text-xl font-semibold mb-2">비전</h3>
-          <p>글로벌 물류 산업에서 최고의 혁신과 신뢰를 제공하는 선도 기업이 되는 것.</p>
-        </div>
-        <div class="p-6 bg-gray-700 rounded shadow" data-aos="fade-up" data-aos-delay="300">
-          <h3 class="text-xl font-semibold mb-2">가치</h3>
-          <p>고객 중심, 투명성, 안전성, 효율성을 핵심 가치로 삼습니다.</p>
-        </div>
+  <!-- Services Section -->
+  <section class="bg-white py-16 px-6 max-w-5xl mx-auto">
+    <h2 class="text-3xl font-bold mb-6 text-center" data-key="servicesTitle">서비스</h2>
+    <div class="grid md:grid-cols-3 gap-8 text-center">
+      <div>
+        <h3 class="font-semibold text-xl mb-2" data-key="service1Title">컨설팅</h3>
+        <p data-key="service1Text">비즈니스 전략과 운영 효율성을 극대화할 수 있는 전문 컨설팅 서비스를 제공합니다.</p>
+      </div>
+      <div>
+        <h3 class="font-semibold text-xl mb-2" data-key="service2Title">기술 솔루션</h3>
+        <p data-key="service2Text">최신 IT 기술과 맞춤형 솔루션을 통해 고객의 디지털 혁신을 지원합니다.</p>
+      </div>
+      <div>
+        <h3 class="font-semibold text-xl mb-2" data-key="service3Title">고객 지원</h3>
+        <p data-key="service3Text">24/7 고객 지원으로 언제나 문제 해결과 만족도를 제공합니다.</p>
       </div>
     </div>
   </section>
 
-  <!-- TEAM -->
-  <section class="py-20 bg-gray-800">
-    <div class="container mx-auto px-6 text-center">
-      <h2 class="text-3xl font-bold mb-12" data-aos="fade-up">우리 팀</h2>
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="p-6 bg-gray-700 rounded shadow" data-aos="fade-up" data-aos-delay="100">
-          <img src="images/team1.jpg" alt="팀원 1" class="w-40 h-40 mx-auto rounded-full object-cover mb-4">
-          <h3 class="text-xl font-semibold text-skyblue mb-1">홍길동</h3>
-          <p>CEO</p>
-        </div>
-        <div class="p-6 bg-gray-700 rounded shadow" data-aos="fade-up" data-aos-delay="200">
-          <img src="images/team2.jpg" alt="팀원 2" class="w-40 h-40 mx-auto rounded-full object-cover mb-4">
-          <h3 class="text-xl font-semibold text-skyblue mb-1">김영희</h3>
-          <p>COO</p>
-        </div>
-        <div class="p-6 bg-gray-700 rounded shadow" data-aos="fade-up" data-aos-delay="300">
-          <img src="images/team3.jpg" alt="팀원 3" class="w-40 h-40 mx-auto rounded-full object-cover mb-4">
-          <h3 class="text-xl font-semibold text-skyblue mb-1">이민수</h3>
-          <p>CTO</p>
-        </div>
-      </div>
-    </div>
+  <!-- Contact Section -->
+  <section class="py-16 px-6 max-w-5xl mx-auto text-center">
+    <h2 class="text-3xl font-bold mb-6" data-key="contactTitle">연락처</h2>
+    <p class="text-gray-700 mb-2" data-key="contactText">문의 사항은 아래 이메일 또는 전화로 연락해주세요.</p>
+    <p class="text-gray-700" data-key="contactEmail">이메일: contact@ourcompany.com</p>
+    <p class="text-gray-700" data-key="contactPhone">전화: +82 10-1234-5678</p>
   </section>
 
-  <!-- CONTACT CTA -->
-  <section class="py-20 bg-gray-900">
-    <div class="container mx-auto px-6 text-center">
-      <h2 class="text-3xl font-bold mb-6" data-aos="fade-up">문의하기</h2>
-      <p class="mb-8" data-aos="fade-up" data-aos-delay="100">AOL LOGISTICS와 함께 글로벌 배송을 경험하세요. 문의는 언제든지 환영합니다.</p>
-      <a href="#contact" class="inline-block bg-skyblue text-white px-8 py-4 rounded-lg font-semibold shadow hover:bg-sky-600" data-aos="fade-up" data-aos-delay="200">문의하기</a>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer class="py-12 text-gray-300">
-    <div class="container mx-auto text-center px-6">
-      <p>&copy; 2025 AOL LOGISTICS. All rights reserved.</p>
-    </div>
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-6 text-center">
+    <p data-key="footerText">© 2025 우리 회사. 모든 권리 보유.</p>
   </footer>
 
-  <!-- AOS -->
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script>AOS.init({duration: 800, once: true});</script>
+  <!-- Translations & Script -->
+  <script>
+    const translations = {
+      en: {
+        home: "Home",
+        about: "About Us",
+        services: "Services",
+        contact: "Contact",
+        heroTitle: "Welcome to Our Company",
+        heroText: "We deliver the best solutions to our clients, grounded in innovation and trust.",
+        aboutTitle: "About Our Company",
+        aboutText: "Founded in 2010, our company has grown and innovated to provide top-notch services across diverse industries. Our customer-first philosophy and expertise make us a trusted partner.",
+        aboutText2: "Leveraging cutting-edge technology and skilled professionals, we support our clients' business success and contribute to social value creation. We aim to provide sustainable solutions beyond mere services.",
+        servicesTitle: "Our Services",
+        service1Title: "Consulting",
+        service1Text: "We offer expert consulting to maximize business strategy and operational efficiency.",
+        service2Title: "Tech Solutions",
+        service2Text: "We support clients' digital transformation with the latest IT technologies and customized solutions.",
+        service3Title: "Customer Support",
+        service3Text: "We provide 24/7 support to ensure problem resolution and satisfaction.",
+        contactTitle: "Contact Us",
+        contactText: "For inquiries, please reach out via email or phone below.",
+        contactEmail: "Email: contact@ourcompany.com",
+        contactPhone: "Phone: +82 10-1234-5678",
+        footerText: "© 2025 Our Company. All rights reserved."
+      },
+      ko: {
+        home: "홈",
+        about: "회사소개",
+        services: "서비스",
+        contact: "연락처",
+        heroTitle: "우리 회사에 오신 것을 환영합니다",
+        heroText: "혁신과 신뢰를 기반으로, 고객에게 최고의 솔루션을 제공합니다.",
+        aboutTitle: "회사 소개",
+        aboutText: "우리 회사는 2010년 설립되어, 지속적인 성장과 혁신을 통해 다양한 산업에 걸쳐 최고의 서비스를 제공하고 있습니다. 고객 중심의 철학과 뛰어난 전문성을 바탕으로, 신뢰받는 파트너가 되기 위해 노력하고 있습니다.",
+        aboutText2: "최신 기술과 전문 인력을 활용하여, 고객의 비즈니스 성공을 지원하고 사회적 가치 창출에 기여합니다. 우리는 단순한 서비스를 넘어, 지속 가능한 솔루션을 제공하는 것을 목표로 합니다.",
+        servicesTitle: "서비스",
+        service1Title: "컨설팅",
+        service1Text: "비즈니스 전략과 운영 효율성을 극대화할 수 있는 전문 컨설팅 서비스를 제공합니다.",
+        service2Title: "기술 솔루션",
+        service2Text: "최신 IT 기술과 맞춤형 솔루션을 통해 고객의 디지털 혁신을 지원합니다.",
+        service3Title: "고객 지원",
+        service3Text: "24/7 고객 지원으로 언제나 문제 해결과 만족도를 제공합니다.",
+        contactTitle: "연락처",
+        contactText: "문의 사항은 아래 이메일 또는 전화로 연락해주세요.",
+        contactEmail: "이메일: contact@ourcompany.com",
+        contactPhone: "전화: +82 10-1234-5678",
+        footerText: "© 2025 우리 회사. 모든 권리 보유."
+      }
+    };
+
+    // Local storage language handling
+    let currentLang = localStorage.getItem('lang') || 'ko';
+    const langToggle = document.getElementById('langToggle');
+
+    const setLanguage = (lang) => {
+      currentLang = lang;
+      localStorage.setItem('lang', lang);
+      const elements = document.querySelectorAll('[data-key]');
+      elements.forEach(el => {
+        const key = el.getAttribute('data-key');
+        if(translations[lang][key]) el.textContent = translations[lang][key];
+      });
+      langToggle.textContent = lang === 'ko' ? 'English' : '한국어';
+    };
+
+    setLanguage(currentLang);
+
+    langToggle.addEventListener('click', () => {
+      const newLang = currentLang === 'ko' ? 'en' : 'ko';
+      setLanguage(newLang);
+    });
+  </script>
 
 </body>
 </html>
