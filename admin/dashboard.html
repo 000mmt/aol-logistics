@@ -489,6 +489,7 @@ async function openMailModal(userId) {
     document.getElementById('receiverName').value = userInfo.receiver_name || "";
     document.getElementById('phoneNumber').value = userInfo.receiver_phone || "";
     document.getElementById('address').value = userInfo.receiver_address || "";
+    document.getElementById('mail').value = userInfo.receiver_email || "";
     document.getElementById('trackingNumber').value = userInfo.tracking_no || "";
     document.getElementById('carrierName').value = (userInfo.carrier_name || '');
     document.getElementById('note').value = "";
@@ -519,6 +520,7 @@ document.getElementById('mailForm').addEventListener('submit', async function(e)
     phone_number: document.getElementById('phoneNumber').value,
     address: document.getElementById('address').value,
     note: document.getElementById('note').value,
+    mail: document.getElementById('mail').value,
     tracking_number: document.getElementById('trackingNumber').value,
     carrier_name: document.getElementById('carrierName').value,
     shipment_date: shipmentDate,
