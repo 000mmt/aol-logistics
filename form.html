@@ -187,16 +187,20 @@
         status: "주문 접수"
       };
 
-      const { error } = await supabase.from("user_info").insert([shipment]);
-      if (error) {
-        messageDiv.innerHTML = `<p class="text-red-500">❌ ${document.documentElement.lang === "ko" ? "실패:" : "Failed:"} ${error.message}</p>`;
-        btn.disabled = false;
-        btn.innerText = document.documentElement.lang === "ko" ? "배송 제출" : "Submit Shipment";
-        return;
-      }
+      // ✅ Insert shipment and capture the new ID
+        const { data, error } = await supabase
+        .from("user_info")
+        .insert([shipment])
+        .select(); // <-- this ensures Supabase returns the inserted row
+        
+        if (error) {
+          messageDiv.innerHTML = `<p class="text-red-500">❌ ${document.documentElement.lang === "ko" ? "실패:" : "Failed:"} ${error.message}</p>`;btn.disabled = false;
+          btn.innerText = document.documentElement.lang === "ko" ? "배송 제출" : "Submit Shipment";
+          return;
+        }
+        // ✅ Get the newly inserted shipment ID
+        const shipmentId = data?.[0]?.id || null;
 
-      // ✅ Get the newly inserted shipment ID
-      const shipmentId = data?.[0]?.id || null;
 
 
       // Insert initial tracking update
