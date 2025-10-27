@@ -1,82 +1,125 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>회사 소개 - AOL 물류</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title data-key="page_title">회사 소개 - AOL 물류</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="images/images (2).jpeg" />
+
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- AOS -->
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
   <style>
+    :root {
+      --sky: #87CEEB; /* sky blue requested */
+      --bg: #111827;
+      --card: #1f2937;
+      --muted: #cbd5e1;
+    }
+
     body {
       background-color: #1a202c;
       color: #e2e8f0;
       font-family: 'Inter', sans-serif;
     }
-    .text-skyblue { color: #87CEEB; }
-    .bg-skyblue { background-color: #87CEEB; }
-    .team-img { width: 100%; height: auto; object-fit: cover; border-radius: 0.75rem; }
-    @media (max-width: 768px) { .team-img { height: 200px; } }
+
+    .text-skyblue { color: var(--sky); }
+    .bg-skyblue { background-color: var(--sky); }
     .container { max-width: 1200px; }
+
+    /* TEAM card equal sizing */
+    .team-card {
+      background: #111827;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      box-shadow: 0 6px 18px rgba(2,6,23,0.6);
+      transition: transform .22s ease, box-shadow .22s ease;
+    }
+    .team-card:hover { transform: translateY(-6px); box-shadow: 0 14px 30px rgba(2,6,23,0.7); }
+
+    .team-img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+    }
+    @media (min-width: 768px) {
+      .team-img { height: 260px; }
+    }
+
+    /* uniform highlight card */
+    .highlight-card { background: #111827; border-radius: 0.75rem; padding: 1.25rem; }
   </style>
 </head>
+
 <body>
 
   <!-- HEADER -->
   <header class="bg-gray-800 shadow-md fixed top-0 left-0 w-full z-50">
     <div class="container mx-auto flex items-center justify-between px-6 py-3">
       <!-- Logo -->
-      <a href="home.html" class="flex items-center space-x-2">
+      <a href="home.html" class="flex items-center space-x-3">
         <img src="images/images (2).jpeg" alt="로고" class="h-12 w-12 object-cover rounded-full">
-        <h1 class="text-xl font-bold text-skyblue italic">AOL LOGISTICS</h1>
+        <h1 class="text-xl font-bold italic text-skyblue" data-key="brand">AOL LOGISTICS</h1>
       </a>
 
       <!-- Nav (centered on desktop) -->
-      <nav class="hidden md:flex space-x-6 absolute left-1/2 transform -translate-x-1/2">
-        <a href="home.html" class="hover:text-skyblue">홈</a>
-        <a href="about.html" class="hover:text-skyblue font-semibold">회사 소개</a>
-        <a href="#services" class="hover:text-skyblue">서비스</a>
-        <a href="tracking.html" class="hover:text-skyblue">배송 추적</a>
-        <a href="form.html" class="hover:text-skyblue">배송 생성</a>
-        <a href="#contact" class="hover:text-skyblue">연락처</a>
+      <nav class="hidden md:flex space-x-6 absolute left-1/2 transform -translate-x-1/2 text-gray-200">
+        <a href="home.html" class="hover:text-skyblue" data-key="nav_home">홈</a>
+        <a href="about.html" class="hover:text-skyblue font-semibold" data-key="nav_about">회사 소개</a>
+        <a href="#services" class="hover:text-skyblue" data-key="nav_services">서비스</a>
+        <a href="tracking.html" class="hover:text-skyblue" data-key="nav_track">배송 추적</a>
+        <a href="form.html" class="hover:text-skyblue" data-key="nav_create">배송 생성</a>
+        <a href="#contact" class="hover:text-skyblue" data-key="nav_contact">연락처</a>
       </nav>
 
       <!-- Buttons -->
-      <div class="flex items-center space-x-2">
-        <button id="langBtn" class="bg-skyblue text-white px-4 py-2 rounded">EN</button>
-        <button id="menuBtn" class="md:hidden bg-skyblue text-white px-4 py-2 rounded">메뉴</button>
+      <div class="flex items-center space-x-3">
+        <button id="langBtn" class="bg-skyblue text-black px-4 py-2 rounded font-semibold">EN</button>
+        <button id="menuBtn" class="md:hidden bg-skyblue text-black px-4 py-2 rounded">메뉴</button>
       </div>
     </div>
 
     <!-- Mobile Menu -->
     <div id="mobileMenu" class="hidden md:hidden bg-gray-800">
-      <nav class="flex flex-col px-6 py-4 space-y-2 text-center">
-        <a href="home.html" class="hover:text-skyblue">홈</a>
-        <a href="about.html" class="hover:text-skyblue font-semibold">회사 소개</a>
-        <a href="#services" class="hover:text-skyblue">서비스</a>
-        <a href="tracking.html" class="hover:text-skyblue">배송 추적</a>
-        <a href="form.html" class="hover:text-skyblue">배송 생성</a>
-        <a href="#contact" class="hover:text-skyblue">연락처</a>
+      <nav class="flex flex-col px-6 py-4 space-y-2 text-center text-gray-200">
+        <a href="home.html" class="hover:text-skyblue" data-key="nav_home_mobile">홈</a>
+        <a href="about.html" class="hover:text-skyblue font-semibold" data-key="nav_about_mobile">회사 소개</a>
+        <a href="#services" class="hover:text-skyblue" data-key="nav_services_mobile">서비스</a>
+        <a href="tracking.html" class="hover:text-skyblue" data-key="nav_track_mobile">배송 추적</a>
+        <a href="form.html" class="hover:text-skyblue" data-key="nav_create_mobile">배송 생성</a>
+        <a href="#contact" class="hover:text-skyblue" data-key="nav_contact_mobile">연락처</a>
       </nav>
     </div>
   </header>
 
   <!-- HERO SECTION -->
   <section class="pt-28 pb-16 text-center px-6">
-    <h1 class="text-4xl md:text-5xl font-bold mb-4" data-en="About AOL LOGISTICS" data-ko="AOL LOGISTICS 소개" data-aos="fade-up">AOL LOGISTICS 소개</h1>
-    <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-6" data-en="Connecting businesses across continents with global logistics solutions." data-ko="글로벌 물류 솔루션을 통해 기업을 대륙과 연결합니다." data-aos="fade-up" data-aos-delay="100">
+    <h1 class="text-4xl md:text-5xl font-bold mb-4" data-key="hero_title" data-aos="fade-up">AOL LOGISTICS 소개</h1>
+    <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-6" data-key="hero_sub" data-aos="fade-up" data-aos-delay="100">
       글로벌 물류 솔루션을 통해 기업을 대륙과 연결합니다.
     </p>
+
     <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-10 mt-10" data-aos="fade-up" data-aos-delay="200">
       <div>
-        <img src="images/sunset-4913611_1280.jpg" alt="회사 이미지" class="w-full rounded-lg shadow-lg">
+        <img src="images/sunset-4913611_1280.jpg" alt="" data-key="hero_img_alt" class="w-full rounded-lg shadow-lg object-cover">
       </div>
+
       <div class="flex flex-col justify-center">
-        <h2 class="text-2xl font-semibold mb-4" data-en="Our Mission" data-ko="우리의 사명">우리의 사명</h2>
-        <p class="text-gray-300 mb-4" data-en="AOL LOGISTICS prioritizes reliability and efficiency in global logistics services. We provide customized transportation solutions so businesses can operate smoothly." data-ko="AOL LOGISTICS는 신뢰성과 효율성을 최우선으로 글로벌 물류 서비스를 제공합니다. 우리는 기업이 원활하게 운영될 수 있도록 맞춤형 운송 솔루션을 제공합니다.">
-          AOL LOGISTICS는 신뢰성과 효율성을 최우선으로 글로벌 물류 서비스를 제공합니다.
-          우리는 기업이 원활하게 운영될 수 있도록 맞춤형 운송 솔루션을 제공합니다.
+        <h2 class="text-2xl font-semibold mb-4" data-key="mission_title">우리의 사명</h2>
+        <p class="text-gray-300 mb-4" data-key="mission_p1">
+          AOL LOGISTICS는 신뢰성과 효율성을 최우선으로 글로벌 물류 서비스를 제공합니다. 우리는 기업이 원활하게 운영될 수 있도록 맞춤형 운송 솔루션을 제공합니다.
         </p>
-        <p class="text-gray-300" data-en="Our goal is to connect customers and businesses across all continents, facilitating seamless international trade." data-ko="우리의 목표는 모든 대륙에서 고객과 기업을 연결하고, 국제 무역을 원활하게 만드는 것입니다.">
+        <p class="text-gray-300" data-key="mission_p2">
           우리의 목표는 모든 대륙에서 고객과 기업을 연결하고, 국제 무역을 원활하게 만드는 것입니다.
         </p>
       </div>
@@ -84,59 +127,59 @@
   </section>
 
 <!-- COMPANY BIO SECTION -->
-<section class="px-6">
-  <div class="max-w-5xl mx-auto bg-gray-800 rounded-xl shadow-lg p-10 mb-16" data-aos="fade-up">
+<section class="py-20 bg-gray-900 text-gray-300 relative overflow-hidden">
+  <div class="container mx-auto px-6 lg:px-12 grid lg:grid-cols-2 gap-12 items-center" data-aos="fade-up">
     
-    <h2 class="text-3xl font-bold mb-8 text-center text-skyblue" data-en="Our Company Bio" data-ko="회사 소개">
-      회사 소개
-    </h2>
-
-    <!-- Highlight Cards -->
-    <div class="grid md:grid-cols-3 gap-6 mb-8">
-      <!-- UN Support -->
-      <div class="bg-gray-700 rounded-lg p-6 flex flex-col items-center text-center hover:shadow-xl transition-shadow duration-300">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-skyblue mb-3" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2C6.477 2 2 6.477 2 12c0 4.837 3.438 8.858 8 9.8V13H8v-2h2V9.5c0-2 1.2-3.1 3-3.1.87 0 1.75.157 1.75.157v1.922h-1c-.986 0-1.293.612-1.293 1.238V11h2.2l-.352 2H12v8.8c4.562-.942 8-4.963 8-9.8 0-5.523-4.477-10-10-10z"/>
-        </svg>
-        <h3 class="font-semibold text-lg mb-2" data-en="Supported by the UN" data-ko="UN 지원">UN 지원</h3>
-        <p class="text-gray-300 text-sm" data-en="AOL Logistics has received support from the United Nations in multiple humanitarian and logistics projects." data-ko="AOL LOGISTICS는 다양한 인도주의 및 물류 프로젝트에서 UN의 지원을 받았습니다.">
-          우리의 운영은 다양한 인도주의 및 물류 프로젝트에서 UN의 지원을 받았습니다.
-        </p>
-      </div>
-
-      <!-- 15 Years -->
-      <div class="bg-gray-700 rounded-lg p-6 flex flex-col items-center text-center hover:shadow-xl transition-shadow duration-300">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-skyblue mb-3" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 14h-2v-2h2v2zm0-4h-2V6h2v6z"/>
-        </svg>
-        <h3 class="font-semibold text-lg mb-2" data-en="15 years of operation" data-ko="운영 15년">운영 15년</h3>
-        <p class="text-gray-300 text-sm" data-en="Founded 15 years ago, AOL Logistics has become a trusted global logistics provider." data-ko="AOL LOGISTICS는 15년 전에 설립되어 신뢰받는 글로벌 물류 제공자로 성장했습니다.">
-          15년 동안 신뢰받는 글로벌 물류 제공자로 성장했습니다.
-        </p>
-      </div>
-
-      <!-- Global Reach -->
-      <div class="bg-gray-700 rounded-lg p-6 flex flex-col items-center text-center hover:shadow-xl transition-shadow duration-300">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-skyblue mb-3" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2C6.477 2 2 6.477 2 12c0 4.84 3.438 8.87 8 9.8V13h-2v-2h2V9.5c0-2 1.2-3.1 3-3.1.87 0 1.75.157 1.75.157v1.922h-1c-.986 0-1.293.612-1.293 1.238V11h2.2l-.352 2H12v8.8c4.562-.93 8-4.96 8-9.8 0-5.523-4.477-10-10-10z"/>
-        </svg>
-        <h3 class="font-semibold text-lg mb-2" data-en="Global logistics reach" data-ko="글로벌 물류 네트워크">글로벌 물류 네트워크</h3>
-        <p class="text-gray-300 text-sm" data-en="Connecting businesses and customers across all continents with efficient logistics solutions." data-ko="효율적인 물류 솔루션으로 모든 대륙의 기업과 고객을 연결합니다.">
-          효율적인 물류 솔루션으로 모든 대륙의 기업과 고객을 연결합니다.
-        </p>
-      </div>
+    <!-- Image Side -->
+    <div class="relative">
+      <video 
+        class="w-full h-64 md:h-auto object-cover shadow-lg rounded" 
+        autoplay 
+        muted 
+        loop 
+        playsinline 
+        data-key="about_video">
+        <source src="images/APLL-Website-Hdr-clip_1920x1080_10152020.mp4" type="video/mp4">
+        <img src="images/ACL-Cell-Guides-RW-scaled.jpg" alt="AOL 소개" class="w-full h-64 md:h-auto object-cover shadow-lg rounded">
+      </video>
+      <div class="absolute inset-0 bg-gradient-to-tr from-gray-900/30 to-transparent rounded-2xl"></div>
     </div>
 
-    <!-- Detailed Company Text -->
-    <div class="space-y-4 text-center text-gray-300">
-      <p data-en="We pride ourselves on transparency, reliability, and innovation, offering tailored solutions to businesses of all sizes." data-ko="우리는 투명성, 신뢰성 및 혁신을 자랑하며, 모든 규모의 기업에 맞춤형 솔루션을 제공합니다.">
-        우리는 투명성, 신뢰성 및 혁신을 자랑하며, 모든 규모의 기업에 맞춤형 솔루션을 제공합니다.
-      </p>
-      <p data-en="Our experienced team maintains strong partnerships across the logistics ecosystem, ensuring seamless global operations." data-ko="경험이 풍부한 팀은 물류 생태계 전반에서 강력한 파트너십을 유지하며 원활한 글로벌 운영을 보장합니다.">
-        경험이 풍부한 팀은 물류 생태계 전반에서 강력한 파트너십을 유지하며 원활한 글로벌 운영을 보장합니다.
-      </p>
-    </div>
+    <!-- Text Side -->
+    <div>
+      <h2 class="text-3xl lg:text-4xl font-bold mb-6 text-sky-400" data-key="company_bio_title">
+        회사 개요
+      </h2>
 
+      <p class="mb-4 leading-relaxed" data-key="company_p1">
+        AOL LOGISTICS는 전 세계 기업을 빠르고 신뢰할 수 있는 스마트 물류 솔루션으로 연결합니다. 우리는 신뢰, 투명성, 혁신을 기반으로 글로벌 무역을 지원하고 공급망을 단순화합니다. 항공 및 해상 운송부터 통합 물류 관리까지, 모든 화물이 안전하고 정확하게 도착하도록 전문 팀이 함께합니다. 전 세계 네트워크와 첨단 기술을 바탕으로, 우리는 물류를 넘어 비즈니스의 성장을 이끌고 있습니다. AOL LOGISTICS는 단순히 화물을 운송하는 것이 아니라, 기회와 사람, 그리고 시장을 연결합니다.
+      </p>
+
+      <p class="mb-6 leading-relaxed" data-key="company_p2">
+        우리는 15년 이상의 글로벌 경험과 전문 지식을 바탕으로, 국제 무역과 공급망을 효율적으로 관리하며 
+        고객이 어디에서나 안정적인 물류 서비스를 경험하도록 돕습니다.
+      </p>
+
+      <div class="grid sm:grid-cols-3 gap-6 mt-10">
+        <div class="bg-gray-800 p-6 rounded-xl text-center hover:shadow-lg transition-shadow duration-300">
+          <img src="images/support.png" alt="Trust Icon" class="h-16 w-16 mx-auto mb-3 object-cover rounded-full shadow-md"/>
+          <h3 class="font-semibold text-lg mb-2" data-key="card1_title">UN 지원</h3>
+          <p class="text-sm" data-key="card1_text">AOL LOGISTICS는 다양한 인도주의 및 물류 프로젝트에서 UN의 지원을 받았습니다.</p>
+        </div>
+
+        <div class="bg-gray-800 p-6 rounded-xl text-center hover:shadow-lg transition-shadow duration-300">
+          <img src="images/years.jpg" alt="Trust Icon" class="h-16 w-16 mx-auto mb-3 object-cover rounded-full shadow-md"/>
+          <h3 class="font-semibold text-lg mb-2" data-key="card2_title">운영 15년</h3>
+          <p class="text-sm" data-key="card2_text">15년 이상 신뢰받는 글로벌 물류 제공자로 성장했습니다.</p>
+        </div>
+
+        <div class="bg-gray-800 p-6 rounded-xl text-center hover:shadow-lg transition-shadow duration-300">
+          <img src="images/Global.png" alt="Trust Icon" class="h-16 w-16 mx-auto mb-3 object-cover rounded-full shadow-md"/>
+          <h3 class="font-semibold text-lg mb-2" data-key="card3_title">글로벌 네트워크</h3>
+          <p class="text-sm" data-key="card3_text">효율적인 물류 솔루션으로 모든 대륙의 기업과 고객을 연결합니다.</p>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -144,22 +187,34 @@
   <!-- TEAM SECTION -->
   <section id="team" class="py-20 bg-gray-800 px-6">
     <div class="container mx-auto text-center">
-      <h2 class="text-3xl font-bold mb-12" data-aos="fade-up">우리 팀</h2>
+      <h2 class="text-3xl font-bold mb-12 text-skyblue" data-key="team_title">우리 팀</h2>
+
       <div class="grid md:grid-cols-3 gap-10">
-        <div data-aos="fade-up" data-aos-delay="100">
-          <img src="images/istockphoto-1346124943-612x612.jpg" alt="팀원 1" class="team-img mb-4">
-          <h3 class="text-xl font-semibold text-skyblue">김민수</h3>
-          <p class="text-gray-300">CEO</p>
+        <!-- Card 1 -->
+        <div class="team-card" data-aos="fade-up" data-aos-delay="100">
+          <img src="images/istockphoto-1346124943-612x612.jpg" alt="팀원 1" class="team-img" data-key="team1_img_alt">
+          <div class="p-5">
+            <h3 class="text-xl font-semibold text-skyblue" data-key="team1_name">김민수</h3>
+            <p class="text-gray-300" data-key="team1_role">CEO</p>
+          </div>
         </div>
-        <div data-aos="fade-up" data-aos-delay="200">
-          <img src="images/istockphoto-1472280448-612x612.jpg" alt="팀원 2" class="team-img mb-4">
-          <h3 class="text-xl font-semibold text-skyblue">이하나</h3>
-          <p class="text-gray-300">COO</p>
+
+        <!-- Card 2 -->
+        <div class="team-card" data-aos="fade-up" data-aos-delay="200">
+          <img src="images/istockphoto-1472280448-612x612.jpg" alt="팀원 2" class="team-img" data-key="team2_img_alt">
+          <div class="p-5">
+            <h3 class="text-xl font-semibold text-skyblue" data-key="team2_name">이하나</h3>
+            <p class="text-gray-300" data-key="team2_role">COO</p>
+          </div>
         </div>
-        <div data-aos="fade-up" data-aos-delay="300">
-          <img src="images/worker-at-port-stockcake.jpg" alt="팀원 3" class="team-img mb-4">
-          <h3 class="text-xl font-semibold text-skyblue">박지원</h3>
-          <p class="text-gray-300">CFO</p>
+
+        <!-- Card 3 -->
+        <div class="team-card" data-aos="fade-up" data-aos-delay="300">
+          <img src="images/worker-at-port-stockcake.jpg" alt="팀원 3" class="team-img" data-key="team3_img_alt">
+          <div class="p-5">
+            <h3 class="text-xl font-semibold text-skyblue" data-key="team3_name">박지원</h3>
+            <p class="text-gray-300" data-key="team3_role">CFO</p>
+          </div>
         </div>
       </div>
     </div>
@@ -169,51 +224,189 @@
   <footer class="bg-gray-900 text-white py-12 mt-12">
     <div class="container mx-auto grid md:grid-cols-3 gap-8 text-center md:text-left px-6">
       <div>
-        <h4 class="text-xl font-bold mb-4">AOL LOGISTICS</h4>
-        <p>신뢰할 수 있는 해운 및 물류 솔루션으로 대륙을 연결합니다.</p>
+        <h4 class="text-xl font-bold mb-4 text-skyblue" data-key="footer_brand">AOL LOGISTICS</h4>
+        <p data-key="footer_tagline">신뢰할 수 있는 해운 및 물류 솔루션으로 대륙을 연결합니다.</p>
       </div>
       <div>
-        <h4 class="text-xl font-bold mb-4">빠른 링크</h4>
+        <h4 class="text-xl font-bold mb-4" data-key="footer_links_title">빠른 링크</h4>
         <ul class="space-y-2">
-          <li><a href="home.html" class="hover:text-skyblue">홈</a></li>
-          <li><a href="about.html" class="hover:text-skyblue">회사 소개</a></li>
-          <li><a href="#services" class="hover:text-skyblue">서비스</a></li>
-          <li><a href="tracking.html" class="hover:text-skyblue">배송 추적</a></li>
-          <li><a href="form.html" class="hover:text-skyblue">배송 생성</a></li>
+          <li><a href="home.html" class="hover:text-skyblue" data-key="nav_home_footer">홈</a></li>
+          <li><a href="about.html" class="hover:text-skyblue" data-key="nav_about_footer">회사 소개</a></li>
+          <li><a href="#services" class="hover:text-skyblue" data-key="nav_services_footer">서비스</a></li>
+          <li><a href="tracking.html" class="hover:text-skyblue" data-key="nav_track_footer">배송 추적</a></li>
+          <li><a href="form.html" class="hover:text-skyblue" data-key="nav_create_footer">배송 생성</a></li>
         </ul>
       </div>
       <div>
-        <h4 class="text-xl font-bold mb-4">연락처</h4>
-        <p>이메일: logisticsaol6@gmail.com</p>
-        <p>전화: +1 800 173 5507</p>
+        <h4 class="text-xl font-bold mb-4" data-key="footer_contact_title">연락처</h4>
+        <p data-key="contact_email">이메일: logisticsaol6@gmail.com</p>
+        <p data-key="contact_phone">전화: +1 800 173 5507</p>
       </div>
     </div>
+
     <div class="text-center mt-8 border-t border-gray-700 pt-6">
-      <p>&copy; 2025 AOL LOGISTICS. 모든 권리 보유.</p>
+      <p data-key="copyright_text">&copy; 2025 AOL LOGISTICS. 모든 권리 보유.</p>
     </div>
   </footer>
 
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <!-- SCRIPTS -->
   <script>
-    AOS.init({duration: 800, once: true});
+    AOS.init({ duration: 800, once: true });
 
     // Mobile menu toggle
     const menuBtn = document.getElementById('menuBtn');
     const mobileMenu = document.getElementById('mobileMenu');
-    menuBtn.addEventListener('click', () => {
-      mobileMenu.classList.toggle('hidden');
+    menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+
+    // Translations object (all strings in one place)
+    const translations = {
+      en: {
+        page_title: "About - AOL LOGISTICS",
+        brand: "AOL LOGISTICS",
+        nav_home: "Home",
+        nav_about: "About Us",
+        nav_services: "Services",
+        nav_track: "Track Shipment",
+        nav_create: "Create Shipment",
+        nav_contact: "Contact",
+        nav_home_mobile: "Home",
+        nav_about_mobile: "About Us",
+        nav_services_mobile: "Services",
+        nav_track_mobile: "Track Shipment",
+        nav_create_mobile: "Create Shipment",
+        nav_contact_mobile: "Contact",
+        hero_title: "About AOL LOGISTICS",
+        hero_sub: "Connecting businesses across continents with global logistics solutions.",
+        hero_img_alt: "Company image",
+        mission_title: "Our Mission",
+        mission_p1: "AOL LOGISTICS prioritizes reliability and efficiency in global logistics services. We provide customized transportation solutions so businesses can operate smoothly.",
+        mission_p2: "Our goal is to connect customers and businesses across all continents, facilitating seamless international trade.",
+        company_bio_title: "Our Company Bio",
+        card1_title: "Supported by the UN",
+        card1_text: "AOL Logistics has received support from the United Nations in multiple humanitarian and logistics projects.",
+        card2_title: "15 Years of Operation",
+        card2_text: "Founded 15 years ago, AOL Logistics has become a trusted global logistics provider.",
+        card3_title: "Global Logistics Network",
+        card3_text: "Connecting businesses and customers across all continents with efficient logistics solutions.",
+        company_p1: "We pride ourselves on transparency, reliability, and innovation, offering tailored solutions to businesses of all sizes.",
+        company_p2: "Our experienced team maintains strong partnerships across the logistics ecosystem, ensuring seamless global operations.",
+        team_title: "Our Team",
+        team1_img_alt: "Team member 1",
+        team1_name: "Kim Minsu",
+        team1_role: "CEO",
+        team2_img_alt: "Team member 2",
+        team2_name: "Lee Hana",
+        team2_role: "COO",
+        team3_img_alt: "Team member 3",
+        team3_name: "Park Jiwon",
+        team3_role: "CFO",
+        footer_brand: "AOL LOGISTICS",
+        footer_tagline: "Connecting continents with trusted shipping and logistics solutions.",
+        footer_links_title: "Quick Links",
+        nav_home_footer: "Home",
+        nav_about_footer: "About",
+        nav_services_footer: "Services",
+        nav_track_footer: "Track Shipment",
+        nav_create_footer: "Create Shipment",
+        footer_contact_title: "Contact",
+        contact_email: "Email: logisticsaol6@gmail.com",
+        contact_phone: "Phone: +1 800 173 5507",
+        copyright_text: "© 2025 AOL LOGISTICS. All rights reserved."
+      },
+      ko: {
+        page_title: "회사 소개 - AOL 물류",
+        brand: "AOL LOGISTICS",
+        nav_home: "홈",
+        nav_about: "회사 소개",
+        nav_services: "서비스",
+        nav_track: "배송 추적",
+        nav_create: "배송 생성",
+        nav_contact: "연락처",
+        nav_home_mobile: "홈",
+        nav_about_mobile: "회사 소개",
+        nav_services_mobile: "서비스",
+        nav_track_mobile: "배송 추적",
+        nav_create_mobile: "배송 생성",
+        nav_contact_mobile: "연락처",
+        hero_title: "AOL LOGISTICS 소개",
+        hero_sub: "글로벌 물류 솔루션을 통해 기업을 대륙과 연결합니다.",
+        hero_img_alt: "회사 이미지",
+        mission_title: "우리의 사명",
+        mission_p1: "AOL LOGISTICS는 신뢰성과 효율성을 최우선으로 글로벌 물류 서비스를 제공합니다. 우리는 기업이 원활하게 운영될 수 있도록 맞춤형 운송 솔루션을 제공합니다.",
+        mission_p2: "우리의 목표는 모든 대륙에서 고객과 기업을 연결하고, 국제 무역을 원활하게 만드는 것입니다.",
+        company_bio_title: "회사 소개",
+        card1_title: "UN 지원",
+        card1_text: "우리의 운영은 다양한 인도주의 및 물류 프로젝트에서 UN의 지원을 받았습니다.",
+        card2_title: "운영 15년",
+        card2_text: "15년 동안 신뢰받는 글로벌 물류 제공자로 성장했습니다.",
+        card3_title: "글로벌 물류 네트워크",
+        card3_text: "효율적인 물류 솔루션으로 모든 대륙의 기업과 고객을 연결합니다.",
+        company_p1: "우리는 투명성, 신뢰성 및 혁신을 자랑하며, 모든 규모의 기업에 맞춤형 솔루션을 제공합니다.",
+        company_p2: "경험이 풍부한 팀은 물류 생태계 전반에서 강력한 파트너십을 유지하며 원활한 글로벌 운영을 보장합니다.",
+        team_title: "우리 팀",
+        team1_img_alt: "팀원 1",
+        team1_name: "김민수",
+        team1_role: "CEO",
+        team2_img_alt: "팀원 2",
+        team2_name: "이하나",
+        team2_role: "COO",
+        team3_img_alt: "팀원 3",
+        team3_name: "박지원",
+        team3_role: "CFO",
+        footer_brand: "AOL LOGISTICS",
+        footer_tagline: "신뢰할 수 있는 해운 및 물류 솔루션으로 대륙을 연결합니다.",
+        footer_links_title: "빠른 링크",
+        nav_home_footer: "홈",
+        nav_about_footer: "회사 소개",
+        nav_services_footer: "서비스",
+        nav_track_footer: "배송 추적",
+        nav_create_footer: "배송 생성",
+        footer_contact_title: "연락처",
+        contact_email: "이메일: logisticsaol6@gmail.com",
+        contact_phone: "전화: +1 800 173 5507",
+        copyright_text: "© 2025 AOL LOGISTICS. 모든 권리 보유."
+      }
+    };
+
+    // initialize language (default ko)
+    let currentLang = localStorage.getItem('site_lang') || 'ko';
+
+    function setLanguage(lang) {
+      document.querySelectorAll('[data-key]').forEach(el => {
+        const key = el.getAttribute('data-key');
+        const text = (translations[lang] && translations[lang][key]) ? translations[lang][key] : null;
+        if (!text) return;
+
+        // inputs and textareas: set placeholder (not used here but safe)
+        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+          el.placeholder = text;
+        } else if (el.tagName === 'IMG') {
+          el.alt = text;
+        } else {
+          el.textContent = text;
+        }
+      });
+
+      // update lang button text / style
+      const langBtn = document.getElementById('langBtn');
+      langBtn.textContent = (lang === 'ko') ? 'EN' : 'KO';
+
+      document.documentElement.lang = lang === 'ko' ? 'ko' : 'en';
+      localStorage.setItem('site_lang', lang);
+      currentLang = lang;
+    }
+
+    // apply initial language after DOM ready
+    document.addEventListener('DOMContentLoaded', () => {
+      AOS.init({ duration: 800, once: true });
+      setLanguage(currentLang);
     });
 
-    // Language toggle
-    const langBtn = document.getElementById('langBtn');
-    langBtn.addEventListener('click', () => {
-      const currentLang = document.documentElement.lang;
-      document.documentElement.lang = currentLang === 'ko' ? 'en' : 'ko';
-      langBtn.innerText = currentLang === 'ko' ? 'KO' : 'EN';
-      document.querySelectorAll('[data-en]').forEach(el => {
-        el.innerText = currentLang === 'ko' ? el.dataset.en : el.dataset.ko;
-      });
+    // lang button toggle
+    document.getElementById('langBtn').addEventListener('click', () => {
+      setLanguage(currentLang === 'ko' ? 'en' : 'ko');
     });
   </script>
+
 </body>
 </html>
