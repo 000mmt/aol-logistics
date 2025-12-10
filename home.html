@@ -435,6 +435,15 @@ button {
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>AOS.init({duration: 800, once: true});</script>
 
+
+ <!-- close mobile menu when a link is clicked -->
+  <script>
+  document.querySelectorAll('#mobileMenu a').forEach(link => {
+  link.addEventListener('click', ()=> document.getElementById('mobileMenu').classList.add('hidden'))
+})
+  </script>
+
+  
   <!-- HERO SLIDER -->
   <script>
     const slides = document.querySelectorAll(".hero-slide");
@@ -500,7 +509,7 @@ button {
         hero_img1_alt: "Cargo Ship",
         hero_img2_alt: "Container Port",
         hero_img3_alt: "Logistics Truck",
-        hero_title: "Moving Cargo. Connecting Continents.",
+        hero_title: "We move cargo and connect continents.",
         hero_sub: "Reliable logistics solutions that deliver across the globe.",
         hero_track: "Track Shipment",
         hero_quote: "Request Quote",
@@ -714,5 +723,6 @@ button {
       setLanguage(currentLang === 'ko' ? 'en' : 'ko');
     });
   </script>
+
 </body>
 </html>
