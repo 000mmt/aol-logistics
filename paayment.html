@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment | AOL Bookshop</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800">
+
+<!-- Header -->
+<header class="bg-[#003366] text-white shadow-lg sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <h1 class="text-xl font-bold">AOL Bookshop Payment</h1>
+    <a href="home.html" class="hover:text-yellow-400">Back to Shop</a>
+  </div>
+</header>
+
+<!-- Payment Section -->
+<section class="max-w-2xl mx-auto mt-12 bg-white shadow-lg rounded-lg p-8">
+  <h2 class="text-3xl font-bold mb-6 text-center">Complete Your Payment</h2>
+
+  <form id="paymentForm" class="space-y-6">
+    <div>
+      <label class="block font-semibold mb-1">Book Name</label>
+      <input type="text" id="bookName" readonly class="w-full border rounded px-3 py-2 bg-gray-100">
+    </div>
+
+    <div>
+      <label class="block font-semibold mb-1">Price ($)</label>
+      <input type="text" id="bookPrice" readonly class="w-full border rounded px-3 py-2 bg-gray-100">
+    </div>
+
+    <div>
+      <label class="block font-semibold mb-1">Payment Method</label>
+      <select id="paymentMethod" class="w-full border rounded px-3 py-2">
+        <option value="card">Credit / Debit Card</option>
+        <option value="bank">Bank Transfer</option>
+      </select>
+    </div>
+
+    <!-- Card Payment Fields -->
+    <div id="cardFields" class="space-y-4">
+      <div>
+        <label class="block font-semibold mb-1">Card Number</label>
+        <input type="text" placeholder="1234 5678 9012 3456" class="w-full border rounded px-3 py-2">
+      </div>
+      <div class="flex gap-4">
+        <div class="flex-1">
+          <label class="block font-semibold mb-1">Expiry</label>
+          <input type="text" placeholder="MM/YY" class="w-full border rounded px-3 py-2">
+        </div>
+        <div class="flex-1">
+          <label class="block font-semibold mb-1">CVV</label>
+          <input type="text" placeholder="123" class="w-full border rounded px-3 py-2">
+        </div>
+      </div>
+    </div>
+
+    <!-- Bank Transfer Info -->
+    <div id="bankFields" class="hidden space-y-2 p-4 bg-gray-100 rounded">
+      <p>Bank: Access Bank</p>
+      <p>Account Name: AOL Bookshop</p>
+      <p>Account Number: 1234567890</p>
+      <p>After transfer, kindly send your payment proof to <span class="font-bold">support@aollogistics.com</span></p>
+    </div>
+
+    <button type="submit" class="w-full bg-[#003366] text-white py-3 rounded hover:bg-yellow-500 transition">Pay Now</button>
+  </form>
+</section>
+
+<!-- Scripts -->
+<script>
+  // Fill book details from URL
+  const params = new URLSearchParams(window.location.search);
+  const bookName = params.get('title') || '';
+  const bookPrice = params.get('price') || '';
+  document.getElementById('bookName').value = bookName;
+  document.getElementById('bookPrice').value = bookPrice;
+
+  // Payment method toggle
+  const paymentMethod = document.getElementById('paymentMethod');
+  const cardFields = document.getElementById('cardFields');
+  const bankFields = document.getElementById('bankFields');
+
+  paymentMethod.addEventListener('change', () => {
+    if(paymentMethod.value === 'card'){
+      cardFields.classList.remove('hidden');
+      bankFields.classList.add('hidden');
+    } else {
+      cardFields.classList.add('hidden');
+      bankFields.classList.remove('hidden');
+    }
+  });
+
+  // Simple form submit
+  document.getElementById('paymentForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    alert('Payment process initiated. In production, integrate with payment gateway.');
+  });
+</script>
+
+</body>
+</html>
