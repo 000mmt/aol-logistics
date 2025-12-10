@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bookshop | AOL Logistics</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans">
+
+<!-- Header / Connect to Homepage -->
+<header class="bg-[#003366] text-white shadow-lg sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <h1 class="text-xl font-bold">AOL Bookshop</h1>
+    <nav class="hidden md:flex space-x-6 mr-4">
+      <a href="index.html" class="hover:text-yellow-400">Home</a>
+      <a href="#books" class="hover:text-yellow-400">Books</a>
+      <a href="#contact" class="hover:text-yellow-400">Contact</a>
+    </nav>
+    <button id="menuBtn" class="md:hidden text-2xl">☰</button>
+  </div>
+
+  <div id="mobileMenu" class="hidden md:hidden bg-[#00264d] p-4 space-y-4 text-white">
+    <a href="index.html" class="block hover:text-yellow-400">Home</a>
+    <a href="#books" class="block hover:text-yellow-400">Books</a>
+    <a href="#contact" class="block hover:text-yellow-400">Contact</a>
+  </div>
+</header>
+
+<!-- Hero Section -->
+<section class="text-center py-20 bg-cover bg-center text-white" style="background-image:url('https://images.unsplash.com/photo-1512820790803-83ca734da794');">
+  <div class="bg-[#00000099] py-20 px-6">
+    <h2 class="text-4xl font-extrabold mb-4">Welcome to Our Bookshop</h2>
+    <p class="text-lg max-w-2xl mx-auto">Buy educational, motivational and logistics related books with affordable prices.</p>
+  </div>
+</section>
+
+<!-- Books Section -->
+<section id="books" class="py-16 max-w-7xl mx-auto px-6">
+  <h3 class="text-3xl font-bold text-center mb-10 text-[#003366]">Available Books</h3>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8" data-aos="fade-up">
+    <!-- Book Card 1 -->
+    <div class="bg-white shadow-md rounded-lg overflow-hidden hover:scale-105 duration-300">
+      <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f" class="w-full h-56 object-cover">
+      <div class="p-4">
+        <h4 class="font-semibold text-lg">Logistics Management Guide</h4>
+        <p class="text-sm text-gray-600 mb-3">Learn global logistics operations.</p>
+        <span class="font-bold text-[#003366] text-xl">₦6,500</span>
+        <button class="block w-full mt-3 bg-[#003366] text-white py-2 rounded hover:bg-yellow-500">Buy Now</button>
+      </div>
+    </div>
+
+    <!-- Book Card 2 -->
+    <div class="bg-white shadow-md rounded-lg overflow-hidden hover:scale-105 duration-300">
+      <img src="https://images.unsplash.com/photo-1528207776546-365bb710ee93" class="w-full h-56 object-cover">
+      <div class="p-4">
+        <h4 class="font-semibold text-lg">Business & Finance Strategies</h4>
+        <p class="text-sm text-gray-600 mb-3">Grow financial intelligence.</p>
+        <span class="font-bold text-[#003366] text-xl">₦5,200</span>
+        <button class="block w-full mt-3 bg-[#003366] text-white py-2 rounded hover:bg-yellow-500">Buy Now</button>
+      </div>
+    </div>
+
+    <!-- Book Card 3 -->
+    <div class="bg-white shadow-md rounded-lg overflow-hidden hover:scale-105 duration-300">
+      <img src="https://images.unsplash.com/photo-1526304640581-d334cdbbf45e" class="w-full h-56 object-cover">
+      <div class="p-4">
+        <h4 class="font-semibold text-lg">Mindset & Growth Psychology</h4>
+        <p class="text-sm text-gray-600 mb-3">Transform your thinking.</p>
+        <span class="font-bold text-[#003366] text-xl">₦4,800</span>
+        <button class="block w-full mt-3 bg-[#003366] text-white py-2 rounded hover:bg-yellow-500">Buy Now</button>
+      </div>
+    </div>
+
+    <!-- Book Card 4 -->
+    <div class="bg-white shadow-md rounded-lg overflow-hidden hover:scale-105 duration-300">
+      <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570" class="w-full h-56 object-cover">
+      <div class="p-4">
+        <h4 class="font-semibold text-lg">International Freight Operations</h4>
+        <p class="text-sm text-gray-600 mb-3">Master cargo shipping.</p>
+        <span class="font-bold text-[#003366] text-xl">₦7,000</span>
+        <button class="block w-full mt-3 bg-[#003366] text-white py-2 rounded hover:bg-yellow-500">Buy Now</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Additional Sections -->
+<section class="py-16 bg-gray-50">
+ <div class="container mx-auto px-6 text-center">
+  <h2 class="text-3xl font-bold mb-4">Featured Collections</h2>
+  <p class="text-gray-600 max-w-2xl mx-auto mb-10">Explore bestselling books from various genres carefully selected for knowledge, inspiration and growth.</p>
+  <div class="grid md:grid-cols-3 gap-6">
+   <div class="bg-white shadow-lg rounded-lg p-6">
+    <h3 class="font-semibold text-xl mb-2">Academic & Research</h3>
+    <p class="text-gray-600 text-sm mb-4">Medical, Nursing, Engineering, Science publications.</p>
+    <a class="text-black font-medium hover:text-yellow-400" href="#">View Collection →</a>
+   </div>
+   <div class="bg-white shadow-lg rounded-lg p-6">
+    <h3 class="font-semibold text-xl mb-2">Business & Self-Development</h3>
+    <p class="text-gray-600 text-sm mb-4">Become financially smarter and build a growth mindset.</p>
+    <a class="text-black font-medium hover:text-yellow-400" href="#">View Collection →</a>
+   </div>
+   <div class="bg-white shadow-lg rounded-lg p-6">
+    <h3 class="font-semibold text-xl mb-2">Novels & Literature</h3>
+    <p class="text-gray-600 text-sm mb-4">Fictional stories, thrillers, romance and classics.</p>
+    <a class="text-black font-medium hover:text-yellow-400" href="#">View Collection →</a>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section class="py-16 bg-white">
+ <div class="container mx-auto px-6">
+  <h2 class="text-3xl font-bold mb-8 text-center">Best Selling Books</h2>
+  <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+   <div class="bg-gray-100 rounded-lg shadow p-4">
+    <img src="book1.jpg" class="w-full h-60 object-cover rounded"/>
+    <h3 class="font-semibold mt-3">Understanding Logistics</h3>
+    <p class="text-sm text-gray-600">Modern strategies for fast delivery chains.</p>
+    <p class="font-bold mt-2 text-yellow-500">₦4,500</p>
+   </div>
+   <div class="bg-gray-100 rounded-lg shadow p-4">
+    <img src="book2.jpg" class="w-full h-60 object-cover rounded"/>
+    <h3 class="font-semibold mt-3">Business Growth Mindset</h3>
+    <p class="text-sm text-gray-600">Practical guide to success and wealth creation.</p>
+    <p class="font-bold mt-2 text-yellow-500">₦6,200</p>
+   </div>
+   <div class="bg-gray-100 rounded-lg shadow p-4">
+    <img src="book3.jpg" class="w-full h-60 object-cover rounded"/>
+    <h3 class="font-semibold mt-3">Nursing Made Easy</h3>
+    <p class="text-sm text-gray-600">A full nursing study companion for students.</p>
+    <p class="font-bold mt-2 text-yellow-500">₦7,800</p>
+   </div>
+   <div class="bg-gray-100 rounded-lg shadow p-4">
+    <img src="book4.jpg" class="w-full h-60 object-cover rounded"/>
+    <h3 class="font-semibold mt-3">Global Trade & Policies</h3>
+    <p class="text-sm text-gray-600">Understanding international business flow.</p>
+    <p class="font-bold mt-2 text-yellow-500">₦5,900</p>
+   </div>
+  </div>
+  <div class="text-center mt-10">
+   <button class="px-6 py-3 bg-black text-white hover:bg-yellow-400 hover:text-black transition rounded-full">Load More Books</button>
+  </div>
+ </div>
+</section>
+
+<section class="py-20 bg-black text-white text-center">
+ <h2 class="text-4xl font-bold mb-4">Get access to premium books</h2>
+ <p class="max-w-xl mx-auto mb-6 text-gray-300">Stay ahead with new releases and exclusive offers delivered directly to your inbox.</p>
+ <input type="email" placeholder="Enter your email..." class="px-4 py-3 rounded w-72 text-black"/>
+ <button class="px-6 py-3 bg-yellow-500 text-black font-semibold rounded ml-2">Subscribe</button>
+</section>
+
+
+  <!-- Footer -->
+<footer id="contact" class="bg-[#003366] text-white py-10 text-center">
+  <h4 class="text-xl font-bold mb-3">Contact Us</h4>
+  <p>Email: support@aollogistics.com | Phone: +234 800 123 4567</p>
+  <p class="mt-4 text-sm">© 2025 AOL Logistics. All Rights Reserved.</p>
+</footer>
+
+<!-- Scripts -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>AOS.init();</script>
+<script>
+  document.getElementById('menuBtn').onclick = ()=>{
+    document.getElementById('mobileMenu').classList.toggle('hidden');
+  }
+</script>
+
+
+</body>
+</html>
