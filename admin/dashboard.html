@@ -21,15 +21,31 @@
 </head>
 <body class="flex flex-col md:flex-row bg-gray-900 min-h-screen text-white">
 
-  <!-- Sidebar -->
-  <aside class="w-full md:w-72 bg-gray-800 shadow-md h-auto md:h-screen p-6">
-    <h2 class="text-2xl font-bold text-yellow-500 mb-6">Admin</h2>
+<!-- Hamburger icon for mobile -->
+<div class="md:hidden flex items-center p-4 bg-gray-900">
+  <button id="menuBtn" class="text-white text-2xl focus:outline-none">
+    &#9776; <!-- Hamburger icon -->
+  </button>
+  <h2 class="text-xl font-bold text-yellow-500 ml-4">Admin</h2>
+</div>
+
+<!-- Sidebar -->
+<aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-gray-800 shadow-md transform -translate-x-full md:translate-x-0 transition-transform duration-300 z-50">
+  <div class="p-6">
+    <h2 class="text-2xl font-bold text-yellow-500 mb-6 md:hidden">Admin</h2>
     <nav class="space-y-4">
       <button id="dashboardBtn" class="block font-semibold text-gray-300 hover:text-yellow-500 w-full text-left">Dashboard</button>
       <button id="notificationsBtn" class="block font-semibold text-gray-300 hover:text-yellow-500 w-full text-left">Notifications</button>
       <button id="logoutBtn" class="w-full mt-6 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600">Logout</button>
     </nav>
-  </aside>
+  </div>
+</aside>
+
+<!-- Overlay -->
+<div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-40 md:hidden"></div>
+
+
+  
 
   <!-- Main -->
   <main class="flex-1 p-4 md:p-8 overflow-y-auto">
@@ -559,6 +575,36 @@ document.getElementById('mailForm').addEventListener('submit', async function(e)
     alert("Failed to send email. See console for details: " + errMsg);
   }
 });
+</script>
+
+
+<script>
+  const menuBtn = document.getElementById("menuBtn");
+const sidebar = document.getElementById("sidebar");
+const overlay = document.getElementById("overlay");
+
+// Open sidebar
+menuBtn.addEventListener("click", () => {
+  sidebar.classList.remove("-translate-x-full");
+  overlay.classList.remove("hidden");
+});
+
+// Close sidebar when overlay is clicked
+overlay.addEventListener("click", () => {
+  sidebar.classList.add("-translate-x-full");
+  overlay.classList.add("hidden");
+});
+
+// Optional: close sidebar when any nav button is clicked (mobile)
+document.querySelectorAll("#sidebar nav button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (window.innerWidth < 768) { // only on mobile
+      sidebar.classList.add("-translate-x-full");
+      overlay.classList.add("hidden");
+    }
+  });
+});
+
 </script>
 </body>
 </html>
