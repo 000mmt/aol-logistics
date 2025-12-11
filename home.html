@@ -395,12 +395,12 @@ button {
         </div>
 
         
-        <form class="space-y-4" data-aos="fade-left">
+        <!-- <form class="space-y-4" data-aos="fade-left">
           <input type="text" placeholder="이름" class="w-full p-3 border rounded" data-key="contact_form_name_placeholder" required>
           <input type="email" placeholder="이메일" class="w-full p-3 border rounded" data-key="contact_form_email_placeholder" required>
           <textarea placeholder="메시지" rows="5" class="w-full p-3 border rounded" data-key="contact_form_message_placeholder" required></textarea>
           <button type="submit" class="bg-skyblue text-white px-6 py-3 rounded font-semibold hover:bg-sky-600" data-key="contact_form_button">메시지 보내기</button>
-        </form>
+        </form> -->
 
 
         <form id="contactForm" class="space-y-4" data-aos="fade-left">
@@ -409,6 +409,7 @@ button {
     id="contact_name"
     placeholder="이름" 
     class="w-full p-3 border rounded" 
+    data-key="contact_form_name_placeholder"
     required
   >
 
@@ -417,6 +418,7 @@ button {
     id="contact_email"
     placeholder="이메일" 
     class="w-full p-3 border rounded" 
+    data-key="contact_form_email_placeholder"
     required
   >
 
@@ -425,12 +427,14 @@ button {
     placeholder="메시지"
     rows="5"
     class="w-full p-3 border rounded"
+    data-key="contact_form_message_placeholder"
     required
   ></textarea>
 
   <button 
     type="submit"
     class="bg-skyblue text-white px-6 py-3 rounded font-semibold hover:bg-sky-600"
+    data-key="contact_form_button"
   >
     메시지 보내기
   </button>
