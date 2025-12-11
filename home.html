@@ -24,6 +24,10 @@
   gtag('config', 'G-G5C2122TVD');
 </script>
 
+
+<!-- Supabase & EmailJS SDKs -->
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
   <style>
     /* HERO SLIDER - fade transition */
     .hero-slider {
@@ -536,6 +540,52 @@ button {
       });
     }
   </script>
+
+
+<script>
+  const supabaseUrl = "https://byvffsxsfehrybkyamyu.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // <-- Replace securely
+  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+</script>
+
+
+
+  <script>
+  document.getElementById("contactForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const btn = e.target.querySelector("button[type='submit']");
+    const msg = document.getElementById("contactMessage");
+
+    btn.disabled = true;
+    btn.innerText = "전송 중...";
+
+    const name = document.getElementById("contact_name").value;
+    const email = document.getElementById("contact_email").value;
+    const message = document.getElementById("contact_message").value;
+
+    const { error } = await supabase
+      .from("contact_messages")
+      .insert([{ name, email, message }]);
+
+    if (error) {
+      msg.innerHTML = `<p class="text-red-500">❌ 오류: ${error.message}</p>`;
+      btn.disabled = false;
+      btn.innerText = "메시지 보내기";
+      return;
+    }
+
+    msg.innerHTML = `<p class="text-green-400 font-semibold">✅ 메시지가 성공적으로 전송되었습니다!</p>`;
+
+    document.getElementById("contactForm").reset();
+    btn.disabled = false;
+    btn.innerText = "메시지 보내기";
+  });
+</script>
+
+
+
+  
 
   <!-- LANGUAGE TOGGLE -->
   <script>
