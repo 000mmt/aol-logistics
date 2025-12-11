@@ -407,44 +407,50 @@ button {
         </form> -->
 
 
-        <form id="contactForm" class="space-y-4" data-aos="fade-left">
-  <input 
-    type="text" 
+<!-- CONTACT FORM (use this markup) -->
+<form id="contactForm" class="space-y-4" data-aos="fade-left">
+  <input
     id="contact_name"
-    placeholder="이름" 
-    class="w-full p-3 border rounded" 
+    type="text"
+    name="name"
+    placeholder="이름"
     data-key="contact_form_name_placeholder"
+    class="w-full p-3 border rounded"
     required
-  >
+  />
 
-  <input 
-    type="email"
+  <input
     id="contact_email"
-    placeholder="이메일" 
-    class="w-full p-3 border rounded" 
+    type="email"
+    name="email"
+    placeholder="이메일"
     data-key="contact_form_email_placeholder"
+    class="w-full p-3 border rounded"
     required
-  >
+  />
 
   <textarea
     id="contact_message"
+    name="message"
     placeholder="메시지"
     rows="5"
-    class="w-full p-3 border rounded"
     data-key="contact_form_message_placeholder"
+    class="w-full p-3 border rounded"
     required
   ></textarea>
 
-  <button 
+  <button
     type="submit"
-    class="bg-skyblue text-white px-6 py-3 rounded font-semibold hover:bg-sky-600"
+    id="contactSubmit"
     data-key="contact_form_button"
+    class="bg-skyblue text-white px-6 py-3 rounded font-semibold hover:bg-sky-600"
   >
     메시지 보내기
   </button>
+
+  <div id="contactMessage" class="mt-3 text-center"></div>
 </form>
 
-<div id="contactMessage" class="mt-4 text-center"></div>
 
 
         
@@ -542,46 +548,101 @@ button {
   </script>
 
 
+<!-- CONTACT SUBMIT SCRIPT (replace your current contact script) -->
 <script>
-  const supabaseUrl = "https://byvffsxsfehrybkyamyu.supabase.co";
-  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // <-- Replace securely
-  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-</script>
+/* SUPABASE SETUP */
+const supabaseUrl = "https://byvffsxsfehrybkyamyu.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // <-- Replace securely
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+  function getSiteLang() {
+    // your language toggle stores site_lang in localStorage
+    return localStorage.getItem('site_lang') || 'ko';
+  }
 
+  // small helper to get translated UI text for status messages
+  function t(key) {
+    const lang = getSiteLang();
+    const map = {
+      ko: {
+        sending: "전송 중...",
+        sendButton: "메시지 보내기",
+        sent: "✅ 메시지가 성공적으로 전송되었습니다!",
+        errorPrefix: "❌ 오류: "
+      },
+      en: {
+        sending: "Sending...",
+        sendButton: "Send Message",
+        sent: "✅ Message sent successfully!",
+        errorPrefix: "❌ Error: "
+      }
+    };
+    return map[lang][key];
+  }
 
-  <script>
   document.getElementById("contactForm").addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const btn = e.target.querySelector("button[type='submit']");
+    const btn = document.getElementById("contactSubmit");
     const msg = document.getElementById("contactMessage");
 
+    // set button to sending (respect current language)
     btn.disabled = true;
-    btn.innerText = "전송 중...";
+    btn.innerText = t('sending');
 
-    const name = document.getElementById("contact_name").value;
-    const email = document.getElementById("contact_email").value;
-    const message = document.getElementById("contact_message").value;
+    const name = document.getElementById("contact_name").value.trim();
+    const email = document.getElementById("contact_email").value.trim();
+    const message = document.getElementById("contact_message").value.trim();
 
-    const { error } = await supabase
-      .from("contact_messages")
-      .insert([{ name, email, message }]);
-
-    if (error) {
-      msg.innerHTML = `<p class="text-red-500">❌ 오류: ${error.message}</p>`;
+    // basic client-side validation (avoid empty inserts)
+    if (!name || !email || !message) {
+      msg.innerHTML = `<p class="text-red-500">${t('errorPrefix')}Please complete all fields.</p>`;
       btn.disabled = false;
-      btn.innerText = "메시지 보내기";
+      btn.innerText = t('sendButton');
       return;
     }
 
-    msg.innerHTML = `<p class="text-green-400 font-semibold">✅ 메시지가 성공적으로 전송되었습니다!</p>`;
+    try {
+      const { error } = await supabase
+        .from("contact_messages")
+        .insert([{ name, email, message }]);
 
-    document.getElementById("contactForm").reset();
-    btn.disabled = false;
-    btn.innerText = "메시지 보내기";
+      if (error) {
+        msg.innerHTML = `<p class="text-red-500">${t('errorPrefix')}${error.message}</p>`;
+        btn.disabled = false;
+        btn.innerText = t('sendButton');
+        return;
+      }
+
+      // success UI
+      msg.innerHTML = `<p class="text-green-400 font-semibold">${t('sent')}</p>`;
+      document.getElementById("contactForm").reset();
+      btn.disabled = false;
+      btn.innerText = t('sendButton');
+
+    } catch (ex) {
+      console.error("Contact submit error:", ex);
+      msg.innerHTML = `<p class="text-red-500">${t('errorPrefix')}${ex.message || ex}</p>`;
+      btn.disabled = false;
+      btn.innerText = t('sendButton');
+    }
+  });
+
+  // optional: when language toggles, ensure button text updates immediately
+  // If your setLanguage() already changes data-key textContent values, this is redundant,
+  // but we include a small listener so the submit-button always reflects the active language.
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'site_lang') {
+      const cur = localStorage.getItem('site_lang') || 'ko';
+      const btn = document.getElementById('contactSubmit');
+      if (btn) {
+        btn.innerText = cur === 'en' ? 'Send Message' : '메시지 보내기';
+      }
+    }
   });
 </script>
+
+
 
 
 
