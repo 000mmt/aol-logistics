@@ -21,13 +21,13 @@
 </head>
 <body class="flex flex-col md:flex-row bg-gray-900 min-h-screen text-white">
 
-<!-- Mobile Menu Icon -->
+<!--  Mobile Menu Icon 
 <div class="md:hidden flex items-center p-4 bg-gray-800 text-white">
   <button id="menuBtn" class="text-2xl focus:outline-none">&#9776;</button>
   <h2 class="ml-4 text-xl font-bold text-yellow-500">Admin</h2>
 </div>
 
-<!-- Sidebar -->
+<!-- Sidebar 
 <aside id="sidebar" class="fixed top-0 left-0 z-50 w-64 h-full bg-gray-800 shadow-md transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
   <div class="p-6">
     <h2 class="text-2xl font-bold text-yellow-500 mb-6 hidden md:block">Admin</h2>
@@ -61,7 +61,7 @@
 
   
 
-  <!-- Main Content -->
+  <!-- Main Content 
  <main class="md:ml-64 p-4 md:p-8 overflow-y-auto min-h-screen">
     <div class="flex items-center justify-between mb-6">
       <!-- <h1 class="text-2xl md:text-3xl font-bold">User Shipments</h1>
@@ -72,7 +72,7 @@
     <div id="userList" class="space-y-6">
        Users loaded here
     </div>
-  </main> -->
+  </main> 
 
 
   <main class="flex-1 p-4 md:p-8 overflow-y-auto">
@@ -80,11 +80,11 @@
   <!-- 
     001. for Main dashboard 
     and other info related
-    -->
+    
   <div id="dashboardPage">
     <h1 class="text-2xl md:text-3xl font-bold mb-4">Dashboard</h1>
         <div id="userList" class="space-y-6">
-           <!-- Users loaded here -->
+           <!-- Users loaded here 
         </div>
   </div>
 
@@ -93,7 +93,7 @@
   <!-- 
     001. for Notification 
     and other info related
-    -->
+    
   <div id="notificationsPage" class="hidden">
     <h1 class="text-2xl md:text-3xl font-bold mb-4">Notifications</h1>
     <p>No new notifications.</p>
@@ -103,23 +103,23 @@
 <!-- 
     001. for messages 
     and other info related
-    -->
+    
 
 
-      <!-- Messages Page -->
+      <!-- Messages Page 
 <div id="messagesPage" class="hidden p-4">
   <h1 class="text-2xl font-bold text-yellow-500 mb-4">Messages</h1>
 
-  <!-- Search input -->
+  <!-- Search input 
   <input type="text" id="messageSearch" placeholder="Search messages..." 
          class="w-full p-2 mb-4 rounded bg-gray-700 text-white border">
 
-  <!-- Messages container -->
+  <!-- Messages container 
   <div id="messagesList" class="space-y-4">
     <!-- Messages from DB will load here -->
   </div>
 
-  <!-- Pagination controls -->
+  <!-- Pagination controls 
   <div class="mt-4 flex justify-between items-center" id="messagePagination">
     <button id="prevPage" class="px-4 py-2 bg-gray-600 rounded text-white">Previous</button>
     <span id="currentPage" class="text-gray-300">1</span>
@@ -138,13 +138,98 @@
  <!-- 
     001. for settings 
     and other info related
-    -->
+    
   <div id="settingsPage" class="hidden">
     <h1 class="text-2xl md:text-3xl font-bold mb-4">Settings</h1>
     <p>Update your account and preferences here.</p>
   </div>
 
 </main>
+ -->
+
+
+ <div class="flex h-screen">
+
+  <!-- LEFT SIDEBAR -->
+  <aside id="sidebar" class="hidden md:block w-64 bg-gray-900 text-white p-6">
+    <h2 class="text-2xl font-bold mb-6 text-yellow-500">Admin</h2>
+
+    <nav class="space-y-4">
+      <button class="navBtn" data-page="dashboardPage">Dashboard</button>
+      <button class="navBtn" data-page="notificationsPage">Notifications</button>
+      <button class="navBtn" data-page="messagesPage">Messages</button>
+      <button class="navBtn" data-page="settingsPage">Settings</button>
+
+      <button class="mt-6 bg-red-500 px-4 py-2 rounded">Logout</button>
+    </nav>
+  </aside>
+
+  <!-- MOBILE TOP BAR -->
+  <div class="md:hidden w-full bg-gray-900 text-white p-4 flex items-center">
+    <button id="menuBtn" class="text-2xl mr-3">&#9776;</button>
+    <h2 class="text-xl font-bold text-yellow-500">Admin</h2>
+  </div>
+
+  <!-- MOBILE SIDEBAR OVERLAY -->
+  <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+
+  <!-- MOBILE SIDEBAR -->
+  <aside id="mobileSidebar"
+    class="fixed top-0 left-0 w-64 h-full bg-gray-900 text-white p-6 z-50 transform -translate-x-full transition duration-300 md:hidden">
+    <h2 class="text-2xl font-bold text-yellow-500 mb-6">Admin</h2>
+
+    <nav class="space-y-4">
+      <button class="navBtn" data-page="dashboardPage">Dashboard</button>
+      <button class="navBtn" data-page="notificationsPage">Notifications</button>
+      <button class="navBtn" data-page="messagesPage">Messages</button>
+      <button class="navBtn" data-page="settingsPage">Settings</button>
+      <button class="mt-6 bg-red-500 px-4 py-2 rounded">Logout</button>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT + DETAILS PANEL -->
+  <main class="flex-1 grid grid-cols-1 md:grid-cols-3">
+
+    <!-- PAGE AREA -->
+    <section id="pageContainer" class="col-span-2 p-6">
+      <div id="dashboardPage" class="page">Dashboard content here...</div>
+      <div id="notificationsPage" class="page hidden">Notifications content...</div>
+      <div id="messagesPage" class="page hidden">
+        
+        <h2 class="text-2xl font-bold mb-4">Messages</h2>
+
+        <!-- Search -->
+        <input id="searchInput" type="text" placeholder="Search messages..."
+               class="w-full p-3 rounded mb-4 bg-gray-800 text-white">
+
+        <!-- Message List -->
+        <div id="messagesList" class="space-y-4"></div>
+
+        <!-- Pagination -->
+        <div id="pagination" class="flex justify-between mt-4"></div>
+      </div>
+      <div id="settingsPage" class="page hidden">Settings content...</div>
+    </section>
+
+    <!-- DETAILS PANEL -->
+    <aside id="detailsPanel"
+           class="hidden md:block col-span-1 p-6 bg-gray-900 text-white border-l border-gray-700">
+           <button id="mobileBackBtn" 
+               class="md:hidden mb-4 px-3 py-1 bg-gray-700 rounded">
+                 ← Back
+           </button>
+
+      <h2 class="text-xl font-bold mb-4">Details</h2>
+      <div id="detailsContent" class="text-gray-300">
+        Click a message to view details.
+      </div>
+    </aside>
+
+  </main>
+
+</div>
+
+
 
 
   <!-- Delete Modal -->
@@ -224,6 +309,13 @@ const EMAILJS_PUBLIC_KEY = "PlzHImKJLSGxIfYy0"; // e.g. public_xxxxxxxxx
 const EMAILJS_SERVICE_ID = "service_g2b1nlw"; // e.g. service_g2b1nlw
 const EMAILJS_TEMPLATE_ID = "template_i9gwyek"; // e.g. template_l5nr4yd
 
+
+// Query state
+let currentPage = 1;
+const pageSize = 10;
+let allMessages = [];
+let filteredMessages = [];
+
 /* ========================
    SETUP
    ======================== */
@@ -265,50 +357,70 @@ let userIdToDelete = null;
 
 
 /* ======================== Sidebar Toggle ======================== */
+
+const pages = document.querySelectorAll(".page");
+const navButtons = document.querySelectorAll(".navBtn");
+const detailsPanel = document.getElementById("detailsPanel");
+const detailsContent = document.getElementById("detailsContent");
+
+// ---- PAGE SWITCHING ----
+navButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    const pageToShow = btn.dataset.page;
+
+    // hide all pages
+    pages.forEach(p => p.classList.add("hidden"));
+
+    // show selected page
+    document.getElementById(pageToShow).classList.remove("hidden");
+
+    // close mobile sidebar
+    mobileSidebar.classList.add("-translate-x-full");
+    overlay.classList.add("hidden");
+
+    // hide details panel for mobile
+    if (window.innerWidth < 768) {
+      detailsPanel.classList.add("hidden");
+    }
+  });
+});
+
+// ---- MOBILE MENU ----
 const menuBtn = document.getElementById("menuBtn");
-const sidebar = document.getElementById("sidebar");
+const mobileSidebar = document.getElementById("mobileSidebar");
 const overlay = document.getElementById("overlay");
 
 menuBtn.addEventListener("click", () => {
-  sidebar.classList.toggle("-translate-x-full");
-  overlay.classList.toggle("hidden");
+  mobileSidebar.classList.remove("-translate-x-full");
+  overlay.classList.remove("hidden");
 });
+
 overlay.addEventListener("click", () => {
-  sidebar.classList.add("-translate-x-full");
+  mobileSidebar.classList.add("-translate-x-full");
   overlay.classList.add("hidden");
 });
 
+// ---- SHOW DETAILS (MESSAGE CLICK) ----
+function showDetails(msg) {
+  const html = `
+    <h3 class="text-xl font-bold">${msg.name}</h3>
+    <p class="text-yellow-400">${msg.email}</p>
+    <p class="mt-4 text-gray-300">${msg.message}</p>
+    <p class="mt-4 text-sm text-gray-500">${new Date(msg.created_at).toLocaleString()}</p>
+  `;
 
+  detailsContent.innerHTML = html;
+  detailsPanel.classList.remove("hidden");
 
-/* ======================== Page Switching ======================== */
-const pages = {
-  dashboardBtn: 'dashboardPage',
-  notificationsBtn: 'notificationsPage',
-  messagesBtn: 'messagesPage',
-  settingsBtn: 'settingsPage'
-};
+  // MOBILE: replace page with details panel
+  if (window.innerWidth < 768) {
+    document.getElementById("pageContainer").classList.add("hidden");
 
-let currentMessagePage = 1;
-const messagesPerPage = 10;
-let totalMessages = 0;
-
-Object.keys(pages).forEach(btnId => {
-  const btn = document.getElementById(btnId);
-  if (btn) {
-    btn.addEventListener('click', () => {
-      Object.values(pages).forEach(pid => document.getElementById(pid).classList.add('hidden'));
-      const showEl = document.getElementById(pages[btnId]);
-      if (showEl) showEl.classList.remove('hidden');
-
-      if (!overlay.classList.contains('hidden')) {
-        sidebar.classList.add('-translate-x-full');
-        overlay.classList.add('hidden');
-      }
-
-      if (btnId === 'messagesBtn') loadMessages(currentMessagePage, document.getElementById("messageSearch").value);
-    });
+    detailsPanel.classList.remove("hidden");
+    detailsPanel.classList.add("fixed", "top-0", "left-0", "w-full", "h-full", "z-50");
   }
-});
+}
+
 
 
   /* ======================== Initial Page ======================== */
@@ -484,68 +596,135 @@ function escapeAttr(str) {
 
 
 /* ======================== Messages Functions ======================== */
-async function loadMessages(page = 1, search = "") {
-  const offset = (page - 1) * messagesPerPage;
-  const { count } = await supabase.from("messages").select("*", { count: 'exact' });
-  totalMessages = count;
 
-  const { data: messages, error } = await supabase.from("messages")
+
+// ---------------------------
+// 🔶 Load Messages From DB
+// ---------------------------
+async function loadMessages() {
+  const start = (currentPage - 1) * pageSize;
+  const end = start + pageSize - 1;
+
+  const { data, error } = await supabase
+    .from("messages")
     .select("*")
-    .ilike("message", `%${search}%`)
     .order("created_at", { ascending: false })
-    .range(offset, offset + messagesPerPage - 1);
+    .range(start, end);
 
-  const container = document.getElementById("messagesList");
-  if (error) return container.innerHTML = `<p class="text-red-500">Error: ${error.message}</p>`;
-  if (!messages.length) return container.innerHTML = `<p class="text-gray-400">No messages found.</p>`;
+  if (error) {
+    console.error(error);
+    return;
+  }
 
-  container.innerHTML = messages.map(msg => `
-    <div class="bg-gray-800 p-4 rounded shadow-md flex justify-between items-start">
-      <div>
-        <p class="text-gray-300"><b>From:</b> ${escapeHtml(messages.name || "Anonymous")}</p>
-        <p class="text-gray-300"><b>Email:</b> ${escapeHtml(messages.email || "N/A")}</p>
-        <p class="text-gray-300 mt-2">${escapeHtml(messages.message)}</p>
-        <p class="text-gray-400 text-sm mt-1">${new Date(msg.created_at).toLocaleString()}</p>
-      </div>
-      <div class="flex flex-col gap-2 ml-4">
-        <button onclick="markMessageRead('${messages.id}')" class="px-2 py-1 bg-yellow-500 text-black rounded">Mark Read</button>
-        <button onclick="deleteMessage('${messages.id}')" class="px-2 py-1 bg-red-600 text-white rounded">Delete</button>
-      </div>
-    </div>
-  `).join("");
+  allMessages = data;
+  filteredMessages = data;
 
-  document.getElementById("currentPage").textContent = page;
+  displayMessages();
+  updatePagination();
 }
 
-document.getElementById("messageSearch").addEventListener("input", e => {
-  currentMessagePage = 1;
-  loadMessages(currentMessagePage, e.target.value);
-});
+loadMessages();
 
-document.getElementById("prevPage").addEventListener("click", () => {
-  if (currentMessagePage > 1) {
-    currentMessagePage--;
-    loadMessages(currentMessagePage, document.getElementById("messageSearch").value);
-  }
-});
 
-document.getElementById("nextPage").addEventListener("click", () => {
-  if (currentMessagePage * messagesPerPage < totalMessages) {
-    currentMessagePage++;
-    loadMessages(currentMessagePage, document.getElementById("messageSearch").value);
-  }
-});
+// ---------------------------
+// 🔶 Display Messages
+// ---------------------------
+function displayMessages() {
+  const listEl = document.getElementById("messagesList");
+  listEl.innerHTML = "";
 
-async function deleteMessage(id) {
-  const { error } = await supabase.from("messages").delete().eq("id", id);
-  if (error) return alert("Delete failed: " + error.message);
-  loadMessages(currentMessagePage, document.getElementById("messageSearch").value);
+  filteredMessages.forEach(msg => {
+    const card = document.createElement("div");
+    card.className = "p-4 bg-gray-800 rounded cursor-pointer hover:bg-gray-700";
+
+    card.innerHTML = `
+      <div class="font-bold text-white">${msg.name}</div>
+      <div class="text-sm text-yellow-400">${msg.email}</div>
+      <div class="text-gray-400 text-sm mt-1 line-clamp-2">${msg.message}</div>
+      <div class="text-gray-500 text-xs mt-2">${new Date(msg.created_at).toLocaleString()}</div>
+    `;
+
+    // When clicked → show details
+    card.addEventListener("click", () => showDetails(msg));
+
+    listEl.appendChild(card);
+  });
 }
 
-async function markMessageRead(id) {
-  const { error } = await supabase.from("messages").update({ read: true }).eq("id", id);
-  if (error) return alert("Update failed: " + error.message);
-  loadMessages(currentMessagePage, document.getElementById("messageSearch").value);
+
+// ---------------------------
+// 🔶 Pagination System
+// ---------------------------
+function updatePagination() {
+  const pagination = document.getElementById("pagination");
+
+  pagination.innerHTML = `
+    <button id="prevBtn" class="px-4 py-2 bg-gray-700 rounded">Previous</button>
+    <span class="text-gray-300">Page ${currentPage}</span>
+    <button id="nextBtn" class="px-4 py-2 bg-gray-700 rounded">Next</button>
+  `;
+
+  document.getElementById("prevBtn").onclick = () => {
+    if (currentPage > 1) {
+      currentPage--;
+      loadMessages();
+    }
+  };
+
+  document.getElementById("nextBtn").onclick = () => {
+    currentPage++;
+    loadMessages();
+  };
+}
+
+
+// ---------------------------
+// 🔶 Search Messages
+// ---------------------------
+document.getElementById("searchInput").addEventListener("input", (e) => {
+  const term = e.target.value.toLowerCase();
+
+  filteredMessages = allMessages.filter(msg =>
+    msg.name.toLowerCase().includes(term) ||
+    msg.email.toLowerCase().includes(term) ||
+    msg.message.toLowerCase().includes(term)
+  );
+
+  displayMessages();
+});
+
+
+// ---------------------------
+// 🔶 Show Message Details
+// ---------------------------
+function showDetails(msg) {
+  const html = `
+    <h3 class="text-xl font-bold">${msg.name}</h3>
+    <p class="text-yellow-400">${msg.email}</p>
+    <p class="mt-4 text-gray-300 whitespace-pre-line">${msg.message}</p>
+    <p class="mt-4 text-sm text-gray-500">${new Date(msg.created_at).toLocaleString()}</p>
+
+    ${
+      window.innerWidth < 768
+        ? '<button id="closeDetails" class="mt-6 px-4 py-2 bg-gray-700 rounded">Back</button>'
+        : ""
+    }
+  `;
+
+  // Insert details
+  detailsContent.innerHTML = html;
+  detailsPanel.classList.remove("hidden");
+
+  // MOBILE MODE → hide the page, show full-screen details
+  if (window.innerWidth < 768) {
+    document.getElementById("pageContainer").classList.add("hidden");
+    detailsPanel.classList.add("fixed", "top-0", "left-0", "w-full", "h-full", "z-50");
+
+    document.getElementById("closeDetails").onclick = () => {
+      detailsPanel.classList.add("hidden");
+      document.getElementById("pageContainer").classList.remove("hidden");
+    };
+  }
 }
 
 /* ========================
@@ -784,6 +963,14 @@ document.getElementById('mailForm').addEventListener('submit', async function(e)
     alert("Failed to send email. See console for details: " + errMsg);
   }
 });
+</script>
+
+<script>
+    document.getElementById("mobileBackBtn").addEventListener("click", () => {
+    detailsPanel.classList.add("hidden");
+    document.getElementById("pageContainer").classList.remove("hidden");
+   });
+
 </script>
 
 </body>
