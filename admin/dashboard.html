@@ -31,11 +31,28 @@
 <aside id="sidebar" class="fixed top-0 left-0 z-50 w-64 h-full bg-gray-800 shadow-md transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
   <div class="p-6">
     <h2 class="text-2xl font-bold text-yellow-500 mb-6 hidden md:block">Admin</h2>
-    <nav class="space-y-4">
-      <button id="dashboardBtn" class="block font-semibold text-gray-300 w-full text-left md:hover:text-gray-300">Dashboard</button>
-      <button id="notificationsBtn" class="block font-semibold text-gray-300 w-full text-left md:hover:text-gray-300">Notifications</button>
-      <button id="logoutBtn" class="w-full mt-6 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 md:hover:bg-red-500">Logout</button>
-    </nav>
+<nav class="space-y-4">
+  <button id="dashboardBtn" class="block font-semibold text-gray-300 w-full text-left md:hover:text-yellow-500">
+    Dashboard
+  </button>
+  
+  <button id="notificationsBtn" class="block font-semibold text-gray-300 w-full text-left md:hover:text-yellow-500">
+    Notifications
+  </button>
+
+  <button id="messagesBtn" class="block font-semibold text-gray-300 w-full text-left md:hover:text-yellow-500">
+    Messages
+  </button>
+
+  <button id="settingsBtn" class="block font-semibold text-gray-300 w-full text-left md:hover:text-yellow-500">
+    Settings
+  </button>
+
+  <button id="logoutBtn" class="w-full mt-6 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 md:hover:bg-red-500">
+    Logout
+  </button>
+</nav>
+
   </div>
 </aside>
 <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
@@ -45,7 +62,7 @@
   
 
   <!-- Main Content -->
-  <main class="md:ml-64 p-4 md:p-8 overflow-y-auto min-h-screen">
+  <!-- <main class="md:ml-64 p-4 md:p-8 overflow-y-auto min-h-screen">
     <div class="flex items-center justify-between mb-6">
       <h1 class="text-2xl md:text-3xl font-bold">User Shipments</h1>
     </div>
@@ -55,7 +72,39 @@
     <div id="userList" class="space-y-6">
       <!-- Users loaded here -->
     </div>
-  </main>
+  </main> -->
+
+
+  <main class="flex-1 p-4 md:p-8 overflow-y-auto">
+
+  <!-- Dashboard Page -->
+  <div id="dashboardPage">
+    <h1 class="text-2xl md:text-3xl font-bold mb-4">Dashboard</h1>
+    <p>Welcome to the dashboard overview.</p>
+  </div>
+
+  <!-- Notifications Page -->
+  <div id="notificationsPage" class="hidden">
+    <h1 class="text-2xl md:text-3xl font-bold mb-4">Notifications</h1>
+    <p>No new notifications.</p>
+  </div>
+
+  <!-- Messages Page -->
+  <div id="messagesPage" class="hidden">
+    <h1 class="text-2xl md:text-3xl font-bold mb-4">Messages</h1>
+    <div id="messageList">
+      <p>Loading messages...</p>
+    </div>
+  </div>
+
+  <!-- Settings Page -->
+  <div id="settingsPage" class="hidden">
+    <h1 class="text-2xl md:text-3xl font-bold mb-4">Settings</h1>
+    <p>Update your account and preferences here.</p>
+  </div>
+
+</main>
+
 
   <!-- Delete Modal -->
   <div id="deleteModal" class="fixed inset-0 hidden items-center justify-center bg-black bg-opacity-60 z-40">
@@ -588,6 +637,78 @@ overlay.addEventListener("click", () => {
   sidebar.classList.add("-translate-x-full");
   overlay.classList.add("hidden");
 });
+
+  </script>
+
+
+
+
+  <script>
+    // Sidebar buttons
+const pages = {
+  dashboardBtn: 'dashboardPage',
+  notificationsBtn: 'notificationsPage',
+  messagesBtn: 'messagesPage',
+  settingsBtn: 'settingsPage'
+};
+
+Object.keys(pages).forEach(btnId => {
+  const btn = document.getElementById(btnId);
+  if (btn) {
+    btn.addEventListener('click', () => {
+      // Hide all pages
+      Object.values(pages).forEach(pageId => {
+        const el = document.getElementById(pageId);
+        if (el) el.classList.add('hidden');
+      });
+      // Show selected page
+      const showEl = document.getElementById(pages[btnId]);
+      if (showEl) showEl.classList.remove('hidden');
+    });
+  }
+});
+
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('dashboardPage').classList.remove('hidden');
+});
+
+  </script>
+
+  <script>
+    <!-- After sidebar and page sections -->
+<script>
+const pages = {
+  dashboardBtn: 'dashboardPage',
+  notificationsBtn: 'notificationsPage',
+  messagesBtn: 'messagesPage',
+  settingsBtn: 'settingsPage'
+};
+
+Object.keys(pages).forEach(btnId => {
+  const btn = document.getElementById(btnId);
+  if (btn) {
+    btn.addEventListener('click', () => {
+      // Hide all pages
+      Object.values(pages).forEach(pageId => {
+        const el = document.getElementById(pageId);
+        if (el) el.classList.add('hidden');
+      });
+      // Show selected page
+      const showEl = document.getElementById(pages[btnId]);
+      if (showEl) showEl.classList.remove('hidden');
+
+      // Close sidebar if mobile
+      if (!overlay.classList.contains('hidden')) {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+      }
+    });
+  }
+});
+</script>
 
   </script>
 
