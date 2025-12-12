@@ -61,10 +61,10 @@
 
   
 
-  <!-- Main Content 
+  Main Content 
  <main class="md:ml-64 p-4 md:p-8 overflow-y-auto min-h-screen">
     <div class="flex items-center justify-between mb-6">
-      <!-- <h1 class="text-2xl md:text-3xl font-bold">User Shipments</h1>
+      <h1 class="text-2xl md:text-3xl font-bold">User Shipments</h1>
     </div> -->
 
    <!--   <div id="notificationBar" class="bg-yellow-500 text-black p-4 rounded-md mb-4 hidden"></div>
@@ -77,20 +77,20 @@
 
   <main class="flex-1 p-4 md:p-8 overflow-y-auto">
 
-  <!-- 
+  
     001. for Main dashboard 
     and other info related
     
   <div id="dashboardPage">
     <h1 class="text-2xl md:text-3xl font-bold mb-4">Dashboard</h1>
         <div id="userList" class="space-y-6">
-           <!-- Users loaded here 
+           Users loaded here 
         </div>
   </div>
 
 
     
-  <!-- 
+  
     001. for Notification 
     and other info related
     
@@ -100,24 +100,24 @@
   </div>
 
 
-<!-- 
+
     001. for messages 
     and other info related
     
 
 
-      <!-- Messages Page 
+      Messages Page 
 <div id="messagesPage" class="hidden p-4">
   <h1 class="text-2xl font-bold text-yellow-500 mb-4">Messages</h1>
 
-  <!-- Search input 
+  Search input 
   <input type="text" id="messageSearch" placeholder="Search messages..." 
          class="w-full p-2 mb-4 rounded bg-gray-700 text-white border">
 
-  <!-- Messages container 
+ Messages container 
   <div id="messagesList" class="space-y-4">
-    <!-- Messages from DB will load here -->
-  </div>
+    Messages from DB will load here -->
+
 
   <!-- Pagination controls 
   <div class="mt-4 flex justify-between items-center" id="messagePagination">
@@ -135,7 +135,7 @@
 
     
 
- <!-- 
+
     001. for settings 
     and other info related
     
@@ -148,24 +148,22 @@
  -->
 
 
- <div class="flex h-screen">
-
-  <!-- LEFT SIDEBAR -->
-  <aside id="sidebar" class="hidden md:block w-64 bg-gray-900 text-white p-6">
-    <h2 class="text-2xl font-bold mb-6 text-yellow-500">Admin</h2>
+ <!-- LEFT SIDEBAR (DESKTOP) -->
+  <aside id="sidebar" class="hidden md:block w-64 bg-gray-900 p-6 border-r border-gray-700">
+    <h2 class="text-2xl font-bold text-yellow-500 mb-6">Admin</h2>
 
     <nav class="space-y-4">
-      <button class="navBtn" data-page="dashboardPage">Dashboard</button>
-      <button class="navBtn" data-page="notificationsPage">Notifications</button>
-      <button class="navBtn" data-page="messagesPage">Messages</button>
-      <button class="navBtn" data-page="settingsPage">Settings</button>
+      <button class="navBtn w-full text-left" data-page="dashboardPage">Dashboard</button>
+      <button class="navBtn w-full text-left" data-page="notificationsPage">Notifications</button>
+      <button class="navBtn w-full text-left" data-page="messagesPage">Messages</button>
+      <button class="navBtn w-full text-left" data-page="settingsPage">Settings</button>
 
       <button class="mt-6 bg-red-500 px-4 py-2 rounded">Logout</button>
     </nav>
   </aside>
 
   <!-- MOBILE TOP BAR -->
-  <div class="md:hidden w-full bg-gray-900 text-white p-4 flex items-center">
+  <div class="md:hidden fixed top-0 left-0 w-full bg-gray-900 p-4 flex items-center z-30">
     <button id="menuBtn" class="text-2xl mr-3">&#9776;</button>
     <h2 class="text-xl font-bold text-yellow-500">Admin</h2>
   </div>
@@ -175,7 +173,7 @@
 
   <!-- MOBILE SIDEBAR -->
   <aside id="mobileSidebar"
-    class="fixed top-0 left-0 w-64 h-full bg-gray-900 text-white p-6 z-50 transform -translate-x-full transition duration-300 md:hidden">
+    class="fixed top-0 left-0 w-64 h-full bg-gray-900 p-6 z-50 transform -translate-x-full transition duration-300 md:hidden">
     <h2 class="text-2xl font-bold text-yellow-500 mb-6">Admin</h2>
 
     <nav class="space-y-4">
@@ -187,47 +185,52 @@
     </nav>
   </aside>
 
-  <!-- MAIN CONTENT + DETAILS PANEL -->
-  <main class="flex-1 grid grid-cols-1 md:grid-cols-3">
+  <!-- MAIN AREA + DETAILS PANEL -->
+  <main class="flex-1 grid grid-cols-1 md:grid-cols-3 mt-14 md:mt-0">
 
-    <!-- PAGE AREA -->
+    <!-- MIDDLE PAGE AREA -->
     <section id="pageContainer" class="col-span-2 p-6">
-      <div id="dashboardPage" class="page">Dashboard content here...</div>
+
+      <!-- Dashboard -->
+      <div id="dashboardPage" class="page">
+         <h1 class="text-2xl md:text-3xl font-bold mb-4">Dashboard</h1>
+         <div id="userList" class="space-y-6">
+            Users loaded here 
+         </div>
+      </div>
+
+      <!-- Notifications -->
       <div id="notificationsPage" class="page hidden">Notifications content...</div>
+
+      <!-- Messages -->
       <div id="messagesPage" class="page hidden">
-        
         <h2 class="text-2xl font-bold mb-4">Messages</h2>
 
-        <!-- Search -->
         <input id="searchInput" type="text" placeholder="Search messages..."
-               class="w-full p-3 rounded mb-4 bg-gray-800 text-white">
+          class="w-full p-3 rounded mb-4 bg-gray-800 text-white">
 
-        <!-- Message List -->
         <div id="messagesList" class="space-y-4"></div>
 
-        <!-- Pagination -->
         <div id="pagination" class="flex justify-between mt-4"></div>
       </div>
+
+      <!-- Settings -->
       <div id="settingsPage" class="page hidden">Settings content...</div>
+
     </section>
 
-    <!-- DETAILS PANEL -->
+    <!-- RIGHT DETAILS PANEL (DESKTOP ONLY) -->
     <aside id="detailsPanel"
-           class="hidden md:block col-span-1 p-6 bg-gray-900 text-white border-l border-gray-700">
-           <button id="mobileBackBtn" 
-               class="md:hidden mb-4 px-3 py-1 bg-gray-700 rounded">
-                 ← Back
-           </button>
+      class="hidden md:block col-span-1 p-6 bg-gray-900 border-l border-gray-700">
 
       <h2 class="text-xl font-bold mb-4">Details</h2>
+
       <div id="detailsContent" class="text-gray-300">
         Click a message to view details.
       </div>
     </aside>
 
   </main>
-
-</div>
 
 
 
