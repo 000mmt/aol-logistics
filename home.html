@@ -604,7 +604,7 @@ const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
     try {
       const { error } = await supabase
-        .from("contact_messages")
+        .from("messages")
         .insert([{ name, email, message }]);
 
       if (error) {
