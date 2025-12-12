@@ -64,8 +64,8 @@
   <!-- Main Content -->
  <main class="md:ml-64 p-4 md:p-8 overflow-y-auto min-h-screen">
     <div class="flex items-center justify-between mb-6">
-      <h1 class="text-2xl md:text-3xl font-bold">User Shipments</h1>
-    </div>
+      <!-- <h1 class="text-2xl md:text-3xl font-bold">User Shipments</h1>
+    </div> -->
 
    <!--   <div id="notificationBar" class="bg-yellow-500 text-black p-4 rounded-md mb-4 hidden"></div>
 
@@ -77,7 +77,10 @@
 
   <main class="flex-1 p-4 md:p-8 overflow-y-auto">
 
-  <!-- Dashboard Page -->
+  <!-- 
+    001. for Main dashboard 
+    and other info related
+    -->
   <div id="dashboardPage">
     <h1 class="text-2xl md:text-3xl font-bold mb-4">Dashboard</h1>
         <div id="userList" class="space-y-6">
@@ -85,21 +88,57 @@
         </div>
   </div>
 
-  <!-- Notifications Page -->
+
+    
+  <!-- 
+    001. for Notification 
+    and other info related
+    -->
   <div id="notificationsPage" class="hidden">
     <h1 class="text-2xl md:text-3xl font-bold mb-4">Notifications</h1>
     <p>No new notifications.</p>
   </div>
 
-  <!-- Messages Page -->
-  <div id="messagesPage" class="hidden">
-    <h1 class="text-2xl md:text-3xl font-bold mb-4">Messages</h1>
-    <div id="messageList">
-      <p>Loading messages...</p>
+
+<!-- 
+    001. for messages 
+    and other info related
+    -->
+
+
+      <!-- Messages Page -->
+<div id="messagesPage" class="hidden p-4">
+  <h1 class="text-2xl font-bold text-yellow-500 mb-4">Messages</h1>
+
+  <!-- Search input -->
+  <input type="text" id="messageSearch" placeholder="Search messages..." 
+         class="w-full p-2 mb-4 rounded bg-gray-700 text-white border">
+
+  <!-- Messages container -->
+  <div id="messagesList" class="space-y-4">
+    <!-- Messages from DB will load here -->
+  </div>
+
+  <!-- Pagination controls -->
+  <div class="mt-4 flex justify-between items-center" id="messagePagination">
+    <button id="prevPage" class="px-4 py-2 bg-gray-600 rounded text-white">Previous</button>
+    <span id="currentPage" class="text-gray-300">1</span>
+    <button id="nextPage" class="px-4 py-2 bg-gray-600 rounded text-white">Next</button>
+  </div>
+</div>
+
+
     </div>
   </div>
 
-  <!-- Settings Page -->
+
+
+    
+
+ <!-- 
+    001. for settings 
+    and other info related
+    -->
   <div id="settingsPage" class="hidden">
     <h1 class="text-2xl md:text-3xl font-bold mb-4">Settings</h1>
     <p>Update your account and preferences here.</p>
@@ -623,8 +662,115 @@ document.getElementById('mailForm').addEventListener('submit', async function(e)
     alert("Failed to send email. See console for details: " + errMsg);
   }
 });
+
+/* ========================
+   load messages from database
+   ======================== */
+
+const messagesPerPage = 10;
+let currentMessagePage = 1;
+let totalMessages = 0;
+
+// Load messages with pagination
+async function loadMessages(page = 1, search = "") {
+  const offset = (page - 1) * messagesPerPage;
+
+  // Fetch total count
+  const { count } = await supabase
+    .from("messages")
+    .select("*", { count: 'exact' });
+
+  totalMessages = count;
+
+  const { data: messages, error } = await supabase
+    .from("messages")
+    .select("*")
+    .ilike("content", `%${search}%`) // search by content
+    .order("created_at", { ascending: false })
+    .range(offset, offset + messagesPerPage - 1);
+
+  if (error) {
+    console.error("Error loading messages:", error);
+    document.getElementById("messagesList").innerHTML = `<p class="text-red-500">Error: ${error.message}</p>`;
+    return;
+  }
+
+  if (!messages || messages.length === 0) {
+    document.getElementById("messagesList").innerHTML = `<p class="text-gray-400">No messages found.</p>`;
+    return;
+  }
+
+  // Render messages
+  const html = messages.map(msg => `
+    <div class="bg-gray-800 p-4 rounded shadow-md flex justify-between items-start">
+      <div>
+        <p class="text-gray-300"><b>From:</b> ${escapeHtml(msg.sender_name || "Anonymous")}</p>
+        <p class="text-gray-300"><b>Email:</b> ${escapeHtml(msg.sender_email || "N/A")}</p>
+        <p class="text-gray-300 mt-2">${escapeHtml(msg.content)}</p>
+        <p class="text-gray-400 text-sm mt-1">${new Date(msg.created_at).toLocaleString()}</p>
+      </div>
+      <div class="flex flex-col gap-2 ml-4">
+        <button onclick="markMessageRead('${msg.id}')" class="px-2 py-1 bg-yellow-500 text-black rounded">Mark Read</button>
+        <button onclick="deleteMessage('${msg.id}')" class="px-2 py-1 bg-red-600 text-white rounded">Delete</button>
+      </div>
+    </div>
+  `).join("");
+
+  document.getElementById("messagesList").innerHTML = html;
+  document.getElementById("currentPage").textContent = page;
+}
+
+
+  /* ========================
+   Search Functionality
+   ======================== */
+
+  document.getElementById("messageSearch").addEventListener("input", (e) => {
+  currentMessagePage = 1;
+  loadMessages(currentMessagePage, e.target.value);
+});
+
+    /* ========================
+  Pagination Buttons
+   ======================== */
+
+  document.getElementById("prevPage").addEventListener("click", () => {
+  if (currentMessagePage > 1) {
+    currentMessagePage--;
+    loadMessages(currentMessagePage, document.getElementById("messageSearch").value);
+  }
+});
+
+document.getElementById("nextPage").addEventListener("click", () => {
+  if (currentMessagePage * messagesPerPage < totalMessages) {
+    currentMessagePage++;
+    loadMessages(currentMessagePage, document.getElementById("messageSearch").value);
+  }
+});
+
+    /* ========================
+  Delete & Mark as Read
+   ======================== */
+  async function deleteMessage(id) {
+  const { error } = await supabase.from("messages").delete().eq("id", id);
+  if (error) return alert("Delete failed: " + error.message);
+  loadMessages(currentMessagePage, document.getElementById("messageSearch").value);
+}
+
+async function markMessageRead(id) {
+  const { error } = await supabase.from("messages").update({ read: true }).eq("id", id);
+  if (error) return alert("Update failed: " + error.message);
+  loadMessages(currentMessagePage, document.getElementById("messageSearch").value);
+}
+
+
+  
 </script>
 
+
+ /* ========================
+  top hamburger
+  ======================== */
 <script>
 const menuBtn = document.getElementById("menuBtn");
 const sidebar = document.getElementById("sidebar");
