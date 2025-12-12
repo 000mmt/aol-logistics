@@ -491,7 +491,7 @@ async function loadMessages(page = 1, search = "") {
 
   const { data: messages, error } = await supabase.from("messages")
     .select("*")
-    .ilike("content", `%${search}%`)
+    .ilike("message", `%${search}%`)
     .order("created_at", { ascending: false })
     .range(offset, offset + messagesPerPage - 1);
 
