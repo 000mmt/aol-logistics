@@ -262,6 +262,60 @@ let userIdToDelete = null;
   }
 })();
 
+
+
+/* ======================== Sidebar Toggle ======================== */
+const menuBtn = document.getElementById("menuBtn");
+const sidebar = document.getElementById("sidebar");
+const overlay = document.getElementById("overlay");
+
+menuBtn.addEventListener("click", () => {
+  sidebar.classList.toggle("-translate-x-full");
+  overlay.classList.toggle("hidden");
+});
+overlay.addEventListener("click", () => {
+  sidebar.classList.add("-translate-x-full");
+  overlay.classList.add("hidden");
+});
+
+
+
+/* ======================== Page Switching ======================== */
+const pages = {
+  dashboardBtn: 'dashboardPage',
+  notificationsBtn: 'notificationsPage',
+  messagesBtn: 'messagesPage',
+  settingsBtn: 'settingsPage'
+};
+
+let currentMessagePage = 1;
+const messagesPerPage = 10;
+let totalMessages = 0;
+
+Object.keys(pages).forEach(btnId => {
+  const btn = document.getElementById(btnId);
+  if (btn) {
+    btn.addEventListener('click', () => {
+      Object.values(pages).forEach(pid => document.getElementById(pid).classList.add('hidden'));
+      const showEl = document.getElementById(pages[btnId]);
+      if (showEl) showEl.classList.remove('hidden');
+
+      if (!overlay.classList.contains('hidden')) {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+      }
+
+      if (btnId === 'messagesBtn') loadMessages(currentMessagePage, document.getElementById("messageSearch").value);
+    });
+  }
+});
+
+
+  /* ======================== Initial Page ======================== */
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('dashboardPage').classList.remove('hidden');
+});
+
 /* ========================
    LOAD USERS + TRACKING
    ======================== */
@@ -391,7 +445,7 @@ async function loadUsers() {
             <input id="origin_${user.id}" type="text" value="${escapeAttr(user.origin || '')}" onchange="updateUser('${user.id}', { origin: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
 
             <label class="block text-gray-400 mt-2">Destination</label>
-            <input id="destination_${user.id}" type="text" value="${escapeAttr(user.destination || '')}" onchange="updateUser('${user.id}" class="w-full p-2 rounded bg-gray-700 text-white">
+            <input id="destination_${user.id}" type="text" value="${escapeAttr(user.destination || '')}" onchange="updateUser('${user.id}', { destination: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
           </div>
         </div>
 
@@ -413,6 +467,7 @@ async function loadUsers() {
 /* ========================
    Helper: escape for safety
    ======================== */
+
 function escapeHtml(str) {
   if (str === null || str === undefined) return '';
   return String(str)
@@ -424,6 +479,73 @@ function escapeHtml(str) {
 }
 function escapeAttr(str) {
   return escapeHtml(str).replaceAll('`','&#96;');
+}
+
+
+
+/* ======================== Messages Functions ======================== */
+async function loadMessages(page = 1, search = "") {
+  const offset = (page - 1) * messagesPerPage;
+  const { count } = await supabase.from("messages").select("*", { count: 'exact' });
+  totalMessages = count;
+
+  const { data: messages, error } = await supabase.from("messages")
+    .select("*")
+    .ilike("content", `%${search}%`)
+    .order("created_at", { ascending: false })
+    .range(offset, offset + messagesPerPage - 1);
+
+  const container = document.getElementById("messagesList");
+  if (error) return container.innerHTML = `<p class="text-red-500">Error: ${error.message}</p>`;
+  if (!messages.length) return container.innerHTML = `<p class="text-gray-400">No messages found.</p>`;
+
+  container.innerHTML = messages.map(msg => `
+    <div class="bg-gray-800 p-4 rounded shadow-md flex justify-between items-start">
+      <div>
+        <p class="text-gray-300"><b>From:</b> ${escapeHtml(msg.sender_name || "Anonymous")}</p>
+        <p class="text-gray-300"><b>Email:</b> ${escapeHtml(msg.sender_email || "N/A")}</p>
+        <p class="text-gray-300 mt-2">${escapeHtml(msg.content)}</p>
+        <p class="text-gray-400 text-sm mt-1">${new Date(msg.created_at).toLocaleString()}</p>
+      </div>
+      <div class="flex flex-col gap-2 ml-4">
+        <button onclick="markMessageRead('${msg.id}')" class="px-2 py-1 bg-yellow-500 text-black rounded">Mark Read</button>
+        <button onclick="deleteMessage('${msg.id}')" class="px-2 py-1 bg-red-600 text-white rounded">Delete</button>
+      </div>
+    </div>
+  `).join("");
+
+  document.getElementById("currentPage").textContent = page;
+}
+
+document.getElementById("messageSearch").addEventListener("input", e => {
+  currentMessagePage = 1;
+  loadMessages(currentMessagePage, e.target.value);
+});
+
+document.getElementById("prevPage").addEventListener("click", () => {
+  if (currentMessagePage > 1) {
+    currentMessagePage--;
+    loadMessages(currentMessagePage, document.getElementById("messageSearch").value);
+  }
+});
+
+document.getElementById("nextPage").addEventListener("click", () => {
+  if (currentMessagePage * messagesPerPage < totalMessages) {
+    currentMessagePage++;
+    loadMessages(currentMessagePage, document.getElementById("messageSearch").value);
+  }
+});
+
+async function deleteMessage(id) {
+  const { error } = await supabase.from("messages").delete().eq("id", id);
+  if (error) return alert("Delete failed: " + error.message);
+  loadMessages(currentMessagePage, document.getElementById("messageSearch").value);
+}
+
+async function markMessageRead(id) {
+  const { error } = await supabase.from("messages").update({ read: true }).eq("id", id);
+  if (error) return alert("Update failed: " + error.message);
+  loadMessages(currentMessagePage, document.getElementById("messageSearch").value);
 }
 
 /* ========================
@@ -662,203 +784,7 @@ document.getElementById('mailForm').addEventListener('submit', async function(e)
     alert("Failed to send email. See console for details: " + errMsg);
   }
 });
-
-/* ========================
-   load messages from database
-   ======================== */
-
-const messagesPerPage = 10;
-let currentMessagePage = 1;
-let totalMessages = 0;
-
-// Load messages with pagination
-async function loadMessages(page = 1, search = "") {
-  const offset = (page - 1) * messagesPerPage;
-
-  // Fetch total count
-  const { count } = await supabase
-    .from("messages")
-    .select("*", { count: 'exact' });
-
-  totalMessages = count;
-
-  const { data: messages, error } = await supabase
-    .from("messages")
-    .select("*")
-    .ilike("content", `%${search}%`) // search by content
-    .order("created_at", { ascending: false })
-    .range(offset, offset + messagesPerPage - 1);
-
-  if (error) {
-    console.error("Error loading messages:", error);
-    document.getElementById("messagesList").innerHTML = `<p class="text-red-500">Error: ${error.message}</p>`;
-    return;
-  }
-
-  if (!messages || messages.length === 0) {
-    document.getElementById("messagesList").innerHTML = `<p class="text-gray-400">No messages found.</p>`;
-    return;
-  }
-
-  // Render messages
-  const html = messages.map(msg => `
-    <div class="bg-gray-800 p-4 rounded shadow-md flex justify-between items-start">
-      <div>
-        <p class="text-gray-300"><b>From:</b> ${escapeHtml(msg.sender_name || "Anonymous")}</p>
-        <p class="text-gray-300"><b>Email:</b> ${escapeHtml(msg.sender_email || "N/A")}</p>
-        <p class="text-gray-300 mt-2">${escapeHtml(msg.content)}</p>
-        <p class="text-gray-400 text-sm mt-1">${new Date(msg.created_at).toLocaleString()}</p>
-      </div>
-      <div class="flex flex-col gap-2 ml-4">
-        <button onclick="markMessageRead('${msg.id}')" class="px-2 py-1 bg-yellow-500 text-black rounded">Mark Read</button>
-        <button onclick="deleteMessage('${msg.id}')" class="px-2 py-1 bg-red-600 text-white rounded">Delete</button>
-      </div>
-    </div>
-  `).join("");
-
-  document.getElementById("messagesList").innerHTML = html;
-  document.getElementById("currentPage").textContent = page;
-}
-
-
-  /* ========================
-   Search Functionality
-   ======================== */
-
-  document.getElementById("messageSearch").addEventListener("input", (e) => {
-  currentMessagePage = 1;
-  loadMessages(currentMessagePage, e.target.value);
-});
-
-    /* ========================
-  Pagination Buttons
-   ======================== */
-
-  document.getElementById("prevPage").addEventListener("click", () => {
-  if (currentMessagePage > 1) {
-    currentMessagePage--;
-    loadMessages(currentMessagePage, document.getElementById("messageSearch").value);
-  }
-});
-
-document.getElementById("nextPage").addEventListener("click", () => {
-  if (currentMessagePage * messagesPerPage < totalMessages) {
-    currentMessagePage++;
-    loadMessages(currentMessagePage, document.getElementById("messageSearch").value);
-  }
-});
-
-    /* ========================
-  Delete & Mark as Read
-   ======================== */
-  async function deleteMessage(id) {
-  const { error } = await supabase.from("messages").delete().eq("id", id);
-  if (error) return alert("Delete failed: " + error.message);
-  loadMessages(currentMessagePage, document.getElementById("messageSearch").value);
-}
-
-async function markMessageRead(id) {
-  const { error } = await supabase.from("messages").update({ read: true }).eq("id", id);
-  if (error) return alert("Update failed: " + error.message);
-  loadMessages(currentMessagePage, document.getElementById("messageSearch").value);
-}
-
-
-  
 </script>
-
-
- /* ========================
-  top hamburger
-  ======================== */
-<script>
-const menuBtn = document.getElementById("menuBtn");
-const sidebar = document.getElementById("sidebar");
-const overlay = document.getElementById("overlay");
-
-menuBtn.addEventListener("click", () => {
-  sidebar.classList.toggle("-translate-x-full");
-  overlay.classList.toggle("hidden");
-});
-
-overlay.addEventListener("click", () => {
-  sidebar.classList.add("-translate-x-full");
-  overlay.classList.add("hidden");
-});
-
-  </script>
-
-
-
-
-  <script>
-    // Sidebar buttons
-const pages = {
-  dashboardBtn: 'dashboardPage',
-  notificationsBtn: 'notificationsPage',
-  messagesBtn: 'messagesPage',
-  settingsBtn: 'settingsPage'
-};
-
-Object.keys(pages).forEach(btnId => {
-  const btn = document.getElementById(btnId);
-  if (btn) {
-    btn.addEventListener('click', () => {
-      // Hide all pages
-      Object.values(pages).forEach(pageId => {
-        const el = document.getElementById(pageId);
-        if (el) el.classList.add('hidden');
-      });
-      // Show selected page
-      const showEl = document.getElementById(pages[btnId]);
-      if (showEl) showEl.classList.remove('hidden');
-    });
-  }
-});
-
-  </script>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('dashboardPage').classList.remove('hidden');
-});
-
-  </script>
-
-  <script>
-    <!-- After sidebar and page sections -->
-<script>
-const pages = {
-  dashboardBtn: 'dashboardPage',
-  notificationsBtn: 'notificationsPage',
-  messagesBtn: 'messagesPage',
-  settingsBtn: 'settingsPage'
-};
-
-Object.keys(pages).forEach(btnId => {
-  const btn = document.getElementById(btnId);
-  if (btn) {
-    btn.addEventListener('click', () => {
-      // Hide all pages
-      Object.values(pages).forEach(pageId => {
-        const el = document.getElementById(pageId);
-        if (el) el.classList.add('hidden');
-      });
-      // Show selected page
-      const showEl = document.getElementById(pages[btnId]);
-      if (showEl) showEl.classList.remove('hidden');
-
-      // Close sidebar if mobile
-      if (!overlay.classList.contains('hidden')) {
-        sidebar.classList.add('-translate-x-full');
-        overlay.classList.add('hidden');
-      }
-    });
-  }
-});
-</script>
-
-  </script>
 
 </body>
 </html>
