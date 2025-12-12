@@ -21,216 +21,84 @@
 </head>
 <body class="flex flex-col md:flex-row bg-gray-900 min-h-screen text-white">
 
-<!--  Mobile Menu Icon 
-<div class="md:hidden flex items-center p-4 bg-gray-800 text-white">
-  <button id="menuBtn" class="text-2xl focus:outline-none">&#9776;</button>
-  <h2 class="ml-4 text-xl font-bold text-yellow-500">Admin</h2>
-</div>
-
-<!-- Sidebar 
-<aside id="sidebar" class="fixed top-0 left-0 z-50 w-64 h-full bg-gray-800 shadow-md transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
-  <div class="p-6">
-    <h2 class="text-2xl font-bold text-yellow-500 mb-6 hidden md:block">Admin</h2>
-<nav class="space-y-4">
-  <button id="dashboardBtn" class="block font-semibold text-gray-300 w-full text-left md:hover:text-yellow-500">
-    Dashboard
-  </button>
-  
-  <button id="notificationsBtn" class="block font-semibold text-gray-300 w-full text-left md:hover:text-yellow-500">
-    Notifications
-  </button>
-
-  <button id="messagesBtn" class="block font-semibold text-gray-300 w-full text-left md:hover:text-yellow-500">
-    Messages
-  </button>
-
-  <button id="settingsBtn" class="block font-semibold text-gray-300 w-full text-left md:hover:text-yellow-500">
-    Settings
-  </button>
-
-  <button id="logoutBtn" class="w-full mt-6 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 md:hover:bg-red-500">
-    Logout
-  </button>
-</nav>
-
-  </div>
-</aside>
-<div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
-
-
-
-  
-
-  Main Content 
- <main class="md:ml-64 p-4 md:p-8 overflow-y-auto min-h-screen">
-    <div class="flex items-center justify-between mb-6">
-      <h1 class="text-2xl md:text-3xl font-bold">User Shipments</h1>
-    </div> -->
-
-   <!--   <div id="notificationBar" class="bg-yellow-500 text-black p-4 rounded-md mb-4 hidden"></div>
-
-    <div id="userList" class="space-y-6">
-       Users loaded here
-    </div>
-  </main> 
-
-
-  <main class="flex-1 p-4 md:p-8 overflow-y-auto">
-
-  
-    001. for Main dashboard 
-    and other info related
-    
-  <div id="dashboardPage">
-    <h1 class="text-2xl md:text-3xl font-bold mb-4">Dashboard</h1>
-        <div id="userList" class="space-y-6">
-           Users loaded here 
-        </div>
-  </div>
-
-
-    
-  
-    001. for Notification 
-    and other info related
-    
-  <div id="notificationsPage" class="hidden">
-    <h1 class="text-2xl md:text-3xl font-bold mb-4">Notifications</h1>
-    <p>No new notifications.</p>
-  </div>
-
-
-
-    001. for messages 
-    and other info related
-    
-
-
-      Messages Page 
-<div id="messagesPage" class="hidden p-4">
-  <h1 class="text-2xl font-bold text-yellow-500 mb-4">Messages</h1>
-
-  Search input 
-  <input type="text" id="messageSearch" placeholder="Search messages..." 
-         class="w-full p-2 mb-4 rounded bg-gray-700 text-white border">
-
- Messages container 
-  <div id="messagesList" class="space-y-4">
-    Messages from DB will load here -->
-
-
-  <!-- Pagination controls 
-  <div class="mt-4 flex justify-between items-center" id="messagePagination">
-    <button id="prevPage" class="px-4 py-2 bg-gray-600 rounded text-white">Previous</button>
-    <span id="currentPage" class="text-gray-300">1</span>
-    <button id="nextPage" class="px-4 py-2 bg-gray-600 rounded text-white">Next</button>
-  </div>
-</div>
-
-
-    </div>
-  </div>
-
-
-
-    
-
-
-    001. for settings 
-    and other info related
-    
-  <div id="settingsPage" class="hidden">
-    <h1 class="text-2xl md:text-3xl font-bold mb-4">Settings</h1>
-    <p>Update your account and preferences here.</p>
-  </div>
-
-</main>
- -->
-
-
  <!-- LEFT SIDEBAR (DESKTOP) -->
-  <aside id="sidebar" class="hidden md:block w-64 bg-gray-900 p-6 border-r border-gray-700">
-    <h2 class="text-2xl font-bold text-yellow-500 mb-6">Admin</h2>
+<aside id="sidebar" class="hidden md:block w-64 bg-gray-900 p-6 border-r border-gray-700">
+  <h2 class="text-2xl font-bold text-yellow-500 mb-6">Admin</h2>
 
-    <nav class="space-y-4">
-      <button class="navBtn w-full text-left" data-page="dashboardPage">Dashboard</button>
-      <button class="navBtn w-full text-left" data-page="notificationsPage">Notifications</button>
-      <button class="navBtn w-full text-left" data-page="messagesPage">Messages</button>
-      <button class="navBtn w-full text-left" data-page="settingsPage">Settings</button>
+  <nav class="space-y-4">
+    <button class="navBtn w-full text-left" data-page="dashboardPage">Dashboard</button>
+    <button class="navBtn w-full text-left" data-page="notificationsPage">Notifications</button>
+    <button class="navBtn w-full text-left" data-page="messagesPage">Messages</button>
+    <button class="navBtn w-full text-left" data-page="settingsPage">Settings</button>
+    <button class="mt-6 bg-red-500 px-4 py-2 rounded">Logout</button>
+  </nav>
+</aside>
 
-      <button class="mt-6 bg-red-500 px-4 py-2 rounded">Logout</button>
-    </nav>
-  </aside>
+<!-- MOBILE TOP BAR -->
+<div class="md:hidden fixed top-0 left-0 w-full bg-gray-900 p-4 flex items-center z-30">
+  <button id="menuBtn" class="text-2xl mr-3">&#9776;</button>
+  <h2 class="text-xl font-bold text-yellow-500">Admin</h2>
+</div>
 
-  <!-- MOBILE TOP BAR -->
-  <div class="md:hidden fixed top-0 left-0 w-full bg-gray-900 p-4 flex items-center z-30">
-    <button id="menuBtn" class="text-2xl mr-3">&#9776;</button>
-    <h2 class="text-xl font-bold text-yellow-500">Admin</h2>
-  </div>
+<!-- MOBILE SIDEBAR OVERLAY -->
+<div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
 
-  <!-- MOBILE SIDEBAR OVERLAY -->
-  <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+<!-- MOBILE SIDEBAR -->
+<aside id="mobileSidebar"
+  class="fixed top-0 left-0 w-64 h-full bg-gray-900 p-6 z-50 transform -translate-x-full transition duration-300 md:hidden">
+  <h2 class="text-2xl font-bold text-yellow-500 mb-6">Admin</h2>
 
-  <!-- MOBILE SIDEBAR -->
-  <aside id="mobileSidebar"
-    class="fixed top-0 left-0 w-64 h-full bg-gray-900 p-6 z-50 transform -translate-x-full transition duration-300 md:hidden">
-    <h2 class="text-2xl font-bold text-yellow-500 mb-6">Admin</h2>
+  <nav class="space-y-4">
+    <button class="navBtn" data-page="dashboardPage">Dashboard</button>
+    <button class="navBtn" data-page="notificationsPage">Notifications</button>
+    <button class="navBtn" data-page="messagesPage">Messages</button>
+    <button class="navBtn" data-page="settingsPage">Settings</button>
+    <button class="mt-6 bg-red-500 px-4 py-2 rounded">Logout</button>
+  </nav>
+</aside>
 
-    <nav class="space-y-4">
-      <button class="navBtn" data-page="dashboardPage">Dashboard</button>
-      <button class="navBtn" data-page="notificationsPage">Notifications</button>
-      <button class="navBtn" data-page="messagesPage">Messages</button>
-      <button class="navBtn" data-page="settingsPage">Settings</button>
-      <button class="mt-6 bg-red-500 px-4 py-2 rounded">Logout</button>
-    </nav>
-  </aside>
+<!-- MAIN AREA + DETAILS PANEL -->
+<main class="flex-1 grid grid-cols-1 md:grid-cols-3 mt-14 md:mt-0">
 
-  <!-- MAIN AREA + DETAILS PANEL -->
-  <main class="flex-1 grid grid-cols-1 md:grid-cols-3 mt-14 md:mt-0">
+  <!-- MIDDLE PAGE AREA -->
+  <section id="pageContainer" class="col-span-2 p-6 overflow-y-auto max-h-screen">
 
-    <!-- MIDDLE PAGE AREA -->
-    <section id="pageContainer" class="col-span-2 p-6">
-
-      <!-- Dashboard -->
-      <div id="dashboardPage" class="page">
-         <h1 class="text-2xl md:text-3xl font-bold mb-4">Dashboard</h1>
-         <div id="userList" class="space-y-6">
-            Users loaded here 
-         </div>
+    <!-- Dashboard -->
+    <div id="dashboardPage" class="page">
+      <h1 class="text-2xl font-bold mb-4">Dashboard</h1>
+      <div id="userList" class="space-y-4">
+        Users loaded here
       </div>
+    </div>
 
-      <!-- Notifications -->
-      <div id="notificationsPage" class="page hidden">Notifications content...</div>
+    <!-- Notifications -->
+    <div id="notificationsPage" class="page hidden">Notifications content...</div>
 
-      <!-- Messages -->
-      <div id="messagesPage" class="page hidden">
-        <h2 class="text-2xl font-bold mb-4">Messages</h2>
+    <!-- Messages -->
+    <div id="messagesPage" class="page hidden">
+      <h2 class="text-2xl font-bold mb-4">Messages</h2>
+      <input id="searchInput" type="text" placeholder="Search messages..."
+             class="w-full p-3 rounded mb-4 bg-gray-800 text-white">
+      <div id="messagesList" class="space-y-4"></div>
+      <div id="pagination" class="flex justify-between mt-4"></div>
+    </div>
 
-        <input id="searchInput" type="text" placeholder="Search messages..."
-          class="w-full p-3 rounded mb-4 bg-gray-800 text-white">
+    <!-- Settings -->
+    <div id="settingsPage" class="page hidden">Settings content...</div>
 
-        <div id="messagesList" class="space-y-4"></div>
+  </section>
 
-        <div id="pagination" class="flex justify-between mt-4"></div>
-      </div>
+<!-- RIGHT DETAILS PANEL -->
+<!-- RIGHT DETAILS PANEL -->
+<aside id="detailsPanel"
+       class="hidden md:block col-span-1 p-6 bg-gray-900 border-l border-gray-700 overflow-y-auto max-h-screen">
+  <button id="mobileBackBtn" class="hidden mb-4 px-4 py-2 bg-gray-700 text-white rounded"
+          onclick="closeRightPanel()">Back
+  </button>
+  <div id="detailsContent"></div>
+</aside>
+</main>
 
-      <!-- Settings -->
-      <div id="settingsPage" class="page hidden">Settings content...</div>
-
-    </section>
-
-    <!-- RIGHT DETAILS PANEL (DESKTOP ONLY) -->
-    <aside id="detailsPanel"
-      class="hidden md:block col-span-1 p-6 bg-gray-900 border-l border-gray-700">
-
-      <h2 class="text-xl font-bold mb-4">Details</h2>
-
-      <div id="detailsContent" class="text-gray-300">
-        Click a message to view details.
-      </div>
-    </aside>
-
-  </main>
 
 
 
@@ -427,9 +295,10 @@ function showDetails(msg) {
 
 
   /* ======================== Initial Page ======================== */
-document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('dashboardPage').classList.remove('hidden');
 });
+
 
 /* ========================
    LOAD USERS + TRACKING
@@ -438,14 +307,13 @@ async function loadUsers() {
   const container = document.getElementById("userList");
   container.innerHTML = `<p class="text-gray-400">Loading...</p>`;
 
-  const { data: users, error: userError } = await supabase
+  const { data: users, error } = await supabase
     .from("user_info")
     .select("*")
     .order("created_at", { ascending: false });
 
-  if (userError) {
-    console.error("Error loading users:", userError);
-    container.innerHTML = `<p class="text-red-500">Error: ${userError.message}</p>`;
+  if (error) {
+    container.innerHTML = `<p class="text-red-500">Error: ${error.message}</p>`;
     return;
   }
 
@@ -454,130 +322,303 @@ async function loadUsers() {
     return;
   }
 
-  // For each user fetch latest tracking update
-  const usersWithTracking = await Promise.all(users.map(async user => {
-    const { data: trackingUpdates } = await supabase
-      .from("tracking_updates")
-      .select("*")
-      .eq("shipment_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(1);
-    return { ...user, latestUpdate: trackingUpdates?.[0] || null };
-  }));
+  const usersWithTracking = await Promise.all(
+    users.map(async (user) => {
+      const { data: trackingUpdates } = await supabase
+        .from("tracking_updates")
+        .select("*")
+        .eq("shipment_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(1);
 
-  // Build HTML
-  container.innerHTML = usersWithTracking.map(user => `
-    <div class="bg-gray-800 shadow rounded-lg p-6">
+      return { ...user, latestUpdate: trackingUpdates?.[0] || {} };
+    })
+  );
+
+  container.innerHTML = usersWithTracking
+    .map(
+      (user) => `
+    <div class="bg-gray-800 shadow rounded-lg p-6 mb-4">
       <div class="md:flex md:justify-between md:items-start">
         <div>
-          <h2 class="text-lg md:text-xl font-bold text-yellow-500 mb-2">
+          <h2 class="text-lg font-bold text-yellow-500 mb-2">
             ${escapeHtml(user.receiver_name || "N/A")}
-            <span class="text-sm text-gray-300">(${escapeHtml(user.tracking_no || "N/A")})</span>
+            <span class="text-sm text-gray-300">(${escapeHtml(
+              user.tracking_no || "N/A"
+            )})</span>
           </h2>
-          <p class="text-sm text-gray-400">${escapeHtml(user.receiver_email || "N/A")} | ${escapeHtml(user.receiver_phone || "N/A")}</p>
-          <p class="text-sm text-gray-400"><b>Current Location:</b> ${escapeHtml(user.latestUpdate?.location || 'N/A')}</p>
-          <p class="text-sm text-gray-400"><b>Status:</b> ${escapeHtml(user.latestUpdate?.status || 'Pending')}</p>
-          <p class="text-sm text-gray-400"><b>Tracking Link:</b> <a href="${escapeAttr(user.tracking_link || '#')}" class="text-yellow-400 break-all" target="_blank">${escapeHtml(user.tracking_link || "N/A")}</a></p>
+          <p class="text-sm text-gray-400">${escapeHtml(
+            user.receiver_email || "N/A"
+          )} | ${escapeHtml(user.receiver_phone || "N/A")}</p>
+          <p class="text-sm text-gray-400"><b>Current Location:</b> ${escapeHtml(
+            user.latestUpdate.location || "N/A"
+          )}</p>
+          <p class="text-sm text-gray-400"><b>Status:</b> ${escapeHtml(
+            user.latestUpdate.status || "Pending"
+          )}</p>
+          <p class="text-sm text-gray-400"><b>Tracking Link:</b> 
+            <a href="${escapeAttr(
+              user.tracking_link || "#"
+            )}" class="text-yellow-400 break-all" target="_blank">
+              ${escapeHtml(user.tracking_link || "N/A")}
+            </a>
+          </p>
         </div>
 
         <div class="mt-4 md:mt-0 md:text-right space-x-2">
-          <button onclick="toggleTab('${user.id}', 'tracking')" class="px-3 py-1 bg-yellow-600 rounded text-white">Track</button>
-          <button onclick="toggleTab('${user.id}', 'details')" class="px-3 py-1 bg-gray-700 rounded text-white">Details</button>
-          <button onclick="openMailModal('${user.id}')" class="px-3 py-1 bg-blue-600 rounded text-white">Mail</button>
-          <button onclick="openDeleteModal('${user.id}')" class="px-3 py-1 bg-red-600 rounded text-white">Delete</button>
+          <button onclick="openRightPanel('${user.id}', 'tracking')" class="px-3 py-1 bg-yellow-600 rounded text-white">Track</button>
+          <button onclick="openRightPanel('${user.id}', 'details')" class="px-3 py-1 bg-gray-700 rounded text-white">Details</button>
         </div>
       </div>
 
-      <!-- Tracking Section -->
-      <div id="tracking-${user.id}" class="tab mt-4 hidden">
+      <!-- Hidden Tracking Form -->
+      <div id="tracking-${user.id}" class="hidden mt-4">
         <h3 class="font-semibold text-white mb-2">Shipment Tracking</h3>
-        <p class="text-gray-300"><b>Tracking No:</b> ${escapeHtml(user.tracking_no || '')}</p>
-        <p class="text-gray-300"><b>Customer:</b> ${escapeHtml(user.receiver_name || '')}</p>
-        <p class="text-gray-300"><b>Status:</b> ${escapeHtml(user.latestUpdate?.status || 'Pending')}</p>
-        <p class="text-gray-300"><b>Progress:</b> ${escapeHtml(user.latestUpdate?.progress || 'N/A')}</p>
-        <p class="text-gray-300"><b>Location:</b> ${escapeHtml(user.latestUpdate?.location || 'N/A')}</p>
+        <p class="text-gray-300"><b>Tracking No:</b> ${escapeHtml(
+          user.tracking_no || ""
+        )}</p>
+        <p class="text-gray-300"><b>Customer:</b> ${escapeHtml(
+          user.receiver_name || ""
+        )}</p>
 
-        <div class="mt-4" id="trackingForm-${user.id}">
-          <h4 class="font-semibold text-white">Edit Tracking Info</h4>
-
+        <div class="mt-4">
           <label class="block mb-1 text-gray-400">Status</label>
-          <input type="text" id="statusInput-${user.id}" value="${escapeAttr(user.latestUpdate?.status || '')}" class="border p-2 rounded bg-gray-700 text-white w-full">
+          <input type="text" id="statusInput-${user.id}" value="${escapeAttr(
+            user.latestUpdate.status || ""
+          )}" class="border p-2 rounded bg-gray-700 text-white w-full">
 
           <label class="block mb-1 text-gray-400 mt-2">Progress</label>
           <select id="progressSelect-${user.id}" class="border p-2 rounded bg-gray-700 text-white w-full">
-            <option ${user.latestUpdate?.progress === "Order Placed" ? "selected" : ""}>Order Placed</option>
-            <option ${user.latestUpdate?.progress === "Preparing Shipment" ? "selected" : ""}>Preparing Shipment</option>
-            <option ${user.latestUpdate?.progress === "Shipped" ? "selected" : ""}>Shipped</option>
-            <option ${user.latestUpdate?.progress === "Delivered" ? "selected" : ""}>Delivered</option>
+            <option ${
+              user.latestUpdate.progress === "Order Placed" ? "selected" : ""
+            }>Order Placed</option>
+            <option ${
+              user.latestUpdate.progress === "Preparing Shipment"
+                ? "selected"
+                : ""
+            }>Preparing Shipment</option>
+            <option ${
+              user.latestUpdate.progress === "Shipped" ? "selected" : ""
+            }>Shipped</option>
+            <option ${
+              user.latestUpdate.progress === "Delivered" ? "selected" : ""
+            }>Delivered</option>
           </select>
 
           <label class="block mb-1 text-gray-400 mt-2">Location</label>
-          <input type="text" id="locationInput-${user.id}" value="${escapeAttr(user.latestUpdate?.location || '')}" class="border p-2 rounded bg-gray-700 text-white w-full">
+          <input type="text" id="locationInput-${user.id}" value="${escapeAttr(
+            user.latestUpdate.location || ""
+          )}" class="border p-2 rounded bg-gray-700 text-white w-full">
 
           <label class="block mb-1 text-gray-400 mt-2">Note</label>
-          <textarea id="noteInput-${user.id}" class="border p-2 rounded bg-gray-700 text-white w-full">${escapeHtml(user.latestUpdate?.note || '')}</textarea>
+          <textarea id="noteInput-${user.id}" class="border p-2 rounded bg-gray-700 text-white w-full">${escapeHtml(
+            user.latestUpdate.note || ""
+          )}</textarea>
 
           <div class="mt-3 flex gap-2">
-            <button onclick="saveTrackingUpdate('${user.id}')" class="bg-yellow-500 text-white px-4 py-2 rounded">Save Tracking Info</button>
-            <button onclick="closeForm('${user.id}','tracking')" class="bg-gray-600 text-white px-4 py-2 rounded">Close</button>
+            <button onclick="saveTrackingUpdate('${user.id}')" class="bg-yellow-500 text-white px-4 py-2 rounded flex-1">Save</button>
+            <button onclick="closeRightPanel()" class="bg-gray-600 text-white px-4 py-2 rounded flex-1">Back</button>
           </div>
         </div>
       </div>
 
-      <!-- Details Section -->
-      <div id="details-${user.id}" class="tab mt-4 hidden">
+      <!-- Hidden Details Form -->
+      <div id="details-${user.id}" class="hidden mt-4">
         <h3 class="font-semibold text-white mb-2">Receiver, Customer & Shipment Details</h3>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label class="block text-gray-400">Receiver Name</label>
-            <input id="receiver_name_${user.id}" type="text" value="${escapeAttr(user.receiver_name || '')}" onchange="updateUser('${user.id}', { receiver_name: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+            <input id="receiver_name_${user.id}" type="text" value="${escapeAttr(
+              user.receiver_name || ""
+            )}" class="w-full p-2 rounded bg-gray-700 text-white">
 
             <label class="block text-gray-400 mt-2">Receiver Email</label>
-            <input id="receiver_email_${user.id}" type="text" value="${escapeAttr(user.receiver_email || '')}" onchange="updateUser('${user.id}', { receiver_email: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+            <input id="receiver_email_${user.id}" type="text" value="${escapeAttr(
+              user.receiver_email || ""
+            )}" class="w-full p-2 rounded bg-gray-700 text-white">
 
             <label class="block text-gray-400 mt-2">Receiver Phone</label>
-            <input id="receiver_phone_${user.id}" type="text" value="${escapeAttr(user.receiver_phone || '')}" onchange="updateUser('${user.id}', { receiver_phone: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+            <input id="receiver_phone_${user.id}" type="text" value="${escapeAttr(
+              user.receiver_phone || ""
+            )}" class="w-full p-2 rounded bg-gray-700 text-white">
 
             <label class="block text-gray-400 mt-2">Receiver Address</label>
-            <input id="receiver_address_${user.id}" type="text" value="${escapeAttr(user.receiver_address || '')}" onchange="updateUser('${user.id}', { receiver_address: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+            <input id="receiver_address_${user.id}" type="text" value="${escapeAttr(
+              user.receiver_address || ""
+            )}" class="w-full p-2 rounded bg-gray-700 text-white">
 
             <label class="block text-gray-400 mt-2">Receiver Country</label>
-            <input id="receiver_country_${user.id}" type="text" value="${escapeAttr(user.receiver_country || '')}" onchange="updateUser('${user.id}', { receiver_country: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+            <input id="receiver_country_${user.id}" type="text" value="${escapeAttr(
+              user.receiver_country || ""
+            )}" class="w-full p-2 rounded bg-gray-700 text-white">
           </div>
 
           <div>
             <label class="block text-gray-400">Customer Name</label>
-            <input id="customer_name_${user.id}" type="text" value="${escapeAttr(user.customer_name || '')}" onchange="updateUser('${user.id}', { customer_name: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+            <input id="customer_name_${user.id}" type="text" value="${escapeAttr(
+              user.customer_name || ""
+            )}" class="w-full p-2 rounded bg-gray-700 text-white">
 
             <label class="block text-gray-400 mt-2">Customer Email</label>
-            <input id="customer_email_${user.id}" type="text" value="${escapeAttr(user.email || '')}" onchange="updateUser('${user.id}', { email: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+            <input id="customer_email_${user.id}" type="text" value="${escapeAttr(
+              user.email || ""
+            )}" class="w-full p-2 rounded bg-gray-700 text-white">
 
             <label class="block text-gray-400 mt-2">Customer Phone</label>
-            <input id="customer_phone_${user.id}" type="text" value="${escapeAttr(user.phone || '')}" onchange="updateUser('${user.id}', { phone: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+            <input id="customer_phone_${user.id}" type="text" value="${escapeAttr(
+              user.phone || ""
+            )}" class="w-full p-2 rounded bg-gray-700 text-white">
 
             <label class="block text-gray-400 mt-2">Origin</label>
-            <input id="origin_${user.id}" type="text" value="${escapeAttr(user.origin || '')}" onchange="updateUser('${user.id}', { origin: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+            <input id="origin_${user.id}" type="text" value="${escapeAttr(
+              user.origin || ""
+            )}" class="w-full p-2 rounded bg-gray-700 text-white">
 
             <label class="block text-gray-400 mt-2">Destination</label>
-            <input id="destination_${user.id}" type="text" value="${escapeAttr(user.destination || '')}" onchange="updateUser('${user.id}', { destination: this.value })" class="w-full p-2 rounded bg-gray-700 text-white">
+            <input id="destination_${user.id}" type="text" value="${escapeAttr(
+              user.destination || ""
+            )}" class="w-full p-2 rounded bg-gray-700 text-white">
           </div>
         </div>
 
         <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <input id="asalu_no_${user.id}" placeholder="ASALU No" value="${escapeAttr(user.asalu_no || '')}" onchange="updateUser('${user.id}', { asalu_no: this.value })" class="p-2 rounded bg-gray-700 text-white">
-          <input id="delivery_code_${user.id}" placeholder="Delivery Code" value="${escapeAttr(user.delivery_code || '')}" onchange="updateUser('${user.id}', { delivery_code: this.value })" class="p-2 rounded bg-gray-700 text-white">
-          <input id="item_no_${user.id}" placeholder="Item No" value="${escapeAttr(user.item_no || '')}" onchange="updateUser('${user.id}', { item_no: this.value })" class="p-2 rounded bg-gray-700 text-white">
+          <input id="asalu_no_${user.id}" placeholder="ASALU No" value="${escapeAttr(
+            user.asalu_no || ""
+          )}" class="p-2 rounded bg-gray-700 text-white">
+
+          <input id="delivery_code_${user.id}" placeholder="Delivery Code" value="${escapeAttr(
+            user.delivery_code || ""
+          )}" class="p-2 rounded bg-gray-700 text-white">
+
+          <input id="item_no_${user.id}" placeholder="Item No" value="${escapeAttr(
+            user.item_no || ""
+          )}" class="p-2 rounded bg-gray-700 text-white">
         </div>
 
         <div class="mt-4 flex gap-2">
           <button onclick="updateUser('${user.id}')" class="bg-yellow-500 text-white px-4 py-2 rounded w-full">Save Details</button>
-          <button onclick="closeForm('${user.id}','details')" class="bg-gray-600 text-white px-4 py-2 rounded w-full">Close</button>
+          <button onclick="closeRightPanel()" class="bg-gray-600 text-white px-4 py-2 rounded w-full">Back</button>
         </div>
       </div>
     </div>
-  `).join("");
+  `
+    )
+    .join("");
 }
+
+/* ========================
+   OPEN RIGHT PANEL
+   ======================== */
+function openRightPanel(userId, section) {
+  const panel = document.getElementById("detailsPanel");
+  const content = document.getElementById("detailsContent");
+
+  panel.classList.remove("hidden");
+  document.getElementById("mobileBackBtn").classList.remove("hidden");
+
+  const form = document.getElementById(`${section}-${userId}`);
+  if (!form) return;
+
+  const clone = form.cloneNode(true);
+  clone.classList.remove("hidden");
+
+  content.innerHTML = "";
+  content.appendChild(clone);
+}
+
+/* ========================
+   CLOSE PANEL
+   ======================== */
+function closeRightPanel() {
+  document.getElementById("detailsPanel").classList.add("hidden");
+  document.getElementById("detailsContent").innerHTML = "";
+  document.getElementById("mobileBackBtn").classList.add("hidden");
+}
+
+/* ========================
+   SAVE TRACKING UPDATE
+   ======================== */
+async function saveTrackingUpdate(userId) {
+  try {
+    const panel = document.getElementById("detailsPanel");
+
+    const status = panel.querySelector(`#statusInput-${userId}`)?.value;
+    const progress = panel.querySelector(`#progressSelect-${userId}`)?.value;
+    const location = panel.querySelector(`#locationInput-${userId}`)?.value;
+    const note = panel.querySelector(`#noteInput-${userId}`)?.value;
+
+    if (!status || !progress) {
+      alert("Status and Progress are required.");
+      return;
+    }
+
+    const { error } = await supabase.from("tracking_updates").insert([
+      {
+        shipment_id: userId,
+        status,
+        progress,
+        location,
+        note,
+      },
+    ]);
+
+    if (error) throw error;
+
+    alert("Tracking updated successfully!");
+    closeRightPanel();
+    loadUsers();
+  } catch (err) {
+    console.error(err);
+    alert("Failed to save tracking info.");
+  }
+}
+
+/* ========================
+   UPDATE USER DETAILS
+   ======================== */
+async function updateUser(userId) {
+  try {
+    const panel = document.getElementById("detailsPanel");
+
+    const updatedFields = {
+      receiver_name: panel.querySelector(`#receiver_name_${userId}`)?.value,
+      receiver_email: panel.querySelector(`#receiver_email_${userId}`)?.value,
+      receiver_phone: panel.querySelector(`#receiver_phone_${userId}`)?.value,
+      receiver_address: panel.querySelector(`#receiver_address_${userId}`)?.value,
+      receiver_country: panel.querySelector(`#receiver_country_${userId}`)?.value,
+
+      customer_name: panel.querySelector(`#customer_name_${userId}`)?.value,
+      email: panel.querySelector(`#customer_email_${userId}`)?.value,
+      phone: panel.querySelector(`#customer_phone_${userId}`)?.value,
+
+      origin: panel.querySelector(`#origin_${userId}`)?.value,
+      destination: panel.querySelector(`#destination_${userId}`)?.value,
+
+      asalu_no: panel.querySelector(`#asalu_no_${userId}`)?.value,
+      delivery_code: panel.querySelector(`#delivery_code_${userId}`)?.value,
+      item_no: panel.querySelector(`#item_no_${userId}`)?.value,
+    };
+
+    const { data, error } = await supabase
+      .from("user_info")
+      .update(updatedFields)
+      .eq("id", userId)
+      .select(); // IMPORTANT
+
+    if (error) throw error;
+
+    alert("User updated successfully!");
+    closeRightPanel();
+    loadUsers();
+  } catch (err) {
+    console.error(err);
+    alert("Failed to update user.");
+  }
+}
+
+
+
 
 /* ========================
    Helper: escape for safety
