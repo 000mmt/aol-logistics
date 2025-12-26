@@ -26,7 +26,7 @@
 
 
 <!-- Supabase & EmailJS SDKs -->
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<!-- <script src="https://unpkg.com/@supabase/supabase-js@2"></script> -->
 
   <style>
     /* HERO SLIDER - fade transition */
@@ -549,11 +549,21 @@ button {
 
 
 <!-- CONTACT SUBMIT SCRIPT (replace your current contact script) -->
-<script>
+<script type="module">
+  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+  const supabase = createClient(
+    "https://byvffsxsfehrybkyamyu.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"
+  );
+
+
+
+  
 /* SUPABASE SETUP */
-const supabaseUrl = "https://byvffsxsfehrybkyamyu.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // <-- Replace securely
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+// const supabaseUrl = "https://byvffsxsfehrybkyamyu.supabase.co";
+// const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // <-- Replace securely
+// const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
   function getSiteLang() {
     // your language toggle stores site_lang in localStorage
