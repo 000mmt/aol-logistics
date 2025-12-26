@@ -25,7 +25,7 @@
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
   <!-- ✅ Supabase -->
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <!-- <script src="https://unpkg.com/@supabase/supabase-js@2"></script> -->
 
   <style>
     body {
@@ -130,7 +130,17 @@
   </footer>
 
   <!-- Scripts -->
-  <script>
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+    const supabase = createClient(
+      "https://byvffsxsfehrybkyamyu.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"
+    );
+
+
+
+    
     AOS.init({ duration: 800, easing: "ease-in-out" });
 
     // ✅ Mobile Menu Toggle
@@ -143,9 +153,9 @@
     });
 
     // ✅ Supabase Setup
-    const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // ⚠️ Replace securely
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // const SUPABASE_URL = "https://byvffsxsfehrybkyamyu.supabase.co";
+    // const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dmZmc3hzZmVocnlia3lhbXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDM0MjMsImV4cCI6MjA3MzgxOTQyM30.R99A5PQ2t9keXeQdglGlq35IOGRk7d3NsqPbe9Dw8uY"; // ⚠️ Replace securely
+    // const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 
     // Auto generators
