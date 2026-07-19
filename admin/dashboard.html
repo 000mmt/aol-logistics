@@ -30,6 +30,20 @@
   --mono: 'JetBrains Mono', 'Consolas', monospace;
 }
 
+/* Light theme overrides — toggled by adding data-theme="light" to <body>.
+   Brand elements (header gradient, accent yellow, danger zone) stay
+   consistent across themes on purpose; the panels/cards/inputs switch. */
+body[data-theme="light"] {
+  --bg-app: #f1f5f9;
+  --bg-panel: #ffffff;
+  --bg-panel-alt: #f1f5f9;
+  --bg-card: #ffffff;
+  --border: #e2e8f0;
+  --border-soft: #e5e9f0;
+  --text: #1e293b;
+  --text-dim: #64748b;
+}
+
 /* ===================== */
 /* RESET & BASE */
 /* ===================== */
@@ -43,10 +57,15 @@
 html { scroll-behavior: smooth; }
 
 body {
-  overflow: hidden; /* stops main window scroll */
   margin: 0;
-  height: 100vh; /* full viewport height */
+  height: 100vh;
+  height: 100dvh; /* accounts for mobile browser toolbars so nothing sits below the fold */
+  overflow: hidden; /* the page itself never scrolls — inner panes do instead */
   background: var(--bg-app);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 a:focus-visible,
@@ -92,6 +111,32 @@ textarea:focus-visible,
 }
 
 /* ===================== */
+/* AUTH GATE (shown while checking session, or on redirect) */
+/* ===================== */
+#authGate {
+  position: fixed;
+  inset: 0;
+  background: #0b1220;
+  color: #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  z-index: 9999;
+  font-size: 0.95rem;
+}
+#authGate .auth-spinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid #334155;
+  border-top-color: var(--accent);
+  animation: authSpin 0.8s linear infinite;
+}
+@keyframes authSpin { to { transform: rotate(360deg); } }
+
+/* ===================== */
 /* TOP NAV BAR */
 /* ===================== */
 header {
@@ -106,6 +151,7 @@ header {
   z-index: 1500;
   border-bottom: 1px solid #0b1220;
   box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+  flex-shrink: 0;
 }
 
 .header-brand {
@@ -197,7 +243,7 @@ header h1 span {
   100% { box-shadow: 0 0 0 0 rgba(74,222,128,0); }
 }
 
-/* Notification bell */
+/* Notification bell / theme toggle */
 .notif-bell-wrap {
   position: relative;
 }
@@ -255,6 +301,7 @@ header h1 span {
   transform: translateY(-6px);
   transition: all 0.18s ease;
   z-index: 1600;
+  color: var(--text);
 }
 
 .notif-dropdown.show {
@@ -315,6 +362,7 @@ nav a.active {
   display: none;
   font-size: 1.8rem;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 /* ===================== */
@@ -325,7 +373,11 @@ nav a.active {
 }
 
 .content-section.active {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 /* ===================== */
@@ -333,14 +385,17 @@ nav a.active {
 /* ===================== */
 .dashboard-layout {
   display: flex;
-  min-height: 80vh;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
 }
 
 .dashboard-sidebar {
   width: 30%;
-  background: #f1f5f9;
+  background: var(--bg-app);
   border-right: 1px solid #e5e7eb;
   padding: 20px;
+  overflow-y: auto;
 }
 
 .dashboard-sidebar ul {
@@ -363,7 +418,8 @@ nav a.active {
   width: 70%;
   flex: 1;
   padding: 20px;
-  height: 100vh;
+  height: 100%;
+  min-height: 0;
   overflow-y: auto; /* THIS MAKES IT SCROLLABLE */
 }
 
@@ -380,6 +436,7 @@ nav a.active {
 /* ===================== */
 .sidebar-toggle {
   display: none;
+  flex-shrink: 0;
 }
 
 /* ===================== */
@@ -403,6 +460,21 @@ nav a.active {
 }
 
 /* ===================== */
+/* SEARCH */
+/* ===================== */
+.shipment-search {
+  width: 100%;
+  max-width: 420px;
+  padding: 10px 12px;
+  margin: 6px 0 18px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-panel-alt);
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+/* ===================== */
 /* USER CARDS */
 /* ===================== */
 .user-grid {
@@ -413,9 +485,9 @@ nav a.active {
 }
 
 .user-card {
-  background: #020617;
-  color: #e5e7eb;
-  border: 1px solid #1e293b;
+  background: var(--bg-card);
+  color: var(--text);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 16px;
   cursor: pointer;
@@ -449,12 +521,28 @@ nav a.active {
 .card-header h3 {
   color: #facc15;
   font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 .card-header small {
-  color: #9ca3af;
+  color: var(--text-dim);
   font-size: 0.85rem;
 }
+
+.copy-tracking-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+.copy-tracking-btn:hover { background: rgba(255,255,255,0.08); }
 
 .delete-btn {
   background: #7f1d1d;
@@ -497,7 +585,7 @@ nav a.active {
   width: 90%;
   max-width: 900px;
   max-height: 90vh;
-  background: #0f172a;
+  background: var(--bg-panel);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -505,7 +593,7 @@ nav a.active {
   visibility: hidden;
   transition: all 0.3s ease;
   z-index: 2001;
-  color: #e5e7eb;
+  color: var(--text);
 }
 
 .modal-container.show {
@@ -528,7 +616,7 @@ nav a.active {
 /* Header */
 .modal-header {
   padding: 16px 20px;
-  border-bottom: 1px solid #1e293b;
+  border-bottom: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -543,7 +631,7 @@ nav a.active {
   background: none;
   border: none;
   font-size: 26px;
-  color: #9ca3af;
+  color: var(--text-dim);
   cursor: pointer;
 }
 
@@ -574,9 +662,9 @@ nav a.active {
   padding: 8px 10px;
   margin-bottom: 8px;
   border-radius: 6px;
-  border: 1px solid #1e293b;
-  background: #111827;
-  color: #e5e7eb;
+  border: 1px solid var(--border);
+  background: var(--bg-panel-alt);
+  color: var(--text);
 }
 
 .modal-body textarea {
@@ -587,7 +675,7 @@ nav a.active {
 /* Footer */
 .modal-footer {
   padding: 16px 20px;
-  border-top: 1px solid #1e293b;
+  border-top: 1px solid var(--border);
   display: flex;
   justify-content: flex-end;
   gap: 12px;
@@ -595,11 +683,11 @@ nav a.active {
 
 /* Buttons */
 .btn-cancel {
-  background: #1e293b;
-  color: #e5e7eb;
+  background: var(--bg-panel-alt);
+  color: var(--text);
   padding: 10px 16px;
   border-radius: 6px;
-  border: none;
+  border: 1px solid var(--border);
   cursor: pointer;
 }
 
@@ -610,15 +698,17 @@ nav a.active {
   border-radius: 6px;
   border: none;
   cursor: pointer;
+  font-weight: 600;
 }
 
 /* tracking list */
 .tracking-card {
-  background: #1f2937;
-  color: #f9fafb;
+  background: var(--bg-panel-alt);
+  color: var(--text);
   padding: 16px;
   margin-bottom: 12px;
   border-radius: 8px;
+  border: 1px solid var(--border);
 }
 
 .tracking-card h3 {
@@ -643,12 +733,12 @@ nav a.active {
    SETTINGS PANEL COMPONENTS
    ========================= */
 .settings-card {
-  background: #0f172a;
-  border: 1px solid #1e293b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 18px 20px;
   margin-bottom: 16px;
-  color: #e5e7eb;
+  color: var(--text);
 }
 
 .settings-card h3 {
@@ -666,9 +756,9 @@ nav a.active {
   padding: 8px 10px;
   margin-bottom: 8px;
   border-radius: 6px;
-  border: 1px solid #1e293b;
-  background: #111827;
-  color: #e5e7eb;
+  border: 1px solid var(--border);
+  background: var(--bg-panel-alt);
+  color: var(--text);
 }
 
 .form-msg {
@@ -692,14 +782,14 @@ nav a.active {
 .radio-group label {
   display: block;
   margin-bottom: 8px;
-  color: #e5e7eb;
+  color: var(--text);
   font-size: 0.9rem;
 }
 
 .toggle-row {
   display: block;
   margin-bottom: 10px;
-  color: #e5e7eb;
+  color: var(--text);
   font-size: 0.9rem;
 }
 
@@ -710,7 +800,7 @@ nav a.active {
 }
 
 .stat-box {
-  background: #111827;
+  background: var(--bg-panel-alt);
   border-radius: 8px;
   padding: 14px;
   text-align: center;
@@ -724,7 +814,7 @@ nav a.active {
 
 .stat-box .stat-label {
   font-size: 0.8rem;
-  color: #9ca3af;
+  color: var(--text-dim);
   margin-top: 4px;
 }
 
@@ -782,7 +872,7 @@ nav a.active {
 }
 
 .overview-card {
-  background: linear-gradient(160deg, #0f172a, #0b1220);
+  background: linear-gradient(160deg, var(--bg-panel), var(--bg-panel-alt));
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 14px 16px;
@@ -898,7 +988,7 @@ nav a.active {
   display: flex;
   gap: 12px;
   padding: 12px 4px;
-  border-bottom: 1px solid #1f2937;
+  border-bottom: 1px solid var(--border);
   animation: activityIn 0.35s ease;
 }
 
@@ -918,7 +1008,7 @@ nav a.active {
   justify-content: center;
   font-size: 1rem;
   flex-shrink: 0;
-  background: var(--icon-bg, #1e293b);
+  background: var(--icon-bg, var(--bg-panel-alt));
   color: var(--icon-fg, var(--accent));
 }
 
@@ -950,8 +1040,8 @@ nav a.active {
    MESSAGE LIST
    ========================= */
 .message-item {
-  background: #1f2937;
-  border: 1px solid #263244;
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 14px 16px;
   margin-bottom: 10px;
@@ -964,7 +1054,7 @@ nav a.active {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #111827;
+  background: var(--bg-panel);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -982,9 +1072,9 @@ nav a.active {
   flex-wrap: wrap;
 }
 
-.message-item .msg-title { color: #f9fafb; font-weight: 600; font-size: 0.92rem; }
+.message-item .msg-title { color: var(--text); font-weight: 600; font-size: 0.92rem; }
 .message-item .msg-time { color: var(--text-dim); font-size: 0.72rem; font-family: var(--mono); white-space: nowrap; }
-.message-item .msg-text { color: #cbd5e1; font-size: 0.85rem; margin-top: 4px; line-height: 1.4; }
+.message-item .msg-text { color: var(--text-dim); font-size: 0.85rem; margin-top: 4px; line-height: 1.4; }
 
 .msg-status-pill {
   display: inline-block;
@@ -1000,14 +1090,14 @@ nav a.active {
 .resend-btn {
   margin-top: 8px;
   background: none;
-  border: 1px solid #374151;
-  color: #e5e7eb;
+  border: 1px solid var(--border);
+  color: var(--text);
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 0.75rem;
   cursor: pointer;
 }
-.resend-btn:hover { background: #111827; }
+.resend-btn:hover { background: var(--bg-panel); }
 
 /* =========================
    SKELETON LOADING
@@ -1026,6 +1116,40 @@ nav a.active {
 
 .skeleton-card { height: 118px; margin-bottom: 16px; }
 .skeleton-line { height: 14px; margin-bottom: 8px; width: 70%; }
+
+/* =========================
+   TOASTS
+   ========================= */
+#toastContainer {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: min(320px, calc(100vw - 32px));
+}
+
+.toast {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--info);
+  color: var(--text);
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+  animation: toastIn 0.25s ease;
+}
+.toast.success { border-left-color: var(--ok); }
+.toast.error { border-left-color: var(--err); }
+.toast.warning { border-left-color: var(--accent); }
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
 
 /* =========================
    MOBILE FULLSCREEN
@@ -1058,8 +1182,10 @@ body.modal-open {
 footer {
   text-align: center;
   padding: 15px;
-  background: #f1f5f9;
+  background: var(--bg-app);
   font-size: 0.9rem;
+  flex-shrink: 0;
+  color: var(--text);
 }
 
 /* ===================== */
@@ -1081,6 +1207,8 @@ footer {
     flex-direction: column;
     padding: 15px 0;
     z-index: 1400;
+    max-height: calc(100dvh - 60px);
+    overflow-y: auto;
   }
 
   nav.show {
@@ -1090,7 +1218,8 @@ footer {
   .sidebar-toggle {
     display: block;
     z-index: 1300;
-    background: #f1f5f9;
+    background: var(--bg-app);
+    color: var(--text);
     padding: 8px 12px;
     border-radius: 6px;
     font-size: 0.9rem;
@@ -1106,7 +1235,7 @@ footer {
     top: 110px;
     left: -100%;
     width: 80%;
-    height: calc(100vh - 110px);
+    height: calc(100dvh - 110px);
     z-index: 1200;
     transition: left 0.3s ease;
     border-right: none;
@@ -1149,6 +1278,7 @@ footer {
   .user-grid { grid-template-columns: 1fr; }
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
   .modal-body input, .modal-body select, .modal-body textarea { font-size: 16px; } /* avoid iOS zoom-on-focus */
+  .shipment-search { max-width: 100%; }
 }
 
 /* =========================
@@ -1176,6 +1306,8 @@ footer {
 
   /* Settings action rows: let buttons/links wrap instead of overflowing */
   .settings-card { overflow-x: hidden; }
+
+  #toastContainer { left: 10px; right: 10px; max-width: none; top: 10px; }
 }
 
 @media (max-width: 380px) {
@@ -1191,6 +1323,12 @@ footer {
 
 <body>
 
+<!-- AUTH GATE — covers the screen until the session/admin check finishes -->
+<div id="authGate">
+  <div class="auth-spinner"></div>
+  <div>Checking access…</div>
+</div>
+
 <header>
   <div class="header-brand">
     <div class="brand-mark">AL</div>
@@ -1202,6 +1340,8 @@ footer {
       <span class="live-dot"></span>
       <span class="live-label" id="liveLabel">Connecting…</span>
     </div>
+
+    <button class="notif-bell" id="themeToggleBtn" type="button" aria-label="Toggle theme">🌙</button>
 
     <div class="notif-bell-wrap">
       <button class="notif-bell" id="notifBellBtn" type="button" aria-label="Recent activity">
@@ -1222,7 +1362,7 @@ footer {
       <a href="#" data-target="dashboard" class="active">Dashboard</a>
       <a href="#" data-target="messages">Messages</a>
       <a href="#" data-target="settings">Settings</a>
-      <a href="logout.html">Logout</a>
+      <a href="#" id="navLogoutLink">Logout</a>
     </nav>
   </div>
 </header>
@@ -1256,6 +1396,8 @@ footer {
            <div class="overview-card skeleton skeleton-card"></div>
          </div>
 
+         <input type="text" id="shipmentSearch" class="shipment-search" placeholder="Search by name, tracking #, or email…" />
+
           <!-- USERS CARD CONTAINER -->
          <div id="userList" class="user-grid"></div>
        </div>
@@ -1266,7 +1408,7 @@ footer {
 
          <!-- Users tracking list -->
          <div id="trackingList">
-           <p style="color:#9ca3af;">Loading tracking info...</p>
+           <p style="color:var(--text-dim);">Loading tracking info...</p>
          </div>
        </div>
 
@@ -1290,7 +1432,7 @@ footer {
       <div id="dash-email" class="panel">
         <h2>Email</h2>
         <p class="section-sub">Delivery log for every customer notification sent from this panel.</p>
-        <div id="dashEmailList"><p style="color:#9ca3af;">Loading email logs...</p></div>
+        <div id="dashEmailList"><p style="color:var(--text-dim);">Loading email logs...</p></div>
       </div>
     </main>
   </div>
@@ -1343,7 +1485,7 @@ footer {
         <div class="settings-card">
           <p><b>Admin Email:</b> <span id="profileEmail">Loading...</span></p>
           <p><b>Account Created:</b> <span id="profileCreated">Loading...</span></p>
-          <p style="margin-top:10px; color:#9ca3af; font-size:0.85rem;">
+          <p style="margin-top:10px; color:var(--text-dim); font-size:0.85rem;">
             Name and avatar are managed through your Supabase Auth user profile.
           </p>
         </div>
@@ -1366,16 +1508,16 @@ footer {
 
         <div class="settings-card">
           <h3>Login Activity</h3>
-          <p style="color:#9ca3af; font-size:0.85rem; margin-bottom:10px;">
+          <p style="color:var(--text-dim); font-size:0.85rem; margin-bottom:10px;">
             Showing the most recent recorded sign-ins to this admin panel.
           </p>
-          <div id="loginActivityList"><p style="color:#9ca3af;">Loading...</p></div>
+          <div id="loginActivityList"><p style="color:var(--text-dim);">Loading...</p></div>
         </div>
 
         <div class="settings-card">
           <h3>Security Scan</h3>
-          <div id="securityScanList"><p style="color:#9ca3af;">Running checks...</p></div>
-          <p id="securityScanTime" style="color:#9ca3af; font-size:0.8rem; margin-top:10px;"></p>
+          <div id="securityScanList"><p style="color:var(--text-dim);">Running checks...</p></div>
+          <p id="securityScanTime" style="color:var(--text-dim); font-size:0.8rem; margin-top:10px;"></p>
           <button id="rerunScanBtn" class="btn-cancel" type="button" style="margin-top:6px;">Re-run Scan</button>
         </div>
       </div>
@@ -1386,10 +1528,10 @@ footer {
 
         <div class="settings-card">
           <h3>Active Session</h3>
-          <p>✓ Current Session <span id="sessionEmail" style="color:#9ca3af;"></span></p>
+          <p>✓ Current Session <span id="sessionEmail" style="color:var(--text-dim);"></span></p>
           <button id="logoutCurrentBtn" class="btn-cancel" type="button" style="margin-top:10px;">Logout This Session</button>
           <button id="logoutAllBtn" class="btn-cancel" type="button" style="margin-top:10px; margin-left:8px;">Logout Every Device</button>
-          <p style="color:#9ca3af; font-size:0.8rem; margin-top:8px;">
+          <p style="color:var(--text-dim); font-size:0.8rem; margin-top:8px;">
             "Logout Every Device" requires a small server-side function (it needs Supabase's service-role key, which must never be placed in browser code). See note below the button when clicked.
           </p>
         </div>
@@ -1399,7 +1541,7 @@ footer {
           <p>Status: <span id="mfaStatus" class="badge badge-off">OFF</span></p>
           <div id="mfaEnrollArea" style="margin-top:12px; display:none;">
             <img id="mfaQr" style="background:#fff; padding:8px; border-radius:6px; max-width:200px;" />
-            <p style="font-size:0.8rem; color:#9ca3af; margin:8px 0;">Scan with Google Authenticator, then enter the 6-digit code below.</p>
+            <p style="font-size:0.8rem; color:var(--text-dim); margin:8px 0;">Scan with Google Authenticator, then enter the 6-digit code below.</p>
             <input id="mfaCodeInput" placeholder="6-digit code" maxlength="6" />
             <button id="mfaVerifyBtn" class="btn-submit" type="button" style="margin-top:6px;">Verify &amp; Enable</button>
           </div>
@@ -1424,7 +1566,7 @@ footer {
         <div class="settings-card">
           <h3>Database Statistics</h3>
           <div class="stat-grid" id="statGrid">
-            <p style="color:#9ca3af;">Loading...</p>
+            <p style="color:var(--text-dim);">Loading...</p>
           </div>
         </div>
 
@@ -1436,7 +1578,7 @@ footer {
 
         <div class="settings-card">
           <h3>Restore Database</h3>
-          <p style="color:#9ca3af; font-size:0.85rem; margin-bottom:8px;">
+          <p style="color:var(--text-dim); font-size:0.85rem; margin-bottom:8px;">
             Restores from a JSON export produced above. Existing rows with matching IDs will be overwritten.
           </p>
           <input type="file" id="restoreFileInput" accept="application/json" />
@@ -1499,7 +1641,7 @@ footer {
       <!-- DANGER ZONE -->
       <div id="set-danger" class="panel">
         <h2 style="color:#ef4444;">Danger Zone</h2>
-        <p style="color:#9ca3af; margin-bottom:16px; font-size:0.85rem;">
+        <p style="color:var(--text-dim); margin-bottom:16px; font-size:0.85rem;">
           These actions are irreversible. Each requires typing DELETE to confirm.
         </p>
 
@@ -1646,6 +1788,9 @@ footer {
   </form>
 </div>
 
+<!-- Toasts -->
+<div id="toastContainer"></div>
+
 <!-- Footer -->
 <footer>
   <p data-key="footerText">© 2025 AOL Logistics. All rights reserved.</p>
@@ -1667,11 +1812,72 @@ const SUPABASE_KEY = "sb_publishable_SFI-gjeDtTrOGpLp1_BTtg_hXy6wPSB";
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 /* =====================
+   AUTH GUARD — runs before anything else on the page.
+   1. No session at all -> straight to login.html.
+   2. If an `admins` allow-list table exists and this user isn't in
+      it, they're signed out and bounced too. If that table doesn't
+      exist yet, any authenticated Supabase user is treated as admin
+      (today's behavior) — create the table below to lock it down
+      to specific accounts:
+
+        create table public.admins (
+          user_id uuid primary key references auth.users(id) on delete cascade
+        );
+        -- then insert your admin's auth user id into this table.
+
+   3. If the session is ever lost while the panel is open (signed
+      out in another tab, token expired, etc.) we bounce out too.
+===================== */
+async function enforceAdminAccess() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    window.location.replace("login.html");
+    return null;
+  }
+
+  try {
+    const { data: adminRow, error } = await supabase
+      .from("admins")
+      .select("user_id")
+      .eq("user_id", session.user.id)
+      .maybeSingle();
+    if (!error && !adminRow) {
+      await supabase.auth.signOut();
+      window.location.replace("login.html");
+      return null;
+    }
+  } catch (_) {
+    // admins table not set up yet — fall through, any authenticated user is admin
+  }
+
+  return session.user;
+}
+
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === "SIGNED_OUT" || !session) {
+    window.location.replace("login.html");
+  }
+});
+
+const currentAdminUser = await enforceAdminAccess();
+if (currentAdminUser) {
+  document.getElementById("authGate")?.remove();
+} else {
+  throw new Error("Not authenticated — redirecting to login.html");
+}
+
+document.getElementById("navLogoutLink").addEventListener("click", async e => {
+  e.preventDefault();
+  await supabase.auth.signOut();
+  window.location.href = "login.html";
+});
+
+/* =====================
    EMAILJS CONFIG
 ===================== */
 // Get this from EmailJS → Account → API Keys ("Public Key")
 const EMAILJS_PUBLIC_KEY = "PlzHImKJLSGxIfYy0";
-const EMAILJS_SERVICE_ID = "service_wznyhjn";
+const EMAILJS_SERVICE_ID = "service_g2b1nlw";
 // Create the template using email-template.html (provided separately),
 // then paste the Template ID it gives you here.
 const EMAILJS_TEMPLATE_ID = "template_i9gwyek";
@@ -1685,6 +1891,23 @@ function escapeHtml(str = "") {
   return String(str).replace(/[&<>"']/g, m =>
     ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" }[m])
   );
+}
+
+/* =====================
+   TOASTS — lightweight, non-blocking status messages
+===================== */
+function showToast(message, type = "info", duration = 3800) {
+  const container = document.getElementById("toastContainer");
+  if (!container) return;
+  const el = document.createElement("div");
+  el.className = `toast ${type}`;
+  el.textContent = message;
+  container.appendChild(el);
+  setTimeout(() => {
+    el.style.transition = "opacity 0.25s ease";
+    el.style.opacity = "0";
+    setTimeout(() => el.remove(), 250);
+  }, duration);
 }
 
 /* =====================
@@ -1943,7 +2166,7 @@ async function loadEmailLogs() {
     if (badgeDash) badgeDash.textContent = data.length > 99 ? "99+" : String(data.length);
     if (badgeSent) badgeSent.textContent = data.length > 99 ? "99+" : String(data.length);
   } catch (e) {
-    const msg = `<p style="color:#9ca3af;">Email log needs the email_logs table — see the SQL provided in chat.</p>`;
+    const msg = `<p style="color:var(--text-dim);">Email log needs the email_logs table — see the SQL provided in chat.</p>`;
     if (dashContainer) dashContainer.innerHTML = msg;
     if (sentContainer) sentContainer.innerHTML = msg;
   }
@@ -2024,10 +2247,53 @@ async function seedActivityLog() {
 }
 
 /* =====================
-   LOAD USERS (dashboard cards)
+   LOAD USERS (dashboard cards) + SEARCH/FILTER
 ===================== */
 let cachedUsersWithTracking = [];
 let lastSyncAt = null;
+
+function renderUserCards(list) {
+  const container = document.getElementById("userList");
+  if (!container) return;
+
+  if (!cachedUsersWithTracking.length) {
+    container.innerHTML = `<div class="activity-empty"><div class="ae-icon">📦</div>No shipments yet — new ones will appear here the moment they're created.</div>`;
+    return;
+  }
+  if (!list.length) {
+    container.innerHTML = `<div class="activity-empty"><div class="ae-icon">🔍</div>No shipments match your search.</div>`;
+    return;
+  }
+
+  container.innerHTML = list.map(user => `
+    <div class="user-card" data-id="${user.id}" data-tracking="${escapeHtml(user.tracking_no || "")}">
+      <div class="card-header">
+        <h3>${escapeHtml(user.receiver_name || "N/A")}
+          <small>(${escapeHtml(user.tracking_no || "N/A")})</small>
+          <button class="copy-tracking-btn" data-tracking="${escapeHtml(user.tracking_no || "")}" title="Copy tracking number" type="button">📋</button>
+        </h3>
+        <button class="delete-btn" data-id="${user.id}" type="button">Delete</button>
+      </div>
+      <p><b>Email:</b> ${escapeHtml(user.email || "N/A")}</p>
+      <p><b>Status:</b> ${escapeHtml(user.latestUpdate?.status || "Pending")}</p>
+      <p><b>Location:</b> ${escapeHtml(user.latestUpdate?.location || "N/A")}</p>
+    </div>
+  `).join("");
+}
+
+function applyShipmentSearch() {
+  const q = (document.getElementById("shipmentSearch")?.value || "").trim().toLowerCase();
+  const list = !q
+    ? cachedUsersWithTracking
+    : cachedUsersWithTracking.filter(u =>
+        (u.receiver_name || "").toLowerCase().includes(q) ||
+        (u.tracking_no || "").toLowerCase().includes(q) ||
+        (u.email || "").toLowerCase().includes(q)
+      );
+  renderUserCards(list);
+}
+
+document.getElementById("shipmentSearch")?.addEventListener("input", applyShipmentSearch);
 
 async function loadUsers() {
   const container = document.getElementById("userList");
@@ -2062,20 +2328,7 @@ async function loadUsers() {
   cachedUsersWithTracking = usersWithTracking;
   lastSyncAt = new Date();
   loadOverview();
-
-  container.innerHTML = usersWithTracking.map(user => `
-    <div class="user-card" data-id="${user.id}" data-tracking="${escapeHtml(user.tracking_no || "")}">
-      <div class="card-header">
-        <h3>${escapeHtml(user.receiver_name || "N/A")}
-          <small>(${escapeHtml(user.tracking_no || "N/A")})</small>
-        </h3>
-        <button class="delete-btn" data-id="${user.id}" type="button">Delete</button>
-      </div>
-      <p><b>Email:</b> ${escapeHtml(user.email || "N/A")}</p>
-      <p><b>Status:</b> ${escapeHtml(user.latestUpdate?.status || "Pending")}</p>
-      <p><b>Location:</b> ${escapeHtml(user.latestUpdate?.location || "N/A")}</p>
-    </div>
-  `).join("");
+  applyShipmentSearch();
 }
 
 /* =====================
@@ -2147,9 +2400,22 @@ document.getElementById("cancelTracking").onclick = closeModal;
 modalOverlay.onclick = closeModal;
 
 /* =====================
-   CARD CLICKS (edit / tracking / delete)
+   CARD CLICKS (edit / tracking / delete / copy)
 ===================== */
 document.addEventListener("click", async e => {
+  // Copy tracking number
+  const copyBtn = e.target.closest(".copy-tracking-btn");
+  if (copyBtn) {
+    e.stopPropagation();
+    const val = copyBtn.dataset.tracking;
+    if (val && navigator.clipboard) {
+      navigator.clipboard.writeText(val)
+        .then(() => showToast(`Copied "${val}" to clipboard`, "success"))
+        .catch(() => showToast("Couldn't copy — copy it manually", "error"));
+    }
+    return;
+  }
+
   // Resend a failed notification email
   const resendBtn = e.target.closest(".resend-btn");
   if (resendBtn) {
@@ -2173,7 +2439,8 @@ document.addEventListener("click", async e => {
     const id = deleteBtn.dataset.id;
     if (!confirm("Delete this shipment record? This cannot be undone.")) return;
     const { error } = await supabase.from("user_info").delete().eq("id", id);
-    if (error) return alert("Failed to delete: " + error.message);
+    if (error) return showToast("Failed to delete: " + error.message, "error");
+    showToast("Shipment deleted.", "success");
     loadUsers();
     loadTrackingPanel();
     return;
@@ -2194,7 +2461,7 @@ document.addEventListener("click", async e => {
   if (card) {
     const id = card.dataset.id;
     const { data, error } = await supabase.from("user_info").select("*").eq("id", id).single();
-    if (error || !data) return alert("Failed to load record");
+    if (error || !data) return showToast("Failed to load record", "error");
 
     const form = document.getElementById("editForm");
     form.reset();
@@ -2214,7 +2481,7 @@ document.getElementById("editForm").addEventListener("submit", async e => {
   e.preventDefault();
   const form = e.target;
   const id = form.dataset.editId;
-  if (!id) return alert("No record selected");
+  if (!id) return showToast("No record selected", "error");
 
   const formData = new FormData(form);
   const updates = {};
@@ -2222,8 +2489,9 @@ document.getElementById("editForm").addEventListener("submit", async e => {
   delete updates.tracking_no; // read-only, never overwrite
 
   const { error } = await supabase.from("user_info").update(updates).eq("id", id);
-  if (error) return alert("Failed to save: " + error.message);
+  if (error) return showToast("Failed to save: " + error.message, "error");
 
+  showToast("Shipment updated.", "success");
   closeModal();
   loadUsers();
   loadTrackingPanel();
@@ -2254,7 +2522,7 @@ async function sendTrackingEmail(shipment, update) {
     // update itself already saved successfully.
     console.error("EmailJS send failed:", err);
     await logEmail(shipment.id, shipment.email, "failed", err?.text || err?.message || "Unknown error");
-    alert("Tracking saved, but the notification email failed to send.");
+    showToast("Tracking saved, but the notification email failed to send.", "warning");
   }
 }
 
@@ -2281,7 +2549,7 @@ document.getElementById("trackingForm").addEventListener("submit", async e => {
   e.preventDefault();
 
   const shipmentId = document.getElementById("trackingShipmentId").value;
-  if (!shipmentId) return alert("Missing shipment ID");
+  if (!shipmentId) return showToast("Missing shipment ID", "error");
 
   const status = document.getElementById("trackingStatus").value;
   const location = document.getElementById("trackingLocation").value;
@@ -2295,7 +2563,7 @@ document.getElementById("trackingForm").addEventListener("submit", async e => {
     created_at: new Date().toISOString()
   }]);
 
-  if (error) return alert("Failed to save tracking: " + error.message);
+  if (error) return showToast("Failed to save tracking: " + error.message, "error");
 
   // Fetch the shipment so we have the customer's name/email for the notification
   const { data: shipment, error: shipmentError } = await supabase
@@ -2308,6 +2576,7 @@ document.getElementById("trackingForm").addEventListener("submit", async e => {
     sendTrackingEmail(shipment, { status, location, note });
   }
 
+  showToast("Tracking update saved.", "success");
   closeModal();
   loadTrackingPanel();
   loadUsers();
@@ -2430,7 +2699,7 @@ async function loadLoginActivity() {
 
     if (error) throw error;
     if (!data?.length) {
-      container.innerHTML = `<p style="color:#9ca3af;">No login activity recorded yet.</p>`;
+      container.innerHTML = `<p style="color:var(--text-dim);">No login activity recorded yet.</p>`;
       return;
     }
 
@@ -2443,7 +2712,7 @@ async function loadLoginActivity() {
       </div>
     `).join("");
   } catch (e) {
-    container.innerHTML = `<p style="color:#9ca3af;">Login activity needs a login_activity table — see the SQL provided in chat.</p>`;
+    container.innerHTML = `<p style="color:var(--text-dim);">Login activity needs a login_activity table — see the SQL provided in chat.</p>`;
   }
 }
 
@@ -2471,6 +2740,16 @@ async function runSecurityScan() {
     ok: EMAILJS_PUBLIC_KEY !== "YOUR_EMAILJS_PUBLIC_KEY" && EMAILJS_TEMPLATE_ID !== "YOUR_EMAILJS_TEMPLATE_ID"
   });
 
+  let adminsTableOk = null;
+  try {
+    const { error } = await supabase.from("admins").select("user_id").limit(1);
+    adminsTableOk = !error;
+  } catch (_) {}
+  checks.push({
+    label: adminsTableOk ? "Admin Allow-List Active" : "Admin Allow-List Not Set Up (any authenticated user is admin)",
+    ok: adminsTableOk
+  });
+
   checks.push({
     label: "Anon Key Scoped by RLS (verify manually)",
     ok: null // can't be verified from the browser — flagged, not claimed
@@ -2491,15 +2770,14 @@ async function runSecurityScan() {
 ===================== */
 document.getElementById("logoutCurrentBtn").onclick = async () => {
   await supabase.auth.signOut();
-  window.location.href = "logout.html";
+  window.location.href = "login.html";
 };
 
 document.getElementById("logoutAllBtn").onclick = () => {
-  alert(
-    "Logging out every device requires Supabase's admin API (service-role key), " +
-    "which can only run safely on a server — never in browser code. " +
-    "Set this up as a Supabase Edge Function that calls supabase.auth.admin.signOut() " +
-    "for the user, then have this button call that function instead."
+  showToast(
+    "Logging out every device needs a server-side Supabase Edge Function using the service-role key — never in browser code. See chat for setup steps.",
+    "warning",
+    6000
   );
 };
 
@@ -2531,14 +2809,15 @@ document.getElementById("mfaToggleBtn").onclick = async e => {
   if (btn.dataset.factorId) {
     // Disable
     const { error } = await supabase.auth.mfa.unenroll({ factorId: btn.dataset.factorId });
-    if (error) return alert("Failed to disable 2FA: " + error.message);
+    if (error) return showToast("Failed to disable 2FA: " + error.message, "error");
+    showToast("2FA disabled.", "success");
     await refreshMfaStatus();
     return;
   }
 
   // Enroll
   const { data, error } = await supabase.auth.mfa.enroll({ factorType: "totp" });
-  if (error) return alert("Failed to start 2FA enrollment: " + error.message);
+  if (error) return showToast("Failed to start 2FA enrollment: " + error.message, "error");
 
   document.getElementById("mfaQr").src = data.totp.qr_code;
   document.getElementById("mfaEnrollArea").style.display = "block";
@@ -2548,19 +2827,19 @@ document.getElementById("mfaToggleBtn").onclick = async e => {
 document.getElementById("mfaVerifyBtn").onclick = async () => {
   const factorId = document.getElementById("mfaEnrollArea").dataset.factorId;
   const code = document.getElementById("mfaCodeInput").value.trim();
-  if (!code) return alert("Enter the 6-digit code from your authenticator app.");
+  if (!code) return showToast("Enter the 6-digit code from your authenticator app.", "warning");
 
   const { data: challenge, error: challengeError } = await supabase.auth.mfa.challenge({ factorId });
-  if (challengeError) return alert("Failed to create challenge: " + challengeError.message);
+  if (challengeError) return showToast("Failed to create challenge: " + challengeError.message, "error");
 
   const { error: verifyError } = await supabase.auth.mfa.verify({
     factorId, challengeId: challenge.id, code
   });
-  if (verifyError) return alert("Incorrect code — try again.");
+  if (verifyError) return showToast("Incorrect code — try again.", "error");
 
   document.getElementById("mfaEnrollArea").style.display = "none";
   document.getElementById("mfaCodeInput").value = "";
-  alert("Two-factor authentication enabled.");
+  showToast("Two-factor authentication enabled.", "success");
   await refreshMfaStatus();
 };
 
@@ -2573,7 +2852,7 @@ function armAutoLogout(minutes) {
   if (!minutes || minutes === "0") return;
   autoLogoutTimer = setTimeout(async () => {
     await supabase.auth.signOut();
-    window.location.href = "logout.html";
+    window.location.href = "login.html";
   }, minutes * 60 * 1000);
 }
 
@@ -2644,25 +2923,27 @@ function toCsv(rows) {
 
 document.getElementById("exportCsvBtn").onclick = async () => {
   const { data, error } = await supabase.from("user_info").select("*");
-  if (error) return alert("Export failed: " + error.message);
+  if (error) return showToast("Export failed: " + error.message, "error");
   downloadFile(`shipments-backup-${Date.now()}.csv`, toCsv(data), "text/csv");
+  showToast("CSV backup downloaded.", "success");
 };
 
 document.getElementById("exportJsonBtn").onclick = async () => {
   const { data: shipments, error: e1 } = await supabase.from("user_info").select("*");
   const { data: tracking, error: e2 } = await supabase.from("tracking_updates").select("*");
-  if (e1 || e2) return alert("Export failed: " + (e1?.message || e2?.message));
+  if (e1 || e2) return showToast("Export failed: " + (e1?.message || e2?.message), "error");
   downloadFile(
     `full-backup-${Date.now()}.json`,
     JSON.stringify({ user_info: shipments, tracking_updates: tracking }, null, 2),
     "application/json"
   );
+  showToast("JSON backup downloaded.", "success");
 };
 
 document.getElementById("restoreBtn").onclick = async () => {
   const fileInput = document.getElementById("restoreFileInput");
   const file = fileInput.files[0];
-  if (!file) return alert("Choose a JSON backup file first.");
+  if (!file) return showToast("Choose a JSON backup file first.", "warning");
   if (!confirm("This will overwrite any existing rows with matching IDs. Continue?")) return;
 
   try {
@@ -2678,12 +2959,12 @@ document.getElementById("restoreBtn").onclick = async () => {
       if (error) throw error;
     }
 
-    alert("Restore complete.");
+    showToast("Restore complete.", "success");
     loadUsers();
     loadTrackingPanel();
     loadStats();
   } catch (err) {
-    alert("Restore failed: " + err.message);
+    showToast("Restore failed: " + err.message, "error");
   }
 };
 
@@ -2693,11 +2974,11 @@ document.getElementById("restoreBtn").onclick = async () => {
 document.querySelectorAll(".clear-log-btn").forEach(btn => {
   btn.onclick = async () => {
     const table = btn.dataset.table;
-    if (!confirm(`Type OK to confirm: permanently clear all rows in "${table}"?`)) return;
+    if (!confirm(`Permanently clear all rows in "${table}"? This cannot be undone.`)) return;
     // neq on a never-matching value deletes every row while still using a WHERE clause
     const { error } = await supabase.from(table).delete().neq("id", "00000000-0000-0000-0000-000000000000");
-    if (error) return alert(`Failed to clear ${table}: ${error.message}`);
-    alert(`${table} cleared.`);
+    if (error) return showToast(`Failed to clear ${table}: ${error.message}`, "error");
+    showToast(`${table} cleared.`, "success");
     loadTrackingPanel();
     loadStats();
   };
@@ -2759,13 +3040,13 @@ document.getElementById("sendTestEmailBtn").onclick = async () => {
       tracking_no: "TEST-0000",
       status: "Test Status",
       location: "Test Location",
-      note: "This is a test email from the SecureVote admin panel.",
+      note: "This is a test email from the admin panel.",
       origin: "Origin City",
       destination: "Destination City"
     });
-    alert("Test email sent.");
+    showToast("Test email sent.", "success");
   } catch (err) {
-    alert("Test email failed: " + (err?.text || err?.message || "Unknown error"));
+    showToast("Test email failed: " + (err?.text || err?.message || "Unknown error"), "error");
   }
 };
 
@@ -2773,6 +3054,47 @@ document.getElementById("sendTestEmailBtn").onclick = async () => {
    SETTINGS: PREFERENCES (Notifications + Theme)
    Persisted to a single-row `admin_settings` table (SQL provided separately).
 ===================== */
+function updateThemeToggleIcon(theme) {
+  const btn = document.getElementById("themeToggleBtn");
+  if (!btn) return;
+  const resolved = theme === "system"
+    ? (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark")
+    : theme;
+  btn.textContent = resolved === "light" ? "☀️" : "🌙";
+}
+
+function applyTheme(theme) {
+  const resolved = theme === "system"
+    ? (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark")
+    : theme;
+  document.body.dataset.theme = resolved;
+  updateThemeToggleIcon(theme);
+}
+
+document.querySelectorAll('input[name="theme"]').forEach(r => {
+  r.addEventListener("change", e => applyTheme(e.target.value));
+});
+
+document.getElementById("themeToggleBtn")?.addEventListener("click", async () => {
+  const current = document.querySelector('input[name="theme"]:checked')?.value || "dark";
+  const resolvedCurrent = current === "system"
+    ? (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark")
+    : current;
+  const next = resolvedCurrent === "dark" ? "light" : "dark";
+
+  const radio = document.querySelector(`input[name="theme"][value="${next}"]`);
+  if (radio) radio.checked = true;
+  applyTheme(next);
+
+  try {
+    const { data: existing } = await supabase.from("admin_settings").select("id").limit(1).single();
+    if (existing) await supabase.from("admin_settings").update({ theme: next }).eq("id", existing.id);
+    else await supabase.from("admin_settings").insert([{ theme: next }]);
+  } catch (_) {
+    // admin_settings table not set up yet — theme still applies for this session
+  }
+});
+
 async function loadPreferences() {
   try {
     const { data, error } = await supabase.from("admin_settings").select("*").limit(1).single();
@@ -2812,23 +3134,11 @@ document.getElementById("savePrefsBtn").onclick = async () => {
     } else {
       await supabase.from("admin_settings").insert([prefs]);
     }
-    alert("Preferences saved.");
+    showToast("Preferences saved.", "success");
   } catch (e) {
-    alert("Could not save preferences — has the admin_settings table been created? See the SQL provided in chat.");
+    showToast("Could not save preferences — has the admin_settings table been created? See chat for the SQL.", "error");
   }
 };
-
-function applyTheme(theme) {
-  const resolved = theme === "system"
-    ? (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark")
-    : theme;
-  document.body.dataset.theme = resolved;
-  // Hook for future light-mode CSS variables — currently the panel is dark-themed throughout.
-}
-
-document.querySelectorAll('input[name="theme"]').forEach(r => {
-  r.addEventListener("change", e => applyTheme(e.target.value));
-});
 
 /* =====================
    SETTINGS: DANGER ZONE
@@ -2851,12 +3161,12 @@ document.querySelectorAll("[data-action]").forEach(btn => {
         await supabase.from("login_activity").delete().neq("id", "00000000-0000-0000-0000-000000000000");
         await supabase.from("email_logs").delete().neq("id", "00000000-0000-0000-0000-000000000000");
       }
-      alert("Done.");
+      showToast("Done.", "success");
       loadUsers();
       loadTrackingPanel();
       loadStats();
     } catch (err) {
-      alert("Action failed: " + err.message);
+      showToast("Action failed: " + err.message, "error");
     }
   };
 });
