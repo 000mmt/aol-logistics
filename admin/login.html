@@ -4,56 +4,312 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Login - AOL Logistics</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center h-screen">
 
-  <!-- Login Card -->
-  <div class="w-full max-w-md bg-white shadow-xl rounded-lg p-8">
-    <h1 class="text-2xl font-bold text-center text-yellow-500 mb-6">Admin Login</h1>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
-    <!-- Login Form -->
-    <form id="adminLoginForm" class="space-y-4" aria-label="Admin Login Form">
-      <div>
-        <label for="email" class="block font-semibold text-gray-700">Email</label>
-        <input type="email" id="email" placeholder="Enter Email" class="w-full mt-2 p-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:outline-none" required>
-      </div>
+<div class="w-full max-w-md bg-white shadow-xl rounded-xl p-8">
 
-      <div>
-        <label for="password" class="block font-semibold text-gray-700">Password</label>
-        <input type="password" id="password" placeholder="Enter password" class="w-full mt-2 p-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:outline-none" required>
-      </div>
+    <h1 class="text-3xl font-bold text-center text-yellow-500">
+        AOL Logistics
+    </h1>
 
-      <button type="submit" class="w-full bg-yellow-500 text-white py-3 rounded-lg font-semibold hover:bg-yellow-600 transition">
-        Login
-      </button>
+    <p class="text-center text-gray-500 mb-6">
+        Administrator Login
+    </p>
+
+    <form id="adminLoginForm" class="space-y-5">
+
+        <div>
+            <label class="block font-semibold text-gray-700">
+                Email
+            </label>
+
+            <input
+                id="email"
+                type="email"
+                required
+                class="w-full mt-2 p-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none"
+                placeholder="admin@aollogistics.com">
+        </div>
+
+        <div>
+
+            <label class="block font-semibold text-gray-700">
+                Password
+            </label>
+
+            <div class="relative">
+
+                <input
+                    id="password"
+                    type="password"
+                    required
+                    class="w-full mt-2 p-3 border rounded-lg w-full pr-16 focus:ring-2 focus:ring-yellow-500 outline-none"
+                    placeholder="Password">
+
+                <button
+                    type="button"
+                    id="togglePassword"
+                    class="absolute right-3 top-5 text-sm text-blue-600">
+
+                    Show
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <button
+            id="loginBtn"
+            class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-lg font-semibold transition">
+
+            Login
+
+        </button>
+
     </form>
 
-    <!-- Message -->
-    <div id="message" class="mt-4 text-center text-sm"></div>
-  </div>
+    <div
+        id="message"
+        class="mt-5 text-center text-sm">
+    </div>
 
-  <script>
-    const SUPABASE_URL = "https://rtgvylkbndrmwntaqkfx.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_SFI-gjeDtTrOGpLp1_BTtg_hXy6wPSB"; // Use environment variables in production
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+</div>
 
-    document.getElementById("adminLoginForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-      const messageDiv = document.getElementById("message");
+<script>
 
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+const SUPABASE_URL="https://rtgvylkbndrmwntaqkfx.supabase.co";
 
-      if (error) {
-        messageDiv.innerHTML = `<p class="text-red-600 font-semibold">❌ ${error.message}</p>`;
-      } else {
-        messageDiv.innerHTML = `<p class="text-green-600 font-semibold">✅ Login successful! Redirecting...</p>`;
-        setTimeout(() => window.location.href = "dashboard.html", 1500);
-      }
-    });
-  </script>
+const SUPABASE_KEY="sb_publishable_SFI-gjeDtTrOGpLp1_BTtg_hXy6wPSB";
+
+const supabase=window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+
+/* -------------------------
+SHOW PASSWORD
+------------------------- */
+
+const password=document.getElementById("password");
+
+document
+.getElementById("togglePassword")
+.onclick=()=>{
+
+if(password.type==="password"){
+
+password.type="text";
+
+document.getElementById("togglePassword").innerText="Hide";
+
+}else{
+
+password.type="password";
+
+document.getElementById("togglePassword").innerText="Show";
+
+}
+
+};
+
+
+/* -------------------------
+AUTO LOGIN
+------------------------- */
+
+(async()=>{
+
+const {data:{session}}=await supabase.auth.getSession();
+
+if(session){
+
+window.location.href="dashboard.html";
+
+}
+
+})();
+
+
+/* -------------------------
+LOGIN
+------------------------- */
+
+document
+.getElementById("adminLoginForm")
+.addEventListener("submit",login);
+
+
+async function login(e){
+
+e.preventDefault();
+
+const btn=document.getElementById("loginBtn");
+
+const message=document.getElementById("message");
+
+btn.disabled=true;
+
+btn.innerHTML="Signing In...";
+
+message.innerHTML="";
+
+const email=document.getElementById("email").value.trim();
+
+const password=document.getElementById("password").value;
+
+
+/* LOGIN */
+
+const {data,error}=await supabase.auth.signInWithPassword({
+
+email,
+password
+
+});
+
+if(error){
+
+message.innerHTML=
+`<p class="text-red-600 font-semibold">
+
+❌ ${error.message}
+
+</p>`;
+
+btn.disabled=false;
+
+btn.innerHTML="Login";
+
+return;
+
+}
+
+
+/* GET USER */
+
+const {
+
+data:{user}
+
+}=await supabase.auth.getUser();
+
+console.log(user);
+
+
+/* CHECK ADMIN TABLE */
+
+const {
+
+data:admin,
+
+error:adminError
+
+}=await supabase
+
+.from("admins")
+
+.select("*")
+
+.eq("id",user.id)
+
+.single();
+
+
+if(adminError){
+
+console.error(adminError);
+
+message.innerHTML=
+
+`<p class="text-red-600 font-semibold">
+
+❌ Admin account not found.
+
+</p>`;
+
+await supabase.auth.signOut();
+
+btn.disabled=false;
+
+btn.innerHTML="Login";
+
+return;
+
+}
+
+
+/* CHECK ACTIVE */
+
+if(!admin.active){
+
+message.innerHTML=
+
+`<p class="text-red-600 font-semibold">
+
+❌ Your account has been disabled.
+
+</p>`;
+
+await supabase.auth.signOut();
+
+btn.disabled=false;
+
+btn.innerHTML="Login";
+
+return;
+
+}
+
+
+/* UPDATE LAST LOGIN */
+
+await supabase
+
+.from("admins")
+
+.update({
+
+last_login:new Date().toISOString()
+
+})
+
+.eq("id",user.id);
+
+
+/* SUCCESS */
+
+localStorage.setItem(
+
+"admin",
+
+JSON.stringify(admin)
+
+);
+
+message.innerHTML=
+
+`<p class="text-green-600 font-semibold">
+
+✅ Welcome ${admin.full_name}
+
+</p>`;
+
+setTimeout(()=>{
+
+window.location.href="dashboard.html";
+
+},1000);
+
+}
+
+</script>
+
 </body>
 </html>
