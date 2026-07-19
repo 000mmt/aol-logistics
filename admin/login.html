@@ -1,72 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Login - AOL Logistics</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login - AOL Logistics</title>
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
 </head>
 
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
-<div class="w-full max-w-md bg-white shadow-xl rounded-xl p-8">
+<div class="w-full max-w-md bg-white shadow-xl rounded-lg p-8">
 
-    <h1 class="text-3xl font-bold text-center text-yellow-500">
-        AOL Logistics
+    <h1 class="text-3xl font-bold text-center text-yellow-500 mb-6">
+        Admin Login
     </h1>
 
-    <p class="text-center text-gray-500 mb-6">
-        Administrator Login
-    </p>
-
-    <form id="adminLoginForm" class="space-y-5">
+    <form id="adminLoginForm" class="space-y-4">
 
         <div>
-            <label class="block font-semibold text-gray-700">
-                Email
-            </label>
+            <label class="block font-semibold">Email</label>
 
             <input
                 id="email"
                 type="email"
                 required
-                class="w-full mt-2 p-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none"
+                class="w-full mt-2 p-3 border rounded-lg"
                 placeholder="admin@aollogistics.com">
         </div>
 
         <div>
 
-            <label class="block font-semibold text-gray-700">
-                Password
-            </label>
+            <label class="block font-semibold">Password</label>
 
-            <div class="relative">
-
-                <input
-                    id="password"
-                    type="password"
-                    required
-                    class="w-full mt-2 p-3 border rounded-lg w-full pr-16 focus:ring-2 focus:ring-yellow-500 outline-none"
-                    placeholder="Password">
-
-                <button
-                    type="button"
-                    id="togglePassword"
-                    class="absolute right-3 top-5 text-sm text-blue-600">
-
-                    Show
-
-                </button>
-
-            </div>
+            <input
+                id="password"
+                type="password"
+                required
+                class="w-full mt-2 p-3 border rounded-lg"
+                placeholder="Password">
 
         </div>
 
         <button
             id="loginBtn"
-            class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-lg font-semibold transition">
+            type="submit"
+            class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-lg">
 
             Login
 
@@ -74,240 +55,135 @@
 
     </form>
 
-    <div
-        id="message"
-        class="mt-5 text-center text-sm">
-    </div>
+    <div id="message" class="mt-4 text-center"></div>
 
 </div>
 
 <script>
 
-const SUPABASE_URL="https://rtgvylkbndrmwntaqkfx.supabase.co";
+// ------------------------
+// SUPABASE
+// ------------------------
 
-const SUPABASE_KEY="sb_publishable_SFI-gjeDtTrOGpLp1_BTtg_hXy6wPSB";
+const SUPABASE_URL = "https://rtgvylkbndrmwntaqkfx.supabase.co";
 
-const supabase=window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
+const SUPABASE_KEY = "sb_publishable_SFI-gjeDtTrOGpLp1_BTtg_hXy6wPSB";
+
+const supabase = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
 );
 
 
-/* -------------------------
-SHOW PASSWORD
-------------------------- */
-
-const password=document.getElementById("password");
-
-document
-.getElementById("togglePassword")
-.onclick=()=>{
-
-if(password.type==="password"){
-
-password.type="text";
-
-document.getElementById("togglePassword").innerText="Hide";
-
-}else{
-
-password.type="password";
-
-document.getElementById("togglePassword").innerText="Show";
-
-}
-
-};
-
-
-/* -------------------------
-AUTO LOGIN
-------------------------- */
-
-(async()=>{
-
-const {data:{session}}=await supabase.auth.getSession();
-
-if(session){
-
-window.location.href="dashboard.html";
-
-}
-
-})();
-
-
-/* -------------------------
-LOGIN
-------------------------- */
+// ------------------------
+// LOGIN
+// ------------------------
 
 document
 .getElementById("adminLoginForm")
-.addEventListener("submit",login);
+.addEventListener("submit", async function(e){
+
+    e.preventDefault();
+
+    const email =
+    document.getElementById("email").value.trim();
+
+    const password =
+    document.getElementById("password").value;
+
+    const msg =
+    document.getElementById("message");
+
+    const btn =
+    document.getElementById("loginBtn");
+
+    btn.disabled = true;
+    btn.innerText = "Signing in...";
+
+    msg.innerHTML = "";
 
 
-async function login(e){
+    // Authenticate
 
-e.preventDefault();
+    const { data, error } =
+    await supabase.auth.signInWithPassword({
 
-const btn=document.getElementById("loginBtn");
+        email,
+        password
 
-const message=document.getElementById("message");
+    });
 
-btn.disabled=true;
+    if(error){
 
-btn.innerHTML="Signing In...";
+        msg.innerHTML =
+        `<p class="text-red-600">${error.message}</p>`;
 
-message.innerHTML="";
+        btn.disabled = false;
+        btn.innerText = "Login";
 
-const email=document.getElementById("email").value.trim();
+        return;
 
-const password=document.getElementById("password").value;
+    }
 
 
-/* LOGIN */
+    // Logged in user
 
-const {data,error}=await supabase.auth.signInWithPassword({
+    const user = data.user;
 
-email,
-password
+    // Verify admin
+
+    const { data: admin, error: adminError } =
+    await supabase
+        .from("admins")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+    if(adminError || !admin){
+
+        await supabase.auth.signOut();
+
+        msg.innerHTML =
+        `<p class="text-red-600">
+        You are not an administrator.
+        </p>`;
+
+        btn.disabled = false;
+        btn.innerText = "Login";
+
+        return;
+
+    }
+
+    if(admin.active === false){
+
+        await supabase.auth.signOut();
+
+        msg.innerHTML =
+        `<p class="text-red-600">
+        Admin account disabled.
+        </p>`;
+
+        btn.disabled = false;
+        btn.innerText = "Login";
+
+        return;
+
+    }
+
+
+    msg.innerHTML =
+    `<p class="text-green-600">
+    Login successful...
+    </p>`;
+
+    setTimeout(function(){
+
+        window.location.href="dashboard.html";
+
+    },1000);
 
 });
-
-if(error){
-
-message.innerHTML=
-`<p class="text-red-600 font-semibold">
-
-❌ ${error.message}
-
-</p>`;
-
-btn.disabled=false;
-
-btn.innerHTML="Login";
-
-return;
-
-}
-
-
-/* GET USER */
-
-const {
-
-data:{user}
-
-}=await supabase.auth.getUser();
-
-console.log(user);
-
-
-/* CHECK ADMIN TABLE */
-
-const {
-
-data:admin,
-
-error:adminError
-
-}=await supabase
-
-.from("admins")
-
-.select("*")
-
-.eq("id",user.id)
-
-.single();
-
-
-if(adminError){
-
-console.error(adminError);
-
-message.innerHTML=
-
-`<p class="text-red-600 font-semibold">
-
-❌ Admin account not found.
-
-</p>`;
-
-await supabase.auth.signOut();
-
-btn.disabled=false;
-
-btn.innerHTML="Login";
-
-return;
-
-}
-
-
-/* CHECK ACTIVE */
-
-if(!admin.active){
-
-message.innerHTML=
-
-`<p class="text-red-600 font-semibold">
-
-❌ Your account has been disabled.
-
-</p>`;
-
-await supabase.auth.signOut();
-
-btn.disabled=false;
-
-btn.innerHTML="Login";
-
-return;
-
-}
-
-
-/* UPDATE LAST LOGIN */
-
-await supabase
-
-.from("admins")
-
-.update({
-
-last_login:new Date().toISOString()
-
-})
-
-.eq("id",user.id);
-
-
-/* SUCCESS */
-
-localStorage.setItem(
-
-"admin",
-
-JSON.stringify(admin)
-
-);
-
-message.innerHTML=
-
-`<p class="text-green-600 font-semibold">
-
-✅ Welcome ${admin.full_name}
-
-</p>`;
-
-setTimeout(()=>{
-
-window.location.href="dashboard.html";
-
-},1000);
-
-}
 
 </script>
 
