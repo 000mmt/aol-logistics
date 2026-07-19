@@ -161,6 +161,7 @@ header {
   min-width: 0; /* lets this flex item actually shrink below its text's natural width */
   flex-shrink: 1;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .header-brand h1 {
@@ -951,6 +952,47 @@ nav a.active {
 }
 
 /* =========================
+   CHAT SESSION LIST (Live Chat panel)
+   ========================= */
+.chat-session-item {
+  padding: 12px;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+.chat-session-item:hover { background: #e2e8f0; }
+.chat-session-item.active { background: #1e293b; color: white; }
+.chat-session-item.active .csi-time { color: var(--text-dim); }
+.csi-top { display: flex; justify-content: space-between; width: 100%; align-items: center; gap: 8px; }
+.csi-name { font-weight: 600; font-size: 0.85rem; }
+.csi-time { font-size: 0.72rem; color: var(--text-dim); font-family: var(--mono); }
+.csi-preview { font-size: 0.78rem; color: var(--text-dim); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
+.chat-session-item.active .csi-preview { color: #cbd5e1; }
+
+.chat-bubble-row { display: flex; flex-direction: column; max-width: 78%; margin-bottom: 12px; }
+.chat-bubble-row.from-user { align-self: flex-start; }
+.chat-bubble-row.from-bot, .chat-bubble-row.from-admin { align-self: flex-end; }
+.chat-bubble {
+  padding: 10px 13px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+.chat-bubble-row.from-user .chat-bubble { background: var(--bg-panel-alt); color: var(--text); border: 1px solid var(--border); }
+.chat-bubble-row.from-bot .chat-bubble { background: #3b82f6; color: #fff; }
+.chat-bubble-row.from-admin .chat-bubble { background: #facc15; color: #1e1300; }
+.chat-bubble-meta { font-size: 0.68rem; color: var(--text-dim); margin-top: 3px; font-family: var(--mono); }
+.chat-bubble-row.from-user .chat-bubble-meta { text-align: left; }
+.chat-bubble-row.from-bot .chat-bubble-meta, .chat-bubble-row.from-admin .chat-bubble-meta { text-align: right; }
+
+/* =========================
    ACTIVITY FEED
    ========================= */
 .activity-toolbar {
@@ -1152,6 +1194,21 @@ nav a.active {
 }
 
 /* =========================
+   PLACEHOLDER CONTRAST (fix for low-visibility placeholder text
+   in dark/"night" view, which previously fell back to the
+   browser's own low-opacity default placeholder styling)
+   ========================= */
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-dim);
+  opacity: 0.85;
+}
+body[data-theme="light"] input::placeholder,
+body[data-theme="light"] textarea::placeholder {
+  opacity: 0.7;
+}
+
+/* =========================
    MOBILE FULLSCREEN
    ========================= */
 @media (max-width: 768px) {
@@ -1236,9 +1293,13 @@ footer {
     left: -100%;
     width: 80%;
     height: calc(100dvh - 110px);
-    z-index: 1200;
+    /* Sits above both the top nav dropdown (1400) and the menu
+       toggle button (1300) so the drawer is never hidden behind
+       either once it's open. */
+    z-index: 1450;
     transition: left 0.3s ease;
     border-right: none;
+    box-shadow: 8px 0 24px rgba(0,0,0,0.25);
   }
 
   .dashboard-sidebar.show {
@@ -1330,7 +1391,7 @@ footer {
 </div>
 
 <header>
-  <div class="header-brand">
+  <div class="header-brand" id="brandHomeBtn" title="Go to Dashboard" role="button" tabindex="0">
     <div class="brand-mark">AL</div>
     <h1>AOL Logistics<span>Admin Panel</span></h1>
   </div>
@@ -1361,6 +1422,7 @@ footer {
     <nav>
       <a href="#" data-target="dashboard" class="active">Dashboard</a>
       <a href="#" data-target="messages">Messages</a>
+      <a href="#" data-target="livechat">Live Chat</a>
       <a href="#" data-target="settings">Settings</a>
       <a href="#" id="navLogoutLink">Logout</a>
     </nav>
@@ -1416,13 +1478,14 @@ footer {
          <div class="section-heading-row">
            <h2>Live Activity</h2>
          </div>
-         <p class="section-sub">Every shipment, tracking, email and login event, as it happens — no refresh needed.</p>
+         <p class="section-sub">Every shipment, tracking, email, message and login event, as it happens — no refresh needed.</p>
 
          <div class="activity-toolbar" id="activityFilterBar">
            <button class="activity-filter active" data-filter="all" type="button">All</button>
            <button class="activity-filter" data-filter="shipment" type="button">Shipments</button>
            <button class="activity-filter" data-filter="tracking" type="button">Tracking</button>
            <button class="activity-filter" data-filter="email" type="button">Email</button>
+           <button class="activity-filter" data-filter="message" type="button">Messages</button>
            <button class="activity-filter" data-filter="login" type="button">Logins</button>
          </div>
 
@@ -1444,19 +1507,54 @@ footer {
     <aside class="dashboard-sidebar">
       <ul>
         <li class="sidebar-btn active" data-panel="msg-inbox">Notifications <span class="count-badge" id="msgInboxBadge">0</span></li>
+        <li class="sidebar-btn" data-panel="msg-form">Contact Form <span class="count-badge" id="msgFormBadge">0</span></li>
         <li class="sidebar-btn" data-panel="msg-sent">Sent <span class="count-badge" id="msgSentBadge">0</span></li>
       </ul>
     </aside>
     <main class="dashboard-content">
       <div id="msg-inbox" class="panel active">
         <h2>Notifications</h2>
-        <p class="section-sub">System alerts — failed deliveries, security flags, and admin sign-ins. Updates in real time.</p>
+        <p class="section-sub">System alerts — failed deliveries, new website messages, security flags, and admin sign-ins. Updates in real time.</p>
         <div id="msgInboxList"></div>
+      </div>
+      <div id="msg-form" class="panel">
+        <h2>Contact Form Submissions</h2>
+        <p class="section-sub">Messages sent from the "Contact Us" form on the public site. New submissions appear here instantly and trigger an email alert.</p>
+        <div id="msgFormList"><p style="color:var(--text-dim);">Loading messages...</p></div>
       </div>
       <div id="msg-sent" class="panel">
         <h2>Sent</h2>
         <p class="section-sub">Every customer notification this panel has sent through EmailJS.</p>
         <div id="msgSentList"></div>
+      </div>
+    </main>
+  </div>
+</section>
+
+<!-- LIVE CHAT -->
+<section id="livechat" class="content-section">
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar">
+      <div class="section-heading-row" style="margin-bottom:10px;">
+        <h2 style="font-size:1.02rem;">Conversations</h2>
+      </div>
+      <div id="chatSessionList"><p style="color:var(--text-dim); font-size:0.85rem;">Loading conversations...</p></div>
+    </aside>
+    <main class="dashboard-content">
+      <div id="chatConvoEmpty" class="activity-empty">
+        <div class="ae-icon">💬</div>Select a conversation on the left to view and reply.
+      </div>
+      <div id="chatConvoArea" style="display:none; flex-direction:column; height:100%;">
+        <div class="section-heading-row">
+          <h2 id="chatConvoTitle" style="font-size:1.05rem;">Conversation</h2>
+          <button class="btn-cancel" id="chatTakeOverBtn" type="button" style="font-size:0.8rem;">Take Over</button>
+        </div>
+        <p class="section-sub" style="margin-bottom:10px;">Replies here go straight to the visitor in real time. Taking over pauses the AI assistant for this chat.</p>
+        <div id="chatConvoMessages" style="flex:1; overflow-y:auto; padding:4px 2px; margin-bottom:12px;"></div>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="chatConvoInput" placeholder="Type a reply…" style="flex:1; padding:11px 13px; border-radius:8px; border:1px solid var(--border); background:var(--bg-panel-alt); color:var(--text);" />
+          <button class="btn-submit" id="chatConvoSendBtn" type="button">Send</button>
+        </div>
       </div>
     </main>
   </div>
@@ -1610,6 +1708,7 @@ footer {
           <p><b>EmailJS Service:</b> <span id="emailServiceStatus" class="badge badge-off">Checking...</span></p>
           <p><b>Service ID:</b> <span id="emailServiceId"></span></p>
           <p><b>Template ID:</b> <span id="emailTemplateId"></span></p>
+          <p><b>Admin Alert Address:</b> <span id="adminAlertEmailSpan"></span></p>
           <button id="sendTestEmailBtn" class="btn-cancel" type="button" style="margin-top:8px;">Send Test Email</button>
           <a href="https://dashboard.emailjs.com/admin" target="_blank" rel="noopener" class="btn-cancel" style="display:inline-block; margin-top:8px; margin-left:8px; text-decoration:none;">Manage in EmailJS →</a>
         </div>
@@ -1882,6 +1981,16 @@ const EMAILJS_SERVICE_ID = "service_g2b1nlw";
 // then paste the Template ID it gives you here.
 const EMAILJS_TEMPLATE_ID = "template_i9gwyek";
 
+// Where new-message alerts (contact form + live chat) get emailed.
+const ADMIN_ALERT_EMAIL = "acldeliveries3@gmail.com";
+// Reuses the tracking template above by default (its fields get repurposed
+// below), which works but reads a little oddly since that template's copy
+// is written for tracking updates. For cleaner-looking alert emails, create
+// a dedicated EmailJS template (Subject: "New AOL Admin Alert: {{tracking_no}}",
+// Body referencing {{location}} as the sender and {{note}} as the message)
+// and paste its ID here instead.
+const EMAILJS_ADMIN_TEMPLATE_ID = EMAILJS_TEMPLATE_ID;
+
 emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
 
 /* =====================
@@ -1891,6 +2000,30 @@ function escapeHtml(str = "") {
   return String(str).replace(/[&<>"']/g, m =>
     ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" }[m])
   );
+}
+
+// Fires an EmailJS notification to ADMIN_ALERT_EMAIL whenever a new
+// contact-form submission or live-chat message comes in from a visitor.
+// NOTE: this only fires while an admin has this dashboard open in a
+// browser tab, since sending happens client-side (there's no service-role
+// key available here to run this from a server). For alerts that fire
+// even when the dashboard is closed, this insert would need to trigger a
+// Supabase Edge Function or Database Webhook instead.
+async function sendAdminAlert(subjectLine, { from = "", message = "" } = {}) {
+  try {
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_ADMIN_TEMPLATE_ID, {
+      to_name: "AOL Admin",
+      to_email: ADMIN_ALERT_EMAIL,
+      tracking_no: subjectLine,
+      status: "New Alert",
+      location: from,
+      note: message,
+      origin: "AOL Website",
+      destination: "Admin Panel"
+    });
+  } catch (err) {
+    console.error("Admin alert email failed:", err);
+  }
 }
 
 /* =====================
@@ -1943,7 +2076,9 @@ const ACTIVITY_ICONS = {
   tracking:        { icon: "🚚", bg: "#0c2a3d", fg: "#60a5fa", category: "tracking" },
   email_sent:      { icon: "✉️", bg: "#14532d", fg: "#4ade80", category: "email" },
   email_failed:    { icon: "✉️", bg: "#3f1414", fg: "#f87171", category: "email" },
-  login:           { icon: "🔐", bg: "#1e293b", fg: "#facc15", category: "login" }
+  login:           { icon: "🔐", bg: "#1e293b", fg: "#facc15", category: "login" },
+  contact_form:    { icon: "📝", bg: "#1e293b", fg: "#facc15", category: "message" },
+  chat_message:    { icon: "💬", bg: "#0c2a3d", fg: "#60a5fa", category: "message" }
 };
 
 function pushActivity(type, titleHtml, meta, createdAt) {
@@ -2008,11 +2143,11 @@ function renderInboxNotifications() {
   if (!container) return;
   const alerts = activityLog.filter(a => {
     const cat = ACTIVITY_ICONS[a.type]?.category;
-    return cat === "email" || cat === "login" || a.type === "shipment_delete";
+    return cat === "email" || cat === "login" || cat === "message" || a.type === "shipment_delete";
   });
   container.innerHTML = alerts.length
     ? alerts.map(activityItemHtml).join("")
-    : `<div class="activity-empty"><div class="ae-icon">🔔</div>No alerts yet. Failed emails and admin sign-ins show up here.</div>`;
+    : `<div class="activity-empty"><div class="ae-icon">🔔</div>No alerts yet. New messages, failed emails and admin sign-ins show up here.</div>`;
 
   const badge = document.getElementById("msgInboxBadge");
   if (badge) badge.textContent = alerts.length > 99 ? "99+" : String(alerts.length);
@@ -2062,7 +2197,7 @@ function setLiveStatus(state) {
 
 /* =====================
    REAL-TIME SUBSCRIPTIONS
-   One channel, five tables. Every insert/update/delete refreshes
+   One channel, several tables. Every insert/update/delete refreshes
    the relevant panel AND drops an entry into the activity engine.
 ===================== */
 function initRealtime() {
@@ -2099,6 +2234,23 @@ function initRealtime() {
       pushActivity("login", `Admin sign-in from <b>${escapeHtml(row.country || "unknown location")}</b>`, row.ip_address || "", row.created_at);
       loadLoginActivity();
     })
+    .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, payload => {
+      const row = payload.new;
+      pushActivity("contact_form", `New contact form message from <b>${escapeHtml(row.name || row.email || "a visitor")}</b>`, row.email || "", row.created_at);
+      sendAdminAlert("New Contact Form Message", { from: row.name || row.email || "Website visitor", message: row.message || "" });
+      loadContactMessages();
+    })
+    .on("postgres_changes", { event: "INSERT", schema: "public", table: "chat_messages" }, payload => {
+      const row = payload.new;
+      if (row.sender === "user") {
+        pushActivity("chat_message", `New live chat message from a website visitor`, (row.content || "").slice(0, 70), row.created_at);
+        sendAdminAlert("New Live Chat Message", { from: "Website visitor (Live Chat)", message: row.content || "" });
+      }
+      loadChatSessions();
+    })
+    .on("postgres_changes", { event: "INSERT", schema: "public", table: "chat_sessions" }, () => {
+      loadChatSessions();
+    })
     .subscribe(status => {
       if (status === "SUBSCRIBED") setLiveStatus("live");
       else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT" || status === "CLOSED") setLiveStatus("error");
@@ -2109,6 +2261,202 @@ function initRealtime() {
 function renderSkeletonList(n = 3) {
   return Array.from({ length: n }).map(() => `<div class="skeleton skeleton-card"></div>`).join("");
 }
+
+/* =====================
+   CONTACT FORM MESSAGES (Messages > Contact Form)
+===================== */
+async function loadContactMessages() {
+  const container = document.getElementById("msgFormList");
+  if (!container) return;
+  container.innerHTML = renderSkeletonList(3);
+
+  const { data, error } = await supabase
+    .from("messages")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(50);
+
+  const badge = document.getElementById("msgFormBadge");
+
+  if (error) {
+    container.innerHTML = `<p style="color:var(--text-dim);">Contact form log needs the messages table (already used by the homepage contact form).</p>`;
+    if (badge) badge.textContent = "0";
+    return;
+  }
+
+  if (badge) badge.textContent = (data?.length || 0) > 99 ? "99+" : String(data?.length || 0);
+
+  if (!data?.length) {
+    container.innerHTML = `<div class="activity-empty"><div class="ae-icon">✉️</div>No contact form messages yet.</div>`;
+    return;
+  }
+
+  container.innerHTML = data.map(row => `
+    <div class="message-item">
+      <div class="msg-icon">📝</div>
+      <div class="msg-body">
+        <div class="msg-top">
+          <span class="msg-title">${escapeHtml(row.name || "Website Visitor")}</span>
+          <span class="msg-time">${timeAgo(row.created_at)}</span>
+        </div>
+        <div class="msg-text">${escapeHtml(row.email || "")}</div>
+        <div class="msg-text" style="margin-top:6px; color:var(--text);">${escapeHtml(row.message || "")}</div>
+      </div>
+    </div>
+  `).join("");
+}
+
+/* =====================
+   LIVE CHAT (admin side)
+===================== */
+let chatSessionsCache = [];
+let activeChatSessionId = null;
+let activeChatChannel = null;
+let seenChatMsgIds = new Set();
+
+function chatSessionPreviewHtml(s) {
+  const activeClass = s.id === activeChatSessionId ? "active" : "";
+  const statusLabel = s.status === "admin" ? "Agent" : "Bot";
+  return `
+    <div class="chat-session-item ${activeClass}" data-session-id="${s.id}">
+      <div class="csi-top">
+        <span class="csi-name">${escapeHtml(s.visitor_name || "Website Visitor")}</span>
+        <span class="badge ${s.status === "admin" ? "badge-ok" : "badge-off"}" style="font-size:0.62rem; padding:1px 8px;">${statusLabel}</span>
+      </div>
+      <span class="csi-time">${timeAgo(s.created_at)}</span>
+    </div>
+  `;
+}
+
+async function loadChatSessions() {
+  const container = document.getElementById("chatSessionList");
+  if (!container) return;
+
+  const { data, error } = await supabase
+    .from("chat_sessions")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(50);
+
+  if (error) {
+    container.innerHTML = `<p style="color:var(--text-dim);">Live chat needs the chat_sessions / chat_messages tables set up in Supabase.</p>`;
+    return;
+  }
+
+  chatSessionsCache = data || [];
+
+  if (!chatSessionsCache.length) {
+    container.innerHTML = `<div class="activity-empty"><div class="ae-icon">💬</div>No conversations yet.</div>`;
+    return;
+  }
+
+  container.innerHTML = chatSessionsCache.map(chatSessionPreviewHtml).join("");
+}
+
+document.getElementById("chatSessionList")?.addEventListener("click", e => {
+  const item = e.target.closest(".chat-session-item");
+  if (!item) return;
+  openChatSession(item.dataset.sessionId);
+});
+
+async function openChatSession(sessionId) {
+  activeChatSessionId = sessionId;
+  document.getElementById("chatConvoEmpty").style.display = "none";
+  document.getElementById("chatConvoArea").style.display = "flex";
+  document.querySelectorAll(".chat-session-item").forEach(el =>
+    el.classList.toggle("active", el.dataset.sessionId === sessionId)
+  );
+
+  const session = chatSessionsCache.find(s => s.id === sessionId);
+  document.getElementById("chatConvoTitle").textContent = session?.visitor_name || "Conversation";
+  document.getElementById("chatTakeOverBtn").textContent = session?.status === "admin" ? "Release to Bot" : "Take Over";
+
+  await loadChatMessages(sessionId);
+  subscribeChatConvo(sessionId);
+}
+
+function chatBubbleHtml(m) {
+  const label = m.sender === "user" ? "Visitor" : (m.sender === "admin" ? "You" : "Bot");
+  return `
+    <div class="chat-bubble-row from-${m.sender}">
+      <div class="chat-bubble">${escapeHtml(m.content)}</div>
+      <div class="chat-bubble-meta">${label} · ${timeAgo(m.created_at)}</div>
+    </div>
+  `;
+}
+
+async function loadChatMessages(sessionId) {
+  const container = document.getElementById("chatConvoMessages");
+  container.innerHTML = renderSkeletonList(2);
+
+  const { data, error } = await supabase
+    .from("chat_messages")
+    .select("*")
+    .eq("session_id", sessionId)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    container.innerHTML = `<p style="color:var(--text-dim);">Failed to load messages.</p>`;
+    return;
+  }
+
+  seenChatMsgIds = new Set((data || []).map(m => m.id));
+  container.innerHTML = (data || []).map(chatBubbleHtml).join("") || `<p style="color:var(--text-dim);">No messages yet.</p>`;
+  container.scrollTop = container.scrollHeight;
+}
+
+function subscribeChatConvo(sessionId) {
+  if (activeChatChannel) {
+    supabase.removeChannel(activeChatChannel);
+    activeChatChannel = null;
+  }
+  activeChatChannel = supabase
+    .channel(`admin-convo-${sessionId}`)
+    .on("postgres_changes", { event: "INSERT", schema: "public", table: "chat_messages", filter: `session_id=eq.${sessionId}` }, payload => {
+      const m = payload.new;
+      if (seenChatMsgIds.has(m.id)) return;
+      seenChatMsgIds.add(m.id);
+      if (activeChatSessionId !== sessionId) return;
+      const container = document.getElementById("chatConvoMessages");
+      if (!container) return;
+      container.insertAdjacentHTML("beforeend", chatBubbleHtml(m));
+      container.scrollTop = container.scrollHeight;
+    })
+    .subscribe();
+}
+
+document.getElementById("chatConvoSendBtn")?.addEventListener("click", sendAdminChatReply);
+document.getElementById("chatConvoInput")?.addEventListener("keydown", e => {
+  if (e.key === "Enter") sendAdminChatReply();
+});
+
+async function sendAdminChatReply() {
+  const input = document.getElementById("chatConvoInput");
+  const text = input.value.trim();
+  if (!text || !activeChatSessionId) return;
+  input.value = "";
+
+  const { error } = await supabase.from("chat_messages").insert([{
+    session_id: activeChatSessionId, sender: "admin", content: text
+  }]);
+  if (error) return showToast("Failed to send reply: " + error.message, "error");
+
+  const session = chatSessionsCache.find(s => s.id === activeChatSessionId);
+  if (session?.status !== "admin") {
+    await supabase.from("chat_sessions").update({ status: "admin" }).eq("id", activeChatSessionId);
+  }
+}
+
+document.getElementById("chatTakeOverBtn")?.addEventListener("click", async () => {
+  if (!activeChatSessionId) return;
+  const session = chatSessionsCache.find(s => s.id === activeChatSessionId);
+  const newStatus = session?.status === "admin" ? "bot" : "admin";
+  const { error } = await supabase.from("chat_sessions").update({ status: newStatus }).eq("id", activeChatSessionId);
+  if (error) return showToast("Failed: " + error.message, "error");
+  showToast(newStatus === "admin" ? "You're now handling this chat." : "Released back to the bot.", "success");
+  await loadChatSessions();
+  openChatSession(activeChatSessionId);
+});
 
 /* =====================
    EMAIL LOG (Dashboard > Email + Messages > Sent)
@@ -2209,10 +2557,11 @@ async function loadOverview() {
 ===================== */
 async function seedActivityLog() {
   try {
-    const [{ data: tracks }, { data: emails }, { data: logins }] = await Promise.all([
+    const [{ data: tracks }, { data: emails }, { data: logins }, { data: formMsgs }] = await Promise.all([
       supabase.from("tracking_updates").select("*").order("created_at", { ascending: false }).limit(8),
       supabase.from("email_logs").select("*").order("created_at", { ascending: false }).limit(8),
-      supabase.from("login_activity").select("*").order("created_at", { ascending: false }).limit(5)
+      supabase.from("login_activity").select("*").order("created_at", { ascending: false }).limit(5),
+      supabase.from("messages").select("*").order("created_at", { ascending: false }).limit(8)
     ]);
 
     const seeded = [];
@@ -2233,6 +2582,11 @@ async function seedActivityLog() {
       type: "login",
       titleHtml: `Admin sign-in from <b>${escapeHtml(row.country || "unknown location")}</b>`,
       meta: row.ip_address || "", createdAt: row.created_at
+    }));
+    (formMsgs || []).forEach(row => seeded.push({
+      type: "contact_form",
+      titleHtml: `New contact form message from <b>${escapeHtml(row.name || row.email || "a visitor")}</b>`,
+      meta: row.email || "", createdAt: row.created_at
     }));
 
     seeded.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -3028,6 +3382,8 @@ function loadEmailStatus() {
   document.getElementById("emailServiceId").textContent = EMAILJS_SERVICE_ID;
   document.getElementById("emailTemplateId").textContent =
     EMAILJS_TEMPLATE_ID === "YOUR_EMAILJS_TEMPLATE_ID" ? "Not set" : EMAILJS_TEMPLATE_ID;
+  const alertSpan = document.getElementById("adminAlertEmailSpan");
+  if (alertSpan) alertSpan.textContent = ADMIN_ALERT_EMAIL;
 }
 
 document.getElementById("sendTestEmailBtn").onclick = async () => {
@@ -3207,10 +3563,12 @@ function initApp() {
   const nav = document.querySelector("nav");
   const sidebarToggle = document.querySelector(".sidebar-toggle");
   const overlay = document.querySelector(".overlay");
+  const brandHomeBtn = document.getElementById("brandHomeBtn");
 
-  // There are THREE .dashboard-sidebar elements (Dashboard / Messages / Settings each
-  // have their own). Always resolve to the one inside the currently active section,
-  // instead of document.querySelector(".dashboard-sidebar") which always grabs the
+  // There are FOUR .dashboard-sidebar elements now (Dashboard / Messages /
+  // Live Chat / Settings each have their own). Always resolve to the one
+  // inside the currently active section, instead of
+  // document.querySelector(".dashboard-sidebar") which always grabs the
   // first one in the DOM (Dashboard's) no matter which tab is actually open.
   function getActiveSidebar() {
     return document.querySelector(".content-section.active .dashboard-sidebar");
@@ -3219,6 +3577,23 @@ function initApp() {
   function closeMobileDrawer() {
     document.querySelectorAll(".dashboard-sidebar.show").forEach(s => s.classList.remove("show"));
     overlay?.classList.remove("show");
+  }
+
+  function openMobileDrawer() {
+    const sidebar = getActiveSidebar();
+    if (!sidebar) return;
+    sidebar.classList.add("show");
+    overlay?.classList.add("show");
+    nav.classList.remove("show");
+  }
+
+  function goToDashboard() {
+    document.querySelectorAll(".content-section").forEach(sec => sec.classList.remove("active"));
+    document.querySelectorAll("nav a[data-target]").forEach(l => l.classList.remove("active"));
+    document.getElementById("dashboard")?.classList.add("active");
+    document.querySelector('nav a[data-target="dashboard"]')?.classList.add("active");
+    nav.classList.remove("show");
+    closeMobileDrawer();
   }
 
   if (menuToggle) {
@@ -3232,14 +3607,21 @@ function initApp() {
     sidebarToggle.onclick = () => {
       const sidebar = getActiveSidebar();
       if (!sidebar) return;
-      sidebar.classList.toggle("show");
-      overlay.classList.toggle("show");
-      nav.classList.remove("show"); // close the top nav menu if it was open
+      const willOpen = !sidebar.classList.contains("show");
+      willOpen ? openMobileDrawer() : closeMobileDrawer();
     };
   }
 
   if (overlay) {
     overlay.onclick = () => closeMobileDrawer();
+  }
+
+  // AOL logo/name in the header always returns to the Dashboard tab.
+  if (brandHomeBtn) {
+    brandHomeBtn.addEventListener("click", goToDashboard);
+    brandHomeBtn.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); goToDashboard(); }
+    });
   }
 
   document.querySelectorAll(".sidebar-btn").forEach(btn => {
@@ -3265,9 +3647,49 @@ function initApp() {
     };
   });
 
+  // ---- Swipe-from-left-edge to open the sidebar drawer on mobile,
+  //      swipe-left anywhere to close it while it's open. ----
+  let touchStartX = null;
+  let touchStartY = null;
+
+  document.addEventListener("touchstart", e => {
+    if (window.innerWidth > 768 || e.touches.length !== 1) { touchStartX = null; return; }
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  document.addEventListener("touchend", e => {
+    if (touchStartX === null) return;
+    const startX = touchStartX;
+    const startY = touchStartY;
+    touchStartX = null;
+    touchStartY = null;
+
+    const endX = e.changedTouches[0].clientX;
+    const endY = e.changedTouches[0].clientY;
+    const dx = endX - startX;
+    const dy = endY - startY;
+
+    if (Math.abs(dy) > 80 || Math.abs(dx) < 55) return; // require a mostly-horizontal swipe
+
+    const sidebar = getActiveSidebar();
+    if (!sidebar) return;
+    const isOpen = sidebar.classList.contains("show");
+
+    if (!isOpen && startX < 28 && dx > 0) {
+      // swipe starting right at the left edge, moving right -> open
+      openMobileDrawer();
+    } else if (isOpen && dx < 0) {
+      // any left-moving swipe while the drawer is open -> close
+      closeMobileDrawer();
+    }
+  }, { passive: true });
+
   loadUsers();
   loadTrackingPanel();
   loadEmailLogs();
+  loadContactMessages();
+  loadChatSessions();
   initSettings();
   seedActivityLog().then(initRealtime);
 }
