@@ -3,11 +3,33 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>SecureVote | Admin Panel</title>
+<title>AOL Logistics | Admin Panel</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
+/* ===================== */
+/* DESIGN TOKENS */
+/* ===================== */
+:root {
+  --bg-app: #f1f5f9;
+  --bg-panel: #0f172a;
+  --bg-panel-alt: #111827;
+  --bg-card: #020617;
+  --border: #1e293b;
+  --border-soft: #243044;
+  --text: #e5e7eb;
+  --text-dim: #9ca3af;
+  --accent: #facc15;
+  --accent-dim: #a16207;
+  --ok: #4ade80;
+  --ok-bg: #14532d;
+  --err: #f87171;
+  --err-bg: #7f1d1d;
+  --info: #60a5fa;
+  --mono: 'JetBrains Mono', 'Consolas', monospace;
+}
+
 /* ===================== */
 /* RESET & BASE */
 /* ===================== */
@@ -18,10 +40,55 @@
   font-family: 'Inter', sans-serif;
 }
 
+html { scroll-behavior: smooth; }
+
 body {
   overflow: hidden; /* stops main window scroll */
   margin: 0;
   height: 100vh; /* full viewport height */
+  background: var(--bg-app);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.sidebar-btn:focus-visible,
+.user-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Dark scrollbars wherever content scrolls inside the panel */
+.dashboard-content::-webkit-scrollbar,
+.modal-body::-webkit-scrollbar,
+.activity-feed::-webkit-scrollbar {
+  width: 8px;
+}
+.dashboard-content::-webkit-scrollbar-track,
+.modal-body::-webkit-scrollbar-track,
+.activity-feed::-webkit-scrollbar-track {
+  background: transparent;
+}
+.dashboard-content::-webkit-scrollbar-thumb,
+.modal-body::-webkit-scrollbar-thumb,
+.activity-feed::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 8px;
+}
+.modal-body::-webkit-scrollbar-thumb,
+.activity-feed::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* ===================== */
@@ -31,15 +98,184 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
   padding: 14px 24px;
-  background: #1e293b;
+  background: linear-gradient(180deg, #24334a 0%, #1e293b 100%);
   color: white;
   position: relative;
   z-index: 1500;
+  border-bottom: 1px solid #0b1220;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.header-brand .brand-mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--accent), #f59e0b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: #1e1300;
+  font-size: 0.95rem;
+  flex-shrink: 0;
 }
 
 header h1 {
-  font-size: 1.3rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+header h1 span {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: var(--text-dim);
+  letter-spacing: 0.02em;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Live connection pill */
+.live-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #6b7280;
+  flex-shrink: 0;
+}
+
+.live-pill.is-live .live-dot {
+  background: var(--ok);
+  box-shadow: 0 0 0 rgba(74,222,128,0.6);
+  animation: livePulse 2s ease-out infinite;
+}
+.live-pill.is-live { color: var(--ok); }
+
+.live-pill.is-error .live-dot { background: var(--err); }
+.live-pill.is-error { color: #fca5a5; }
+
+@keyframes livePulse {
+  0%   { box-shadow: 0 0 0 0 rgba(74,222,128,0.55); }
+  70%  { box-shadow: 0 0 0 7px rgba(74,222,128,0); }
+  100% { box-shadow: 0 0 0 0 rgba(74,222,128,0); }
+}
+
+/* Notification bell */
+.notif-bell-wrap {
+  position: relative;
+}
+
+.notif-bell {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--text);
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+}
+.notif-bell:hover { background: rgba(255,255,255,0.12); }
+
+.notif-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.notif-badge.show { display: flex; }
+
+.notif-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 340px;
+  max-width: min(340px, 90vw);
+  max-height: 420px;
+  overflow-y: auto;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.45);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: all 0.18s ease;
+  z-index: 1600;
+}
+
+.notif-dropdown.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.notif-dropdown-header {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.notif-dropdown-header button {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 0.75rem;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 500;
 }
 
 nav {
@@ -50,11 +286,20 @@ nav {
 nav a {
   color: white;
   text-decoration: none;
+  font-size: 0.9rem;
+  padding: 6px 2px;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.15s ease, opacity 0.15s ease;
+  opacity: 0.85;
 }
 
+nav a:hover { opacity: 1; }
+
 nav a.active {
-  text-decoration: underline;
+  text-decoration: none;
   font-weight: 600;
+  border-bottom-color: var(--accent);
+  opacity: 1;
 }
 
 .menu-toggle {
@@ -516,6 +761,262 @@ nav a.active {
 .danger-btn:hover { background: #991b1b; }
 
 /* =========================
+   OVERVIEW / STAT STRIP (Dashboard)
+   ========================= */
+.overview-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.overview-card {
+  background: linear-gradient(160deg, #0f172a, #0b1220);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.overview-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--card-accent, var(--accent));
+}
+
+.overview-card .ov-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+.overview-card .ov-num {
+  font-family: var(--mono);
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.section-heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.section-heading-row h2 { margin-bottom: 0; }
+
+.section-sub {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  margin-bottom: 18px;
+}
+
+/* =========================
+   SIDEBAR BADGES
+   ========================= */
+.sidebar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  transition: background 0.15s ease;
+}
+
+.sidebar-btn .count-badge {
+  background: rgba(255,255,255,0.08);
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-family: var(--mono);
+}
+
+.sidebar-btn.active .count-badge {
+  background: rgba(255,255,255,0.18);
+  color: white;
+}
+
+.sidebar-btn:not(.active):hover {
+  background: #e2e8f0;
+}
+
+/* =========================
+   ACTIVITY FEED
+   ========================= */
+.activity-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.activity-filter {
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.activity-filter.active {
+  background: var(--accent);
+  color: #000;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.activity-feed {
+  max-height: 65vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.activity-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 4px;
+  border-bottom: 1px solid #1f2937;
+  animation: activityIn 0.35s ease;
+}
+
+.activity-item:last-child { border-bottom: none; }
+
+@keyframes activityIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.activity-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+  background: var(--icon-bg, #1e293b);
+  color: var(--icon-fg, var(--accent));
+}
+
+.activity-body { min-width: 0; flex: 1; }
+
+.activity-title {
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.activity-title b { color: var(--accent); font-weight: 600; }
+
+.activity-meta {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-top: 3px;
+  font-family: var(--mono);
+}
+
+.activity-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-dim);
+}
+.activity-empty .ae-icon { font-size: 2rem; margin-bottom: 10px; opacity: 0.6; }
+
+/* =========================
+   MESSAGE LIST
+   ========================= */
+.message-item {
+  background: #1f2937;
+  border: 1px solid #263244;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.message-item .msg-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #111827;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1rem;
+}
+
+.message-item .msg-body { flex: 1; min-width: 0; }
+
+.message-item .msg-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.message-item .msg-title { color: #f9fafb; font-weight: 600; font-size: 0.92rem; }
+.message-item .msg-time { color: var(--text-dim); font-size: 0.72rem; font-family: var(--mono); white-space: nowrap; }
+.message-item .msg-text { color: #cbd5e1; font-size: 0.85rem; margin-top: 4px; line-height: 1.4; }
+
+.msg-status-pill {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+.msg-status-pill.sent { background: var(--ok-bg); color: var(--ok); }
+.msg-status-pill.failed { background: var(--err-bg); color: #fca5a5; }
+
+.resend-btn {
+  margin-top: 8px;
+  background: none;
+  border: 1px solid #374151;
+  color: #e5e7eb;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+.resend-btn:hover { background: #111827; }
+
+/* =========================
+   SKELETON LOADING
+   ========================= */
+.skeleton {
+  background: linear-gradient(90deg, #1f2937 25%, #26344a 37%, #1f2937 63%);
+  background-size: 400% 100%;
+  animation: skeletonWave 1.4s ease infinite;
+  border-radius: 8px;
+}
+
+@keyframes skeletonWave {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+.skeleton-card { height: 118px; margin-bottom: 16px; }
+.skeleton-line { height: 14px; margin-bottom: 8px; width: 70%; }
+
+/* =========================
    MOBILE FULLSCREEN
    ========================= */
 @media (max-width: 768px) {
@@ -608,47 +1109,87 @@ footer {
     width: 100%;
     padding: 20px;
   }
-}
-</style>
-</head>
 
-<body>
+  .notif-dropdown {
+    position: fixed;
+    top: 60px;
+    right: 10px;
+    left: 10px;
+    width: auto;
+    max-width: none;
+  }
 
-<header>
-  <h1>Admin Panel</h1>
-  <div class="menu-toggle" aria-label="Open navigation">☰</div>
-  <nav>
-    <a href="#" data-target="dashboard" class="active">Dashboard</a>
-    <a href="#" data-target="messages">Messages</a>
-    <a href="#" data-target="settings">Settings</a>
-    <a href="logout.html">Logout</a>
-  </nav>
+  header h1 { font-size: 1rem; }
+  header h1 span { display: none; }
+  .live-pill span.live-label { display: none; }
+}@media (max-width: 1024px) and (min-width: 769px) {
+  .dashboard-sidebar { width: 38%; }
+  .dashboard-content { width: 62%; }
+  .notif-dropdown { width: 300px; }}@media (max-width: 480px) {
+  .overview-strip { grid-template-columns: repeat(2, 1fr); }
+  .user-grid { grid-template-columns: 1fr; }
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .modal-body input, .modal-body select, .modal-body textarea { font-size: 16px; } /* avoid iOS zoom-on-focus */
+}</style></head><body><header>  <div class="header-brand">    <div class="brand-mark">AL</div>  <h1>AOL Logistics<span>Admin Panel</span></h1>  </div>  <div class="header-right">    <div class="live-pill" id="livePill">
+      <span class="live-dot"></span>
+      <span class="live-label" id="liveLabel">Connecting…</span>
+    </div>
+
+    <div class="notif-bell-wrap">
+      <button class="notif-bell" id="notifBellBtn" type="button" aria-label="Recent activity">
+        🔔
+        <span class="notif-badge" id="notifBadge">0</span>
+      </button>
+      <div class="notif-dropdown" id="notifDropdown">
+        <div class="notif-dropdown-header">
+          <span>Live Activity</span>
+          <button type="button" id="notifClearBtn">Mark all read</button>
+        </div>
+        <div id="notifList" class="activity-feed" style="max-height:360px;"></div>
+      </div>
+    </div>
+
+    <div class="menu-toggle" aria-label="Open navigation">☰</div>
+    <nav>
+      <a href="#" data-target="dashboard" class="active">Dashboard</a>
+      <a href="#" data-target="messages">Messages</a>
+      <a href="#" data-target="settings">Settings</a>
+      <a href="logout.html">Logout</a>
+    </nav>
+  </div>
 </header>
-
 <div class="sidebar-toggle" aria-label="Open menu">☰ Menu</div>
 <div class="overlay"></div>
-
-<!-- DASHBOARD -->
 <section id="dashboard" class="content-section active">
   <div class="dashboard-layout">
     <aside class="dashboard-sidebar">
       <ul>
         <li class="sidebar-btn active" data-panel="dash-details">Details</li>
         <li class="sidebar-btn" data-panel="dash-tracking">Tracking</li>
-        <li class="sidebar-btn" data-panel="dash-email">Email</li>
+        <li class="sidebar-btn" data-panel="dash-activity">Activity <span class="count-badge" id="dashActivityBadge">0</span></li>
+        <li class="sidebar-btn" data-panel="dash-email">Email <span class="count-badge" id="dashEmailBadge">0</span></li>
       </ul>
     </aside>
 
     <main class="dashboard-content">
        <div id="dash-details" class="panel active">
-         <h2>Dashboard Overview</h2>
+         <div class="section-heading-row">
+           <h2>Dashboard Overview</h2>
+         </div>
+         <p class="section-sub">Live snapshot of every shipment on file.</p>
 
-          <!-- USERS CARD CONTAINER -->
+         <div class="overview-strip" id="overviewStrip">
+           <div class="overview-card skeleton skeleton-card"></div>
+           <div class="overview-card skeleton skeleton-card"></div>
+           <div class="overview-card skeleton skeleton-card"></div>
+           <div class="overview-card skeleton skeleton-card"></div>
+         </div>
          <div id="userList" class="user-grid"></div>
        </div>
 
        <div id="dash-tracking" class="panel">
          <h2>Tracking</h2>
+         <p class="section-sub">Latest status per shipment. Updates the instant a change is saved.</p>
 
          <!-- Users tracking list -->
          <div id="trackingList">
@@ -656,31 +1197,53 @@ footer {
          </div>
        </div>
 
+       <div id="dash-activity" class="panel">
+         <div class="section-heading-row">
+           <h2>Live Activity</h2>
+         </div>
+         <p class="section-sub">Every shipment, tracking, email and login event, as it happens — no refresh needed.</p>
+
+         <div class="activity-toolbar" id="activityFilterBar">
+           <button class="activity-filter active" data-filter="all" type="button">All</button>
+           <button class="activity-filter" data-filter="shipment" type="button">Shipments</button>
+           <button class="activity-filter" data-filter="tracking" type="button">Tracking</button>
+           <button class="activity-filter" data-filter="email" type="button">Email</button>
+           <button class="activity-filter" data-filter="login" type="button">Logins</button>
+         </div>
+
+         <div id="dashActivityFeed" class="activity-feed"></div>
+       </div>
+
       <div id="dash-email" class="panel">
         <h2>Email</h2>
-        <p>Email logs appear here.</p>
+        <p class="section-sub">Delivery log for every customer notification sent from this panel.</p>
+        <div id="dashEmailList"><p style="color:#9ca3af;">Loading email logs...</p></div>
       </div>
     </main>
   </div>
 </section>
-
-<!-- MESSAGES -->
 <section id="messages" class="content-section">
   <div class="dashboard-layout">
     <aside class="dashboard-sidebar">
       <ul>
-        <li class="sidebar-btn active" data-panel="msg-inbox">Inbox</li>
-        <li class="sidebar-btn" data-panel="msg-sent">Sent</li>
+        <li class="sidebar-btn active" data-panel="msg-inbox">Notifications <span class="count-badge" id="msgInboxBadge">0</span></li>
+        <li class="sidebar-btn" data-panel="msg-sent">Sent <span class="count-badge" id="msgSentBadge">0</span></li>
       </ul>
     </aside>
     <main class="dashboard-content">
-      <div id="msg-inbox" class="panel active"><h2>Inbox</h2></div>
-      <div id="msg-sent" class="panel"><h2>Sent</h2></div>
+      <div id="msg-inbox" class="panel active">
+        <h2>Notifications</h2>
+        <p class="section-sub">System alerts — failed deliveries, security flags, and admin sign-ins. Updates in real time.</p>
+        <div id="msgInboxList"></div>
+      </div>
+      <div id="msg-sent" class="panel">
+        <h2>Sent</h2>
+        <p class="section-sub">Every customer notification this panel has sent through EmailJS.</p>
+        <div id="msgSentList"></div>
+      </div>
     </main>
   </div>
 </section>
-
-<!-- SETTINGS -->
 <section id="settings" class="content-section">
   <div class="dashboard-layout">
     <aside class="dashboard-sidebar">
@@ -708,8 +1271,6 @@ footer {
           </p>
         </div>
       </div>
-
-      <!-- SECURITY -->
       <div id="set-security" class="panel">
         <h2>Security</h2>
 
@@ -739,8 +1300,6 @@ footer {
           <button id="rerunScanBtn" class="btn-cancel" type="button" style="margin-top:6px;">Re-run Scan</button>
         </div>
       </div>
-
-      <!-- SESSIONS & 2FA -->
       <div id="set-sessions" class="panel">
         <h2>Sessions &amp; Two-Factor Authentication</h2>
 
@@ -856,7 +1415,6 @@ footer {
         </div>
       </div>
 
-      <!-- DANGER ZONE -->
       <div id="set-danger" class="panel">
         <h2 style="color:#ef4444;">Danger Zone</h2>
         <p style="color:#9ca3af; margin-bottom:16px; font-size:0.85rem;">
@@ -900,10 +1458,8 @@ footer {
   </div>
 </section>
 
-<!-- Overlay -->
 <div id="modalOverlay" class="modal-overlay"></div>
 
-<!-- EDIT SHIPMENT MODAL -->
 <div id="modalContainer" class="modal-container">
   <div class="modal-header">
     <h2 id="modalTitle">Edit Shipment</h2>
@@ -924,7 +1480,6 @@ footer {
         <option>Delivered</option>
       </select>
 
-      <!-- SENDER -->
       <h3>Sender</h3>
       <input name="sender_name" placeholder="Sender Name" />
       <input name="sender_address" placeholder="Sender Address" />
@@ -1002,54 +1557,318 @@ footer {
     <div class="modal-footer">
       <button type="button" class="btn-cancel" id="cancelTracking">Cancel</button>
       <button type="submit" class="btn-submit">Save Update</button>
-    </div>
-  </form>
-</div>
-
-<!-- Footer -->
-<footer>
-  <p data-key="footerText">© 2025 AOL Logistics. All rights reserved.</p>
-</footer>
-
-<!-- EmailJS SDK (REQUIRED) -->
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-
-<!-- Supabase SDK (REQUIRED) -->
-<script type="module">
-/* =====================
-   SUPABASE CONFIG
-===================== */
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
-
-const SUPABASE_URL = "https://rtgvylkbndrmwntaqkfx.supabase.co";
-const SUPABASE_KEY = "sb_publishable_SFI-gjeDtTrOGpLp1_BTtg_hXy6wPSB";
-
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-/* =====================
-   EMAILJS CONFIG
-===================== */
-// Get this from EmailJS → Account → API Keys ("Public Key")
-const EMAILJS_PUBLIC_KEY = "PlzHImKJLSGxIfYy0";
-const EMAILJS_SERVICE_ID = "service_wznyhjn";
-// Create the template using email-template.html (provided separately),
-// then paste the Template ID it gives you here.
-const EMAILJS_TEMPLATE_ID = "template_i9gwyek";
+    </div>  </form></div><footer><p data-key="footerText">© 2025 AOL Logistics. All rights reserved.</p></footer><script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script><script type="module">import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";const SUPABASE_URL = "https://rtgvylkbndrmwntaqkfx.supabase.co";const SUPABASE_KEY = "sb_publishable_SFI-gjeDtTrOGpLp1_BTtg_hXy6wPSB";const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const EMAILJS_PUBLIC_KEY = "PlzHImKJLSGxIfYy0";const EMAILJS_SERVICE_ID = "service_wznyhjn";const EMAILJS_TEMPLATE_ID = "template_i9gwyek";
 
 emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
-
-/* =====================
-   HELPERS
-===================== */
 function escapeHtml(str = "") {
   return String(str).replace(/[&<>"']/g, m =>
     ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" }[m])
   );
 }
+const activityLog = []; // newest first
+const MAX_ACTIVITY = 60;
+let unreadCount = 0;
+let currentActivityFilter = "all";
 
-/* =====================
-   LOAD USERS (dashboard cards)
-===================== */
+function timeAgo(dateInput) {
+  const date = new Date(dateInput);
+  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+  if (seconds < 5) return "just now";
+  if (seconds < 60) return `${seconds}s ago`;
+  const mins = Math.floor(seconds / 60);
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return `${days}d ago`;
+  return date.toLocaleDateString();
+}
+
+const ACTIVITY_ICONS = {
+  shipment_new:    { icon: "📦", bg: "#1e293b", fg: "#facc15", category: "shipment" },
+  shipment_update: { icon: "✏️", bg: "#1e293b", fg: "#60a5fa", category: "shipment" },
+  shipment_delete: { icon: "🗑️", bg: "#3f1414", fg: "#f87171", category: "shipment" },
+  tracking:        { icon: "🚚", bg: "#0c2a3d", fg: "#60a5fa", category: "tracking" },
+  email_sent:      { icon: "✉️", bg: "#14532d", fg: "#4ade80", category: "email" },
+  email_failed:    { icon: "✉️", bg: "#3f1414", fg: "#f87171", category: "email" },
+  login:           { icon: "🔐", bg: "#1e293b", fg: "#facc15", category: "login" }
+};
+
+function pushActivity(type, titleHtml, meta, createdAt) {
+  const entry = {
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    type,
+    titleHtml,
+    meta: meta || "",
+    createdAt: createdAt || new Date().toISOString()
+  };
+  activityLog.unshift(entry);
+  if (activityLog.length > MAX_ACTIVITY) activityLog.length = MAX_ACTIVITY;
+  unreadCount++;
+  renderActivityViews();
+  return entry;
+}
+
+function activityItemHtml(entry) {
+  const cfg = ACTIVITY_ICONS[entry.type] || { icon: "•", bg: "#1e293b", fg: "#9ca3af" };
+  return `
+    <div class="activity-item" data-category="${cfg.category || ""}">
+      <div class="activity-icon" style="--icon-bg:${cfg.bg}; --icon-fg:${cfg.fg};">${cfg.icon}</div>
+      <div class="activity-body">
+        <div class="activity-title">${entry.titleHtml}</div>
+        <div class="activity-meta">${timeAgo(entry.createdAt)}${entry.meta ? " · " + escapeHtml(entry.meta) : ""}</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderActivityViews() {
+  const notifList = document.getElementById("notifList");
+  if (notifList) {
+    notifList.innerHTML = activityLog.length
+      ? activityLog.slice(0, 12).map(activityItemHtml).join("")
+      : `<div class="activity-empty"><div class="ae-icon">🔔</div>No activity yet — it appears here the moment something happens.</div>`;
+  }
+
+  const dashFeed = document.getElementById("dashActivityFeed");
+  if (dashFeed) {
+    const filtered = currentActivityFilter === "all"
+      ? activityLog
+      : activityLog.filter(a => (ACTIVITY_ICONS[a.type]?.category) === currentActivityFilter);
+    dashFeed.innerHTML = filtered.length
+      ? filtered.map(activityItemHtml).join("")
+      : `<div class="activity-empty"><div class="ae-icon">📭</div>Nothing here yet.</div>`;
+  }
+
+  const badge = document.getElementById("notifBadge");
+  if (badge) {
+    badge.textContent = unreadCount > 99 ? "99+" : String(unreadCount);
+    badge.classList.toggle("show", unreadCount > 0);
+  }
+  const dashBadge = document.getElementById("dashActivityBadge");
+  if (dashBadge) dashBadge.textContent = activityLog.length > 99 ? "99+" : String(activityLog.length);
+
+  renderInboxNotifications();
+}
+
+function renderInboxNotifications() {
+  const container = document.getElementById("msgInboxList");
+  if (!container) return;
+  const alerts = activityLog.filter(a => {
+    const cat = ACTIVITY_ICONS[a.type]?.category;
+    return cat === "email" || cat === "login" || a.type === "shipment_delete";
+  });
+  container.innerHTML = alerts.length
+    ? alerts.map(activityItemHtml).join("")
+    : `<div class="activity-empty"><div class="ae-icon">🔔</div>No alerts yet. Failed emails and admin sign-ins show up here.</div>`;
+
+  const badge = document.getElementById("msgInboxBadge");
+  if (badge) badge.textContent = alerts.length > 99 ? "99+" : String(alerts.length);
+}
+
+setInterval(renderActivityViews, 30000);
+
+document.getElementById("notifBellBtn").onclick = e => {
+  e.stopPropagation();
+  document.getElementById("notifDropdown").classList.toggle("show");
+};
+document.addEventListener("click", e => {
+  const wrap = document.querySelector(".notif-bell-wrap");
+  if (wrap && !wrap.contains(e.target)) document.getElementById("notifDropdown").classList.remove("show");
+});
+document.getElementById("notifClearBtn").onclick = () => {
+  unreadCount = 0;
+  renderActivityViews();
+};
+document.getElementById("activityFilterBar")?.addEventListener("click", e => {
+  const btn = e.target.closest(".activity-filter");
+  if (!btn) return;
+  currentActivityFilter = btn.dataset.filter;
+  document.querySelectorAll(".activity-filter").forEach(b => b.classList.toggle("active", b === btn));
+  renderActivityViews();
+});
+function setLiveStatus(state) {
+  const pill = document.getElementById("livePill");
+  const label = document.getElementById("liveLabel");
+  if (!pill || !label) return;
+  pill.classList.remove("is-live", "is-error");
+  if (state === "live") {
+    pill.classList.add("is-live");
+    label.textContent = "Live";
+  } else if (state === "error") {
+    pill.classList.add("is-error");
+    label.textContent = "Reconnecting…";
+  } else {
+    label.textContent = "Connecting…";
+  }
+}
+function initRealtime() {
+  return supabase
+    .channel("admin-panel-activity")
+    .on("postgres_changes", { event: "INSERT", schema: "public", table: "user_info" }, payload => {
+      const row = payload.new;
+      pushActivity("shipment_new", `New shipment for <b>${escapeHtml(row.receiver_name || "a customer")}</b>`, row.tracking_no || "", row.created_at);
+      loadUsers(); loadTrackingPanel(); loadOverview();
+    })
+    .on("postgres_changes", { event: "UPDATE", schema: "public", table: "user_info" }, payload => {
+      const row = payload.new;
+      pushActivity("shipment_update", `Shipment <b>${escapeHtml(row.tracking_no || row.id)}</b> was updated`, row.receiver_name || "");
+      loadUsers(); loadTrackingPanel(); loadOverview();
+    })
+    .on("postgres_changes", { event: "DELETE", schema: "public", table: "user_info" }, payload => {
+      const row = payload.old;
+      pushActivity("shipment_delete", `Shipment <b>${escapeHtml(row.tracking_no || row.id)}</b> was deleted`, row.receiver_name || "");
+      loadUsers(); loadTrackingPanel(); loadOverview();
+    })
+    .on("postgres_changes", { event: "INSERT", schema: "public", table: "tracking_updates" }, payload => {
+      const row = payload.new;
+      pushActivity("tracking", `Tracking set to <b>${escapeHtml(row.status || "Pending")}</b>${row.location ? " — " + escapeHtml(row.location) : ""}`, "", row.created_at);
+      loadTrackingPanel(); loadUsers(); loadOverview();
+    })
+    .on("postgres_changes", { event: "INSERT", schema: "public", table: "email_logs" }, payload => {
+      const row = payload.new;
+      const ok = row.status === "sent";
+      pushActivity(ok ? "email_sent" : "email_failed", `Notification email ${ok ? "sent to" : "failed for"} <b>${escapeHtml(row.to_email || "customer")}</b>`, "", row.created_at);
+      loadEmailLogs();
+    })
+    .on("postgres_changes", { event: "INSERT", schema: "public", table: "login_activity" }, payload => {
+      const row = payload.new;
+      pushActivity("login", `Admin sign-in from <b>${escapeHtml(row.country || "unknown location")}</b>`, row.ip_address || "", row.created_at);
+      loadLoginActivity();
+    })
+    .subscribe(status => {
+      if (status === "SUBSCRIBED") setLiveStatus("live");
+      else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT" || status === "CLOSED") setLiveStatus("error");
+      else setLiveStatus("connecting");
+    });
+}
+
+function renderSkeletonList(n = 3) {
+  return Array.from({ length: n }).map(() => `<div class="skeleton skeleton-card"></div>`).join("");
+}
+async function loadEmailLogs() {
+  const dashContainer = document.getElementById("dashEmailList");
+  const sentContainer = document.getElementById("msgSentList");
+  if (dashContainer) dashContainer.innerHTML = renderSkeletonList();
+  if (sentContainer) sentContainer.innerHTML = renderSkeletonList();
+
+  try {
+    const { data, error } = await supabase
+      .from("email_logs")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(30);
+    if (error) throw error;
+
+    const badgeDash = document.getElementById("dashEmailBadge");
+    const badgeSent = document.getElementById("msgSentBadge");
+
+    if (!data?.length) {
+      const empty = `<div class="activity-empty"><div class="ae-icon">✉️</div>No emails sent yet.</div>`;
+      if (dashContainer) dashContainer.innerHTML = empty;
+      if (sentContainer) sentContainer.innerHTML = empty;
+      if (badgeDash) badgeDash.textContent = "0";
+      if (badgeSent) badgeSent.textContent = "0";
+      return;
+    }
+
+    const shipmentMap = {};
+    cachedUsersWithTracking.forEach(u => { shipmentMap[u.id] = u; });
+
+    const html = data.map(row => {
+      const shipment = shipmentMap[row.shipment_id];
+      const ok = row.status === "sent";
+      return `
+        <div class="message-item">
+          <div class="msg-icon">${ok ? "✅" : "⚠️"}</div>
+          <div class="msg-body">
+            <div class="msg-top">
+              <span class="msg-title">${escapeHtml(shipment?.receiver_name || "Customer")}${shipment?.tracking_no ? " — " + escapeHtml(shipment.tracking_no) : ""}</span>
+              <span class="msg-time">${timeAgo(row.created_at)}</span>
+            </div>
+            <div class="msg-text">To ${escapeHtml(row.to_email || "unknown")}${row.error_text ? " — " + escapeHtml(row.error_text) : ""}</div>
+            <span class="msg-status-pill ${ok ? "sent" : "failed"}">${ok ? "Delivered" : "Failed"}</span>
+            ${!ok ? `<div><button class="resend-btn" data-shipment="${row.shipment_id}" type="button">Resend</button></div>` : ""}
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    if (dashContainer) dashContainer.innerHTML = html;
+    if (sentContainer) sentContainer.innerHTML = html;
+    if (badgeDash) badgeDash.textContent = data.length > 99 ? "99+" : String(data.length);
+    if (badgeSent) badgeSent.textContent = data.length > 99 ? "99+" : String(data.length);
+  } catch (e) {
+    const msg = `<p style="color:#9ca3af;">Email log needs the email_logs table — see the SQL provided in chat.</p>`;
+    if (dashContainer) dashContainer.innerHTML = msg;
+    if (sentContainer) sentContainer.innerHTML = msg;
+  }
+}
+async function loadOverview() {
+  const grid = document.getElementById("overviewStrip");
+  if (!grid) return;
+  if (!cachedUsersWithTracking.length) await loadUsers();
+
+  const total = cachedUsersWithTracking.length;
+  const counts = { Delivered: 0, Shipped: 0, "Preparing Shipment": 0, "Order Placed": 0, Pending: 0 };
+  cachedUsersWithTracking.forEach(u => {
+    const status = u.latestUpdate?.status || "Pending";
+    counts[status] = (counts[status] || 0) + 1;
+  });
+
+  const cards = [
+    { label: "Total Shipments", value: total, accent: "#facc15" },
+    { label: "Delivered", value: counts["Delivered"] || 0, accent: "#4ade80" },
+    { label: "In Transit", value: (counts["Shipped"] || 0) + (counts["Preparing Shipment"] || 0), accent: "#60a5fa" },
+    { label: "Pending", value: counts["Pending"] || 0, accent: "#f87171" }
+  ];
+
+  grid.innerHTML = cards.map(c => `
+    <div class="overview-card" style="--card-accent:${c.accent}">
+      <div class="ov-label">${escapeHtml(c.label)}</div>
+      <div class="ov-num">${c.value}</div>
+    </div>
+  `).join("");
+}
+async function seedActivityLog() {
+  try {
+    const [{ data: tracks }, { data: emails }, { data: logins }] = await Promise.all([
+      supabase.from("tracking_updates").select("*").order("created_at", { ascending: false }).limit(8),
+      supabase.from("email_logs").select("*").order("created_at", { ascending: false }).limit(8),
+      supabase.from("login_activity").select("*").order("created_at", { ascending: false }).limit(5)
+    ]);
+
+    const seeded = [];
+    (tracks || []).forEach(row => seeded.push({
+      type: "tracking",
+      titleHtml: `Tracking set to <b>${escapeHtml(row.status || "Pending")}</b>${row.location ? " — " + escapeHtml(row.location) : ""}`,
+      meta: "", createdAt: row.created_at
+    }));
+    (emails || []).forEach(row => {
+      const ok = row.status === "sent";
+      seeded.push({
+        type: ok ? "email_sent" : "email_failed",
+        titleHtml: `Notification email ${ok ? "sent to" : "failed for"} <b>${escapeHtml(row.to_email || "customer")}</b>`,
+        meta: "", createdAt: row.created_at
+      });
+    });
+    (logins || []).forEach(row => seeded.push({
+      type: "login",
+      titleHtml: `Admin sign-in from <b>${escapeHtml(row.country || "unknown location")}</b>`,
+      meta: row.ip_address || "", createdAt: row.created_at
+    }));
+
+    seeded.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    seeded.slice(0, MAX_ACTIVITY).forEach(s => {
+      activityLog.push({ id: `${s.createdAt}-${Math.random().toString(36).slice(2, 7)}`, ...s });
+    });
+    unreadCount = 0; // history isn't "unread" — only new live events count
+    renderActivityViews();
+  } catch (e) {
+    console.warn("Activity seed skipped (one or more log tables may not exist yet):", e);
+  }
+}
 let cachedUsersWithTracking = [];
 let lastSyncAt = null;
 
@@ -1057,7 +1876,7 @@ async function loadUsers() {
   const container = document.getElementById("userList");
   if (!container) return;
 
-  container.innerHTML = `<p style="color:#9ca3af;">Loading...</p>`;
+  container.innerHTML = renderSkeletonList(3);
 
   const { data: users, error } = await supabase
     .from("user_info")
@@ -1067,7 +1886,8 @@ async function loadUsers() {
   if (error) return container.innerHTML = `<p style="color:#ef4444;">${escapeHtml(error.message)}</p>`;
   if (!users?.length) {
     cachedUsersWithTracking = [];
-    return container.innerHTML = `<p style="color:#9ca3af;">No records found.</p>`;
+    loadOverview();
+    return container.innerHTML = `<div class="activity-empty"><div class="ae-icon">📦</div>No shipments yet — new ones will appear here the moment they're created.</div>`;
   }
 
   const usersWithTracking = await Promise.all(
@@ -1084,6 +1904,7 @@ async function loadUsers() {
 
   cachedUsersWithTracking = usersWithTracking;
   lastSyncAt = new Date();
+  loadOverview();
 
   container.innerHTML = usersWithTracking.map(user => `
     <div class="user-card" data-id="${user.id}" data-tracking="${escapeHtml(user.tracking_no || "")}">
@@ -1099,15 +1920,11 @@ async function loadUsers() {
     </div>
   `).join("");
 }
-
-/* =====================
-   LOAD TRACKING PANEL
-===================== */
 async function loadTrackingPanel() {
   const container = document.getElementById("trackingList");
   if (!container) return;
 
-  container.innerHTML = `<p style="color:#9ca3af;">Loading tracking info...</p>`;
+  container.innerHTML = renderSkeletonList(3);
 
   const { data: users, error } = await supabase
     .from("user_info")
@@ -1115,7 +1932,7 @@ async function loadTrackingPanel() {
     .order("created_at", { ascending: false });
 
   if (error) return container.innerHTML = `<p style="color:#ef4444;">${escapeHtml(error.message)}</p>`;
-  if (!users?.length) return container.innerHTML = `<p style="color:#9ca3af;">No records found.</p>`;
+  if (!users?.length) return container.innerHTML = `<div class="activity-empty"><div class="ae-icon">🚚</div>Nothing to track yet.</div>`;
 
   const usersWithTracking = await Promise.all(
     users.map(async user => {
@@ -1141,10 +1958,6 @@ async function loadTrackingPanel() {
     `;
   }).join("");
 }
-
-/* =====================
-   MODAL OPEN / CLOSE (shared by both modals)
-===================== */
 const editModal = document.getElementById("modalContainer");
 const trackingModal = document.getElementById("trackingModal");
 const modalOverlay = document.getElementById("modalOverlay");
@@ -1167,13 +1980,21 @@ document.getElementById("modalCancelBtn").onclick = closeModal;
 document.getElementById("closeTrackingModal").onclick = closeModal;
 document.getElementById("cancelTracking").onclick = closeModal;
 modalOverlay.onclick = closeModal;
-
-/* =====================
-   CARD CLICKS (edit / tracking / delete)
-===================== */
 document.addEventListener("click", async e => {
-  // Delete button
-  const deleteBtn = e.target.closest(".delete-btn");
+  const resendBtn = e.target.closest(".resend-btn");
+  if (resendBtn) {
+    e.stopPropagation();
+    resendBtn.disabled = true;
+    resendBtn.textContent = "Resending…";
+    const shipmentId = resendBtn.dataset.shipment;
+    const { data: shipment } = await supabase.from("user_info").select("*").eq("id", shipmentId).single();
+    const { data: lastTrack } = await supabase
+      .from("tracking_updates").select("*").eq("shipment_id", shipmentId)
+      .order("created_at", { ascending: false }).limit(1);
+    if (shipment) await sendTrackingEmail(shipment, lastTrack?.[0] || {});
+    loadEmailLogs();
+    return;
+  }  const deleteBtn = e.target.closest(".delete-btn");
   if (deleteBtn) {
     e.stopPropagation();
     const id = deleteBtn.dataset.id;
@@ -1183,20 +2004,14 @@ document.addEventListener("click", async e => {
     loadUsers();
     loadTrackingPanel();
     return;
-  }
-
-  // Open tracking modal
-  const trackBtn = e.target.closest(".openTrackingBtn");
+  }  const trackBtn = e.target.closest(".openTrackingBtn");
   if (trackBtn) {
     e.stopPropagation();
     document.getElementById("trackingForm").reset();
     document.getElementById("trackingShipmentId").value = trackBtn.dataset.id;
     openModal(trackingModal);
     return;
-  }
-
-  // Open edit shipment modal (dashboard card click)
-  const card = e.target.closest(".user-card");
+  }  const card = e.target.closest(".user-card");
   if (card) {
     const id = card.dataset.id;
     const { data, error } = await supabase.from("user_info").select("*").eq("id", id).single();
@@ -1212,10 +2027,6 @@ document.addEventListener("click", async e => {
     openModal(editModal);
   }
 });
-
-/* =====================
-   SAVE EDITED SHIPMENT
-===================== */
 document.getElementById("editForm").addEventListener("submit", async e => {
   e.preventDefault();
   const form = e.target;
@@ -1234,10 +2045,6 @@ document.getElementById("editForm").addEventListener("submit", async e => {
   loadUsers();
   loadTrackingPanel();
 });
-
-/* =====================
-   EMAIL NOTIFICATION
-===================== */
 async function sendTrackingEmail(shipment, update) {
   if (!shipment.email) return; // nothing to send to
 
@@ -1256,16 +2063,11 @@ async function sendTrackingEmail(shipment, update) {
     await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
     await logEmail(shipment.id, shipment.email, "sent", null);
   } catch (err) {
-    // Don't block the workflow on an email failure — the tracking
-    // update itself already saved successfully.
     console.error("EmailJS send failed:", err);
     await logEmail(shipment.id, shipment.email, "failed", err?.text || err?.message || "Unknown error");
     alert("Tracking saved, but the notification email failed to send.");
   }
 }
-
-// Requires an `email_logs` table — see the SQL provided separately.
-// Fails silently if the table doesn't exist yet, so it never blocks email sending.
 async function logEmail(shipmentId, toEmail, status, errorText) {
   try {
     await supabase.from("email_logs").insert([{
@@ -1279,10 +2081,6 @@ async function logEmail(shipmentId, toEmail, status, errorText) {
     console.warn("email_logs insert skipped (table may not exist yet):", e);
   }
 }
-
-/* =====================
-   SAVE TRACKING UPDATE
-===================== */
 document.getElementById("trackingForm").addEventListener("submit", async e => {
   e.preventDefault();
 
@@ -1318,10 +2116,6 @@ document.getElementById("trackingForm").addEventListener("submit", async e => {
   loadTrackingPanel();
   loadUsers();
 });
-
-/* =====================
-   SETTINGS: PROFILE
-===================== */
 async function loadProfile() {
   const { data: { user } } = await supabase.auth.getUser();
   const emailEl = document.getElementById("profileEmail");
@@ -1335,12 +2129,6 @@ async function loadProfile() {
   createdEl.textContent = user.created_at ? new Date(user.created_at).toLocaleString() : "-";
   document.getElementById("sessionEmail").textContent = user.email ? `(${user.email})` : "";
 }
-
-/* =====================
-   SETTINGS: CHANGE PASSWORD
-   Verifies the current password by re-authenticating, then updates it.
-   Requires the admin to be signed in via Supabase Auth email/password.
-===================== */
 document.getElementById("passwordForm").addEventListener("submit", async e => {
   e.preventDefault();
   const msg = document.getElementById("passwordMsg");
@@ -1368,10 +2156,7 @@ document.getElementById("passwordForm").addEventListener("submit", async e => {
     msg.textContent = "You must be signed in via Supabase Auth to change your password.";
     msg.className = "form-msg error";
     return;
-  }
-
-  // Re-authenticate with the current password to verify it before changing anything
-  const { error: reauthError } = await supabase.auth.signInWithPassword({
+  }  const { error: reauthError } = await supabase.auth.signInWithPassword({
     email: user.email,
     password: current
   });
@@ -1392,13 +2177,6 @@ document.getElementById("passwordForm").addEventListener("submit", async e => {
   msg.className = "form-msg success";
   form.reset();
 });
-
-/* =====================
-   SETTINGS: LOGIN ACTIVITY
-   Requires a `login_activity` table (SQL provided separately).
-   Records a snapshot for the *current* session on load, and lists past entries.
-   For full accuracy, call recordLoginActivity() from your actual login page too.
-===================== */
 async function recordLoginActivity() {
   try {
     const { data: { user } } = await supabase.auth.getUser();
@@ -1452,10 +2230,6 @@ async function loadLoginActivity() {
     container.innerHTML = `<p style="color:#9ca3af;">Login activity needs a login_activity table — see the SQL provided in chat.</p>`;
   }
 }
-
-/* =====================
-   SETTINGS: SECURITY SCAN
-===================== */
 async function runSecurityScan() {
   const list = document.getElementById("securityScanList");
   const checks = [];
@@ -1491,10 +2265,6 @@ async function runSecurityScan() {
 
   document.getElementById("securityScanTime").textContent = "Last scan: " + new Date().toLocaleString();
 }
-
-/* =====================
-   SETTINGS: SESSIONS
-===================== */
 document.getElementById("logoutCurrentBtn").onclick = async () => {
   await supabase.auth.signOut();
   window.location.href = "logout.html";
@@ -1508,10 +2278,6 @@ document.getElementById("logoutAllBtn").onclick = () => {
     "for the user, then have this button call that function instead."
   );
 };
-
-/* =====================
-   SETTINGS: 2FA (Supabase Auth MFA — genuinely functional)
-===================== */
 async function refreshMfaStatus() {
   const { data, error } = await supabase.auth.mfa.listFactors();
   const statusEl = document.getElementById("mfaStatus");
@@ -1569,10 +2335,6 @@ document.getElementById("mfaVerifyBtn").onclick = async () => {
   alert("Two-factor authentication enabled.");
   await refreshMfaStatus();
 };
-
-/* =====================
-   SETTINGS: AUTO LOGOUT
-===================== */
 let autoLogoutTimer = null;
 function armAutoLogout(minutes) {
   clearTimeout(autoLogoutTimer);
@@ -1596,10 +2358,6 @@ function initAutoLogout() {
     }, { passive: true })
   );
 }
-
-/* =====================
-   SETTINGS: DATABASE STATISTICS
-===================== */
 async function loadStats() {
   const grid = document.getElementById("statGrid");
   if (!cachedUsersWithTracking.length) await loadUsers();
@@ -1625,10 +2383,6 @@ async function loadStats() {
     </div>
   `).join("");
 }
-
-/* =====================
-   SETTINGS: BACKUP / RESTORE
-===================== */
 function downloadFile(filename, content, mime) {
   const blob = new Blob([content], { type: mime });
   const url = URL.createObjectURL(blob);
@@ -1692,10 +2446,6 @@ document.getElementById("restoreBtn").onclick = async () => {
     alert("Restore failed: " + err.message);
   }
 };
-
-/* =====================
-   SETTINGS: CLEAR LOGS
-===================== */
 document.querySelectorAll(".clear-log-btn").forEach(btn => {
   btn.onclick = async () => {
     const table = btn.dataset.table;
@@ -1708,10 +2458,6 @@ document.querySelectorAll(".clear-log-btn").forEach(btn => {
     loadStats();
   };
 });
-
-/* =====================
-   SETTINGS: API CONFIGURATION
-===================== */
 async function loadApiStatus() {
   document.getElementById("apiUrl").textContent = SUPABASE_URL;
   await testConnection();
@@ -1773,13 +2519,7 @@ document.getElementById("sendTestEmailBtn").onclick = async () => {
   } catch (err) {
     alert("Test email failed: " + (err?.text || err?.message || "Unknown error"));
   }
-};
-
-/* =====================
-   SETTINGS: PREFERENCES (Notifications + Theme)
-   Persisted to a single-row `admin_settings` table (SQL provided separately).
-===================== */
-async function loadPreferences() {
+};async function loadPreferences() {
   try {
     const { data, error } = await supabase.from("admin_settings").select("*").limit(1).single();
     if (error || !data) return; // fall back to the HTML defaults already checked
@@ -1799,9 +2539,7 @@ async function loadPreferences() {
   } catch (e) {
     console.warn("admin_settings load skipped (table may not exist yet):", e);
   }
-}
-
-document.getElementById("savePrefsBtn").onclick = async () => {
+}document.getElementById("savePrefsBtn").onclick = async () => {
   const prefs = {
     notify_email: document.getElementById("notifyEmail").checked,
     notify_shipment: document.getElementById("notifyShipment").checked,
@@ -1823,7 +2561,6 @@ document.getElementById("savePrefsBtn").onclick = async () => {
     alert("Could not save preferences — has the admin_settings table been created? See the SQL provided in chat.");
   }
 };
-
 function applyTheme(theme) {
   const resolved = theme === "system"
     ? (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark")
@@ -1835,10 +2572,6 @@ function applyTheme(theme) {
 document.querySelectorAll('input[name="theme"]').forEach(r => {
   r.addEventListener("change", e => applyTheme(e.target.value));
 });
-
-/* =====================
-   SETTINGS: DANGER ZONE
-===================== */
 document.querySelectorAll("[data-action]").forEach(btn => {
   btn.onclick = async () => {
     const action = btn.dataset.action;
@@ -1866,10 +2599,6 @@ document.querySelectorAll("[data-action]").forEach(btn => {
     }
   };
 });
-
-/* =====================
-   SETTINGS: INIT
-===================== */
 async function initSettings() {
   loadProfile();
   loadEmailStatus();
@@ -1883,10 +2612,6 @@ async function initSettings() {
 
   document.getElementById("rerunScanBtn").onclick = runSecurityScan;
 }
-
-/* =====================
-   NAV & SIDEBAR
-===================== */
 document.addEventListener("DOMContentLoaded", () => {
   const menuToggle = document.querySelector(".menu-toggle");
   const nav = document.querySelector("nav");
@@ -1935,7 +2660,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadUsers();
   loadTrackingPanel();
+  loadEmailLogs();
   initSettings();
+  seedActivityLog().then(initRealtime);
 });
 </script>
 
