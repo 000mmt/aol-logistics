@@ -1163,7 +1163,7 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
       chat_status_bot: "AI Assistant",
       chat_status_admin: "Agent connected",
       chat_input_placeholder: "Type a message...",
-      chat_greeting: "Hi! I'm the AOL virtual assistant. Ask me about tracking, quotes, or our services — a human agent can jump in anytime.",
+      chat_greeting: "Hi! I'm the AOL virtual assistant 🚚\n\nHere's what I can help with:\n• 📦 Tracking — send me your tracking number\n• 💰 Quotes — Container / RoRo / Special Cargo\n• 🌍 Services — what we ship and how\n• 📞 Contact — phone, email, or a human agent\n\nWhat can I help you with?",
       chat_send_error: "Couldn't send that. Please try again."
     },
     ko: {
@@ -1236,7 +1236,7 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
       chat_status_bot: "AI 어시스턴트",
       chat_status_admin: "상담원 연결됨",
       chat_input_placeholder: "메시지를 입력하세요...",
-      chat_greeting: "안녕하세요! AOL 가상 상담원입니다. 배송 추적, 견적, 서비스 관련 문의를 남겨주세요 — 필요하면 상담원이 직접 연결됩니다.",
+      chat_greeting: "안녕하세요! AOL 물류 가상 상담원입니다 🚚\n\n다음과 같이 도와드릴 수 있어요:\n• 📦 배송 추적 — 운송장 번호를 알려주세요\n• 💰 견적 요청 — 컨테이너 / RoRo / 특수 화물\n• 🌍 서비스 안내 — 무엇을, 어떻게 운송하는지\n• 📞 연락처 — 전화, 이메일, 상담원 연결\n\n무엇을 도와드릴까요?",
       chat_send_error: "전송하지 못했습니다. 다시 시도해 주세요."
     }
   };
@@ -1297,7 +1297,7 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
       statusBot: "AI 어시스턴트",
       statusAdmin: "상담원 연결됨",
       placeholder: "메시지를 입력하세요...",
-      greeting: "안녕하세요! AOL 가상 상담원입니다. 배송 추적, 견적, 서비스 관련 문의를 남겨주세요 — 필요하면 상담원이 직접 연결됩니다.",
+      greeting: "안녕하세요! AOL 물류 가상 상담원입니다 🚚\n\n다음과 같이 도와드릴 수 있어요:\n• 📦 배송 추적 — 운송장 번호를 알려주세요\n• 💰 견적 요청 — 컨테이너 / RoRo / 특수 화물\n• 🌍 서비스 안내 — 무엇을, 어떻게 운송하는지\n• 📞 연락처 — 전화, 이메일, 상담원 연결\n\n무엇을 도와드릴까요?",
       sendError: "전송하지 못했습니다. 다시 시도해 주세요.",
       you: "나", bot: "AI 어시스턴트", admin: "상담원"
     },
@@ -1306,7 +1306,7 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
       statusBot: "AI Assistant",
       statusAdmin: "Agent connected",
       placeholder: "Type a message...",
-      greeting: "Hi! I'm the AOL virtual assistant. Ask me about tracking, quotes, or our services — a human agent can jump in anytime.",
+      greeting: "Hi! I'm the AOL virtual assistant 🚚\n\nHere's what I can help with:\n• 📦 Tracking — send me your tracking number\n• 💰 Quotes — Container / RoRo / Special Cargo\n• 🌍 Services — what we ship and how\n• 📞 Contact — phone, email, or a human agent\n\nWhat can I help you with?",
       sendError: "Couldn't send that. Please try again.",
       you: "You", bot: "AI Assistant", admin: "Agent"
     }
@@ -1368,6 +1368,57 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
   function hideTyping() {
     const t = document.getElementById('chatTypingIndicator');
     if (t) t.remove();
+  }
+
+  // ---------------------------------------------------------------
+  // BOT REPLY ENGINE
+  // Generates and inserts the assistant's reply directly, instead of
+  // relying on a Supabase Edge Function ("chat-reply") that may not
+  // exist yet. That was the root cause of the bot never answering:
+  // supabase.functions.invoke() was failing silently (only logged
+  // to console.warn), so no "bot" row was ever written to
+  // chat_messages and nothing ever appeared on screen.
+  // If you later deploy a real chat-reply Edge Function backed by an
+  // LLM, swap the body of generateBotReply() for a call to it.
+  // ---------------------------------------------------------------
+  function generateBotReply(rawText, langCode) {
+    const q = rawText.toLowerCase();
+    const isKo = langCode === 'ko';
+    const has = words => words.some(w => q.includes(w));
+
+    if (has(['추적', '운송장', 'tracking', 'track', '배송 상태', '어디'])) {
+      return isKo
+        ? '배송 추적은 간단해요 📦\n\n상단 메뉴의 "배송 추적"을 클릭하시거나, 운송장 번호를 여기에 보내주시면 상태를 확인해 드릴게요. 운송장 번호가 있으신가요?'
+        : "Tracking is easy 📦\n\nClick \"Track Shipment\" in the menu, or just send me your tracking number here and I'll help you check its status. Do you have one handy?";
+    }
+
+    if (has(['견적', '가격', '요금', '비용', 'quote', 'price', 'cost', 'how much'])) {
+      return isKo
+        ? '견적 문의 감사합니다 💰\n\n컨테이너 운송, RoRo(차량/중장비), 특수 화물 중 어떤 서비스가 필요하신가요? 출발지, 도착지, 화물 정보를 알려주시면 상담원이 정확한 견적을 도와드립니다. 하단 "연락처" 양식으로도 요청하실 수 있어요.'
+        : 'Happy to help with a quote 💰\n\nAre you looking for Container Shipping, RoRo (vehicles/heavy machinery), or Special Cargo? Share your origin, destination, and cargo details and an agent can put together an accurate quote. You can also use the contact form below.';
+    }
+
+    if (has(['서비스', 'service', 'services', '무엇을 하'])) {
+      return isKo
+        ? 'AOL LOGISTICS는 세 가지 핵심 서비스를 제공합니다 🌍\n\n• 컨테이너 운송 — 글로벌 무역 경로 안전 운송\n• RoRo (롤온/롤오프) — 차량 및 중장비 선적\n• 특수 화물 — 대형·긴급 화물 맞춤 솔루션\n\n더 알고 싶은 서비스가 있으신가요?'
+        : 'AOL LOGISTICS offers three core services 🌍\n\n• Container Shipping — secure transport on global trade routes\n• RoRo (Roll-on/Roll-off) — vehicles & heavy machinery\n• Special Cargo — custom solutions for oversized or urgent shipments\n\nWant more detail on any of these?';
+    }
+
+    if (has(['연락처', '전화', '이메일', 'contact', 'phone', 'email', '상담원', 'agent', 'human', '사람'])) {
+      return isKo
+        ? '언제든 연락 주세요 📞\n\n전화: +1 800 173 5507\n이메일: logisticsaol6@gmail.com\n\n지금 상담원과 연결해 드릴까요? 이 채팅창에 계속 메시지를 남겨주시면 상담원이 확인 후 직접 답변드립니다.'
+        : "Here's how to reach us 📞\n\nPhone: +1 800 173 5507\nEmail: logisticsaol6@gmail.com\n\nWant me to loop in a human agent? Keep chatting here and an agent can jump in anytime.";
+    }
+
+    if (has(['안녕', 'hello', 'hi ', 'hey', '반가워']) || q === 'hi') {
+      return isKo
+        ? '안녕하세요! 배송 추적 📦, 견적 요청 💰, 서비스 안내 🌍, 연락처 📞 중 무엇을 도와드릴까요?'
+        : 'Hello! How can I help — tracking 📦, a quote 💰, our services 🌍, or contact info 📞?';
+    }
+
+    return isKo
+      ? '문의 감사합니다! 다음 중 궁금하신 내용이 있으실까요?\n\n• 📦 배송 추적\n• 💰 견적 요청\n• 🌍 서비스 안내\n• 📞 연락처 / 상담원 연결\n\n원하시는 항목을 말씀해 주세요.'
+      : "Thanks for reaching out! I can help with:\n\n• 📦 Tracking\n• 💰 Quotes\n• 🌍 Our services\n• 📞 Contact info / a human agent\n\nJust let me know which one you'd like.";
   }
 
   async function ensureSession() {
@@ -1489,17 +1540,39 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
       if (error) throw error;
       if (inserted) renderedIds.add(inserted.id);
 
+      // Only the bot answers here — if an admin has taken over
+      // (sessionStatus === 'admin'), we stay silent and let the
+      // admin panel's live reply come through the realtime
+      // subscription above instead.
       if (sessionStatus !== 'admin') {
         showTyping();
-        try {
-          await supabase.functions.invoke('chat-reply', {
-            body: { session_id: sessionId, message: text, lang: lang() }
-          });
-        } catch (fnErr) {
-          console.warn('chat-reply function error', fnErr);
-        } finally {
-          setTimeout(hideTyping, 8000);
-        }
+        const replyText = generateBotReply(text, lang());
+
+        setTimeout(async () => {
+          try {
+            const { data: botMsg, error: botErr } = await supabase
+              .from('chat_messages')
+              .insert([{ session_id: sessionId, sender: 'bot', content: replyText }])
+              .select()
+              .single();
+            if (botErr) throw botErr;
+
+            hideTyping();
+            // Render immediately rather than waiting on the realtime
+            // subscription, in case Realtime isn't enabled for
+            // chat_messages in this Supabase project yet.
+            if (botMsg && !renderedIds.has(botMsg.id)) {
+              renderedIds.add(botMsg.id);
+              addBubble('bot', botMsg.content);
+              scrollToBottom();
+            }
+          } catch (botInsertErr) {
+            console.error('bot reply insert failed', botInsertErr);
+            hideTyping();
+            addBubble('bot', cc().sendError);
+            scrollToBottom();
+          }
+        }, 600 + Math.random() * 500);
       }
     } catch (err) {
       console.error('send error', err);
