@@ -112,6 +112,14 @@ header {
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0; /* lets this flex item actually shrink below its text's natural width */
+  flex-shrink: 1;
+  overflow: hidden;
+}
+
+.header-brand h1 {
+  overflow: hidden;
+  text-overflow: ellipsis;
   min-width: 0;
 }
 
@@ -148,6 +156,7 @@ header h1 span {
   display: flex;
   align-items: center;
   gap: 14px;
+  flex-shrink: 0; /* controls (live pill, bell, menu button) must never get squeezed out */
 }
 
 /* Live connection pill */
@@ -431,6 +440,7 @@ nav a.active {
 
 .card-header {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: start;
   gap: 12px;
@@ -727,6 +737,7 @@ nav a.active {
 
 .danger-card {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   gap: 16px;
@@ -1122,15 +1133,72 @@ footer {
   header h1 { font-size: 1rem; }
   header h1 span { display: none; }
   .live-pill span.live-label { display: none; }
-}@media (max-width: 1024px) and (min-width: 769px) {
+}
+
+/* =========================
+   TABLET BREAKPOINT
+   ========================= */
+@media (max-width: 1024px) and (min-width: 769px) {
   .dashboard-sidebar { width: 38%; }
   .dashboard-content { width: 62%; }
-  .notif-dropdown { width: 300px; }}@media (max-width: 480px) {
+  .notif-dropdown { width: 300px; }
+}
+
+@media (max-width: 480px) {
   .overview-strip { grid-template-columns: repeat(2, 1fr); }
   .user-grid { grid-template-columns: 1fr; }
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
   .modal-body input, .modal-body select, .modal-body textarea { font-size: 16px; } /* avoid iOS zoom-on-focus */
-}</style></head><body><header>  <div class="header-brand">    <div class="brand-mark">AL</div>  <h1>AOL Logistics<span>Admin Panel</span></h1>  </div>  <div class="header-right">    <div class="live-pill" id="livePill">
+}
+
+/* =========================
+   EXTRA PHONE RESPONSIVENESS
+   ========================= */
+@media (max-width: 768px) {
+  /* Bigger, easier-to-hit tap targets on touch screens */
+  .menu-toggle { padding: 6px; }
+  .notif-bell { width: 40px; height: 40px; }
+  .sidebar-toggle { padding: 10px 14px; }
+
+  /* Long emails/notes/names shouldn't force horizontal overflow on narrow screens */
+  .user-card p,
+  .tracking-card p,
+  .message-item .msg-text,
+  .card-header h3,
+  .card-header small {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* Full-width danger button once the card wraps to two rows */
+  .danger-card { flex-direction: column; align-items: stretch; }
+  .danger-btn { width: 100%; }
+
+  /* Settings action rows: let buttons/links wrap instead of overflowing */
+  .settings-card { overflow-x: hidden; }
+}
+
+@media (max-width: 380px) {
+  header { padding: 10px 14px; gap: 8px; }
+  .header-brand h1 { font-size: 0.95rem; max-width: 34vw; }
+  .header-brand .brand-mark { width: 28px; height: 28px; font-size: 0.8rem; }
+  .header-right { gap: 8px; }
+  .live-pill { padding: 4px 8px; }
+  .notif-bell { width: 36px; height: 36px; font-size: 0.9rem; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-brand">
+    <div class="brand-mark">AL</div>
+    <h1>AOL Logistics<span>Admin Panel</span></h1>
+  </div>
+
+  <div class="header-right">
+    <div class="live-pill" id="livePill">
       <span class="live-dot"></span>
       <span class="live-label" id="liveLabel">Connecting…</span>
     </div>
@@ -1158,8 +1226,11 @@ footer {
     </nav>
   </div>
 </header>
+
 <div class="sidebar-toggle" aria-label="Open menu">☰ Menu</div>
 <div class="overlay"></div>
+
+<!-- DASHBOARD -->
 <section id="dashboard" class="content-section active">
   <div class="dashboard-layout">
     <aside class="dashboard-sidebar">
@@ -1184,6 +1255,8 @@ footer {
            <div class="overview-card skeleton skeleton-card"></div>
            <div class="overview-card skeleton skeleton-card"></div>
          </div>
+
+          <!-- USERS CARD CONTAINER -->
          <div id="userList" class="user-grid"></div>
        </div>
 
@@ -1222,6 +1295,8 @@ footer {
     </main>
   </div>
 </section>
+
+<!-- MESSAGES -->
 <section id="messages" class="content-section">
   <div class="dashboard-layout">
     <aside class="dashboard-sidebar">
@@ -1244,6 +1319,8 @@ footer {
     </main>
   </div>
 </section>
+
+<!-- SETTINGS -->
 <section id="settings" class="content-section">
   <div class="dashboard-layout">
     <aside class="dashboard-sidebar">
@@ -1271,6 +1348,8 @@ footer {
           </p>
         </div>
       </div>
+
+      <!-- SECURITY -->
       <div id="set-security" class="panel">
         <h2>Security</h2>
 
@@ -1300,6 +1379,8 @@ footer {
           <button id="rerunScanBtn" class="btn-cancel" type="button" style="margin-top:6px;">Re-run Scan</button>
         </div>
       </div>
+
+      <!-- SESSIONS & 2FA -->
       <div id="set-sessions" class="panel">
         <h2>Sessions &amp; Two-Factor Authentication</h2>
 
@@ -1415,6 +1496,7 @@ footer {
         </div>
       </div>
 
+      <!-- DANGER ZONE -->
       <div id="set-danger" class="panel">
         <h2 style="color:#ef4444;">Danger Zone</h2>
         <p style="color:#9ca3af; margin-bottom:16px; font-size:0.85rem;">
@@ -1458,8 +1540,10 @@ footer {
   </div>
 </section>
 
+<!-- Overlay -->
 <div id="modalOverlay" class="modal-overlay"></div>
 
+<!-- EDIT SHIPMENT MODAL -->
 <div id="modalContainer" class="modal-container">
   <div class="modal-header">
     <h2 id="modalTitle">Edit Shipment</h2>
@@ -1480,6 +1564,7 @@ footer {
         <option>Delivered</option>
       </select>
 
+      <!-- SENDER -->
       <h3>Sender</h3>
       <input name="sender_name" placeholder="Sender Name" />
       <input name="sender_address" placeholder="Sender Address" />
@@ -1557,15 +1642,58 @@ footer {
     <div class="modal-footer">
       <button type="button" class="btn-cancel" id="cancelTracking">Cancel</button>
       <button type="submit" class="btn-submit">Save Update</button>
-    </div>  </form></div><footer><p data-key="footerText">© 2025 AOL Logistics. All rights reserved.</p></footer><script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script><script type="module">import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";const SUPABASE_URL = "https://rtgvylkbndrmwntaqkfx.supabase.co";const SUPABASE_KEY = "sb_publishable_SFI-gjeDtTrOGpLp1_BTtg_hXy6wPSB";const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-const EMAILJS_PUBLIC_KEY = "PlzHImKJLSGxIfYy0";const EMAILJS_SERVICE_ID = "service_wznyhjn";const EMAILJS_TEMPLATE_ID = "template_i9gwyek";
+    </div>
+  </form>
+</div>
+
+<!-- Footer -->
+<footer>
+  <p data-key="footerText">© 2025 AOL Logistics. All rights reserved.</p>
+</footer>
+
+<!-- EmailJS SDK (REQUIRED) -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<!-- Supabase SDK (REQUIRED) -->
+<script type="module">
+/* =====================
+   SUPABASE CONFIG
+===================== */
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const SUPABASE_URL = "https://rtgvylkbndrmwntaqkfx.supabase.co";
+const SUPABASE_KEY = "sb_publishable_SFI-gjeDtTrOGpLp1_BTtg_hXy6wPSB";
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* =====================
+   EMAILJS CONFIG
+===================== */
+// Get this from EmailJS → Account → API Keys ("Public Key")
+const EMAILJS_PUBLIC_KEY = "PlzHImKJLSGxIfYy0";
+const EMAILJS_SERVICE_ID = "service_wznyhjn";
+// Create the template using email-template.html (provided separately),
+// then paste the Template ID it gives you here.
+const EMAILJS_TEMPLATE_ID = "template_i9gwyek";
 
 emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
+/* =====================
+   HELPERS
+===================== */
 function escapeHtml(str = "") {
   return String(str).replace(/[&<>"']/g, m =>
     ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" }[m])
   );
 }
+
+/* =====================
+   ACTIVITY ENGINE (real-time)
+   Central log fed by Supabase Realtime — powers the notification
+   bell, the Dashboard > Activity tab, and Messages > Notifications.
+   Requires Realtime to be enabled on these tables in Supabase
+   (Database → Replication) — the panel degrades gracefully if not.
+===================== */
 const activityLog = []; // newest first
 const MAX_ACTIVITY = 60;
 let unreadCount = 0;
@@ -1667,6 +1795,7 @@ function renderInboxNotifications() {
   if (badge) badge.textContent = alerts.length > 99 ? "99+" : String(alerts.length);
 }
 
+// Keep "x minutes ago" labels fresh without forcing a data refetch
 setInterval(renderActivityViews, 30000);
 
 document.getElementById("notifBellBtn").onclick = e => {
@@ -1688,6 +1817,10 @@ document.getElementById("activityFilterBar")?.addEventListener("click", e => {
   document.querySelectorAll(".activity-filter").forEach(b => b.classList.toggle("active", b === btn));
   renderActivityViews();
 });
+
+/* =====================
+   LIVE CONNECTION STATUS
+===================== */
 function setLiveStatus(state) {
   const pill = document.getElementById("livePill");
   const label = document.getElementById("liveLabel");
@@ -1703,6 +1836,12 @@ function setLiveStatus(state) {
     label.textContent = "Connecting…";
   }
 }
+
+/* =====================
+   REAL-TIME SUBSCRIPTIONS
+   One channel, five tables. Every insert/update/delete refreshes
+   the relevant panel AND drops an entry into the activity engine.
+===================== */
 function initRealtime() {
   return supabase
     .channel("admin-panel-activity")
@@ -1747,6 +1886,10 @@ function initRealtime() {
 function renderSkeletonList(n = 3) {
   return Array.from({ length: n }).map(() => `<div class="skeleton skeleton-card"></div>`).join("");
 }
+
+/* =====================
+   EMAIL LOG (Dashboard > Email + Messages > Sent)
+===================== */
 async function loadEmailLogs() {
   const dashContainer = document.getElementById("dashEmailList");
   const sentContainer = document.getElementById("msgSentList");
@@ -1805,6 +1948,10 @@ async function loadEmailLogs() {
     if (sentContainer) sentContainer.innerHTML = msg;
   }
 }
+
+/* =====================
+   DASHBOARD OVERVIEW STRIP
+===================== */
 async function loadOverview() {
   const grid = document.getElementById("overviewStrip");
   if (!grid) return;
@@ -1831,6 +1978,12 @@ async function loadOverview() {
     </div>
   `).join("");
 }
+
+/* =====================
+   SEED ACTIVITY LOG FROM HISTORY
+   Runs once on load so the feed isn't empty until the next live
+   event — then Realtime takes over for anything new.
+===================== */
 async function seedActivityLog() {
   try {
     const [{ data: tracks }, { data: emails }, { data: logins }] = await Promise.all([
@@ -1869,6 +2022,10 @@ async function seedActivityLog() {
     console.warn("Activity seed skipped (one or more log tables may not exist yet):", e);
   }
 }
+
+/* =====================
+   LOAD USERS (dashboard cards)
+===================== */
 let cachedUsersWithTracking = [];
 let lastSyncAt = null;
 
@@ -1920,6 +2077,10 @@ async function loadUsers() {
     </div>
   `).join("");
 }
+
+/* =====================
+   LOAD TRACKING PANEL
+===================== */
 async function loadTrackingPanel() {
   const container = document.getElementById("trackingList");
   if (!container) return;
@@ -1958,6 +2119,10 @@ async function loadTrackingPanel() {
     `;
   }).join("");
 }
+
+/* =====================
+   MODAL OPEN / CLOSE (shared by both modals)
+===================== */
 const editModal = document.getElementById("modalContainer");
 const trackingModal = document.getElementById("trackingModal");
 const modalOverlay = document.getElementById("modalOverlay");
@@ -1980,7 +2145,12 @@ document.getElementById("modalCancelBtn").onclick = closeModal;
 document.getElementById("closeTrackingModal").onclick = closeModal;
 document.getElementById("cancelTracking").onclick = closeModal;
 modalOverlay.onclick = closeModal;
+
+/* =====================
+   CARD CLICKS (edit / tracking / delete)
+===================== */
 document.addEventListener("click", async e => {
+  // Resend a failed notification email
   const resendBtn = e.target.closest(".resend-btn");
   if (resendBtn) {
     e.stopPropagation();
@@ -1994,7 +2164,10 @@ document.addEventListener("click", async e => {
     if (shipment) await sendTrackingEmail(shipment, lastTrack?.[0] || {});
     loadEmailLogs();
     return;
-  }  const deleteBtn = e.target.closest(".delete-btn");
+  }
+
+  // Delete button
+  const deleteBtn = e.target.closest(".delete-btn");
   if (deleteBtn) {
     e.stopPropagation();
     const id = deleteBtn.dataset.id;
@@ -2004,14 +2177,20 @@ document.addEventListener("click", async e => {
     loadUsers();
     loadTrackingPanel();
     return;
-  }  const trackBtn = e.target.closest(".openTrackingBtn");
+  }
+
+  // Open tracking modal
+  const trackBtn = e.target.closest(".openTrackingBtn");
   if (trackBtn) {
     e.stopPropagation();
     document.getElementById("trackingForm").reset();
     document.getElementById("trackingShipmentId").value = trackBtn.dataset.id;
     openModal(trackingModal);
     return;
-  }  const card = e.target.closest(".user-card");
+  }
+
+  // Open edit shipment modal (dashboard card click)
+  const card = e.target.closest(".user-card");
   if (card) {
     const id = card.dataset.id;
     const { data, error } = await supabase.from("user_info").select("*").eq("id", id).single();
@@ -2027,6 +2206,10 @@ document.addEventListener("click", async e => {
     openModal(editModal);
   }
 });
+
+/* =====================
+   SAVE EDITED SHIPMENT
+===================== */
 document.getElementById("editForm").addEventListener("submit", async e => {
   e.preventDefault();
   const form = e.target;
@@ -2045,6 +2228,10 @@ document.getElementById("editForm").addEventListener("submit", async e => {
   loadUsers();
   loadTrackingPanel();
 });
+
+/* =====================
+   EMAIL NOTIFICATION
+===================== */
 async function sendTrackingEmail(shipment, update) {
   if (!shipment.email) return; // nothing to send to
 
@@ -2063,11 +2250,16 @@ async function sendTrackingEmail(shipment, update) {
     await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
     await logEmail(shipment.id, shipment.email, "sent", null);
   } catch (err) {
+    // Don't block the workflow on an email failure — the tracking
+    // update itself already saved successfully.
     console.error("EmailJS send failed:", err);
     await logEmail(shipment.id, shipment.email, "failed", err?.text || err?.message || "Unknown error");
     alert("Tracking saved, but the notification email failed to send.");
   }
 }
+
+// Requires an `email_logs` table — see the SQL provided separately.
+// Fails silently if the table doesn't exist yet, so it never blocks email sending.
 async function logEmail(shipmentId, toEmail, status, errorText) {
   try {
     await supabase.from("email_logs").insert([{
@@ -2081,6 +2273,10 @@ async function logEmail(shipmentId, toEmail, status, errorText) {
     console.warn("email_logs insert skipped (table may not exist yet):", e);
   }
 }
+
+/* =====================
+   SAVE TRACKING UPDATE
+===================== */
 document.getElementById("trackingForm").addEventListener("submit", async e => {
   e.preventDefault();
 
@@ -2116,6 +2312,10 @@ document.getElementById("trackingForm").addEventListener("submit", async e => {
   loadTrackingPanel();
   loadUsers();
 });
+
+/* =====================
+   SETTINGS: PROFILE
+===================== */
 async function loadProfile() {
   const { data: { user } } = await supabase.auth.getUser();
   const emailEl = document.getElementById("profileEmail");
@@ -2129,6 +2329,12 @@ async function loadProfile() {
   createdEl.textContent = user.created_at ? new Date(user.created_at).toLocaleString() : "-";
   document.getElementById("sessionEmail").textContent = user.email ? `(${user.email})` : "";
 }
+
+/* =====================
+   SETTINGS: CHANGE PASSWORD
+   Verifies the current password by re-authenticating, then updates it.
+   Requires the admin to be signed in via Supabase Auth email/password.
+===================== */
 document.getElementById("passwordForm").addEventListener("submit", async e => {
   e.preventDefault();
   const msg = document.getElementById("passwordMsg");
@@ -2156,7 +2362,10 @@ document.getElementById("passwordForm").addEventListener("submit", async e => {
     msg.textContent = "You must be signed in via Supabase Auth to change your password.";
     msg.className = "form-msg error";
     return;
-  }  const { error: reauthError } = await supabase.auth.signInWithPassword({
+  }
+
+  // Re-authenticate with the current password to verify it before changing anything
+  const { error: reauthError } = await supabase.auth.signInWithPassword({
     email: user.email,
     password: current
   });
@@ -2177,6 +2386,13 @@ document.getElementById("passwordForm").addEventListener("submit", async e => {
   msg.className = "form-msg success";
   form.reset();
 });
+
+/* =====================
+   SETTINGS: LOGIN ACTIVITY
+   Requires a `login_activity` table (SQL provided separately).
+   Records a snapshot for the *current* session on load, and lists past entries.
+   For full accuracy, call recordLoginActivity() from your actual login page too.
+===================== */
 async function recordLoginActivity() {
   try {
     const { data: { user } } = await supabase.auth.getUser();
@@ -2230,6 +2446,10 @@ async function loadLoginActivity() {
     container.innerHTML = `<p style="color:#9ca3af;">Login activity needs a login_activity table — see the SQL provided in chat.</p>`;
   }
 }
+
+/* =====================
+   SETTINGS: SECURITY SCAN
+===================== */
 async function runSecurityScan() {
   const list = document.getElementById("securityScanList");
   const checks = [];
@@ -2265,6 +2485,10 @@ async function runSecurityScan() {
 
   document.getElementById("securityScanTime").textContent = "Last scan: " + new Date().toLocaleString();
 }
+
+/* =====================
+   SETTINGS: SESSIONS
+===================== */
 document.getElementById("logoutCurrentBtn").onclick = async () => {
   await supabase.auth.signOut();
   window.location.href = "logout.html";
@@ -2278,6 +2502,10 @@ document.getElementById("logoutAllBtn").onclick = () => {
     "for the user, then have this button call that function instead."
   );
 };
+
+/* =====================
+   SETTINGS: 2FA (Supabase Auth MFA — genuinely functional)
+===================== */
 async function refreshMfaStatus() {
   const { data, error } = await supabase.auth.mfa.listFactors();
   const statusEl = document.getElementById("mfaStatus");
@@ -2335,6 +2563,10 @@ document.getElementById("mfaVerifyBtn").onclick = async () => {
   alert("Two-factor authentication enabled.");
   await refreshMfaStatus();
 };
+
+/* =====================
+   SETTINGS: AUTO LOGOUT
+===================== */
 let autoLogoutTimer = null;
 function armAutoLogout(minutes) {
   clearTimeout(autoLogoutTimer);
@@ -2358,6 +2590,10 @@ function initAutoLogout() {
     }, { passive: true })
   );
 }
+
+/* =====================
+   SETTINGS: DATABASE STATISTICS
+===================== */
 async function loadStats() {
   const grid = document.getElementById("statGrid");
   if (!cachedUsersWithTracking.length) await loadUsers();
@@ -2383,6 +2619,10 @@ async function loadStats() {
     </div>
   `).join("");
 }
+
+/* =====================
+   SETTINGS: BACKUP / RESTORE
+===================== */
 function downloadFile(filename, content, mime) {
   const blob = new Blob([content], { type: mime });
   const url = URL.createObjectURL(blob);
@@ -2446,6 +2686,10 @@ document.getElementById("restoreBtn").onclick = async () => {
     alert("Restore failed: " + err.message);
   }
 };
+
+/* =====================
+   SETTINGS: CLEAR LOGS
+===================== */
 document.querySelectorAll(".clear-log-btn").forEach(btn => {
   btn.onclick = async () => {
     const table = btn.dataset.table;
@@ -2458,6 +2702,10 @@ document.querySelectorAll(".clear-log-btn").forEach(btn => {
     loadStats();
   };
 });
+
+/* =====================
+   SETTINGS: API CONFIGURATION
+===================== */
 async function loadApiStatus() {
   document.getElementById("apiUrl").textContent = SUPABASE_URL;
   await testConnection();
@@ -2519,7 +2767,13 @@ document.getElementById("sendTestEmailBtn").onclick = async () => {
   } catch (err) {
     alert("Test email failed: " + (err?.text || err?.message || "Unknown error"));
   }
-};async function loadPreferences() {
+};
+
+/* =====================
+   SETTINGS: PREFERENCES (Notifications + Theme)
+   Persisted to a single-row `admin_settings` table (SQL provided separately).
+===================== */
+async function loadPreferences() {
   try {
     const { data, error } = await supabase.from("admin_settings").select("*").limit(1).single();
     if (error || !data) return; // fall back to the HTML defaults already checked
@@ -2539,7 +2793,9 @@ document.getElementById("sendTestEmailBtn").onclick = async () => {
   } catch (e) {
     console.warn("admin_settings load skipped (table may not exist yet):", e);
   }
-}document.getElementById("savePrefsBtn").onclick = async () => {
+}
+
+document.getElementById("savePrefsBtn").onclick = async () => {
   const prefs = {
     notify_email: document.getElementById("notifyEmail").checked,
     notify_shipment: document.getElementById("notifyShipment").checked,
@@ -2561,6 +2817,7 @@ document.getElementById("sendTestEmailBtn").onclick = async () => {
     alert("Could not save preferences — has the admin_settings table been created? See the SQL provided in chat.");
   }
 };
+
 function applyTheme(theme) {
   const resolved = theme === "system"
     ? (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark")
@@ -2572,6 +2829,10 @@ function applyTheme(theme) {
 document.querySelectorAll('input[name="theme"]').forEach(r => {
   r.addEventListener("change", e => applyTheme(e.target.value));
 });
+
+/* =====================
+   SETTINGS: DANGER ZONE
+===================== */
 document.querySelectorAll("[data-action]").forEach(btn => {
   btn.onclick = async () => {
     const action = btn.dataset.action;
@@ -2599,6 +2860,10 @@ document.querySelectorAll("[data-action]").forEach(btn => {
     }
   };
 });
+
+/* =====================
+   SETTINGS: INIT
+===================== */
 async function initSettings() {
   loadProfile();
   loadEmailStatus();
@@ -2612,29 +2877,48 @@ async function initSettings() {
 
   document.getElementById("rerunScanBtn").onclick = runSecurityScan;
 }
+
+/* =====================
+   NAV & SIDEBAR
+===================== */
 document.addEventListener("DOMContentLoaded", () => {
   const menuToggle = document.querySelector(".menu-toggle");
   const nav = document.querySelector("nav");
   const sidebarToggle = document.querySelector(".sidebar-toggle");
   const overlay = document.querySelector(".overlay");
 
-  if (menuToggle) menuToggle.onclick = () => nav.classList.toggle("show");
+  // There are THREE .dashboard-sidebar elements (Dashboard / Messages / Settings each
+  // have their own). Always resolve to the one inside the currently active section,
+  // instead of document.querySelector(".dashboard-sidebar") which always grabs the
+  // first one in the DOM (Dashboard's) no matter which tab is actually open.
+  function getActiveSidebar() {
+    return document.querySelector(".content-section.active .dashboard-sidebar");
+  }
+
+  function closeMobileDrawer() {
+    document.querySelectorAll(".dashboard-sidebar.show").forEach(s => s.classList.remove("show"));
+    overlay?.classList.remove("show");
+  }
+
+  if (menuToggle) {
+    menuToggle.onclick = () => {
+      nav.classList.toggle("show");
+      closeMobileDrawer(); // don't leave the sidebar drawer open behind the nav menu
+    };
+  }
 
   if (sidebarToggle && overlay) {
     sidebarToggle.onclick = () => {
-      document.querySelector(".dashboard-sidebar").classList.toggle("show");
+      const sidebar = getActiveSidebar();
+      if (!sidebar) return;
+      sidebar.classList.toggle("show");
       overlay.classList.toggle("show");
+      nav.classList.remove("show"); // close the top nav menu if it was open
     };
   }
 
   if (overlay) {
-    overlay.onclick = () => {
-      const sidebar = document.querySelector(".dashboard-sidebar");
-      if (sidebar.classList.contains("show")) {
-        sidebar.classList.remove("show");
-        overlay.classList.remove("show");
-      }
-    };
+    overlay.onclick = () => closeMobileDrawer();
   }
 
   document.querySelectorAll(".sidebar-btn").forEach(btn => {
@@ -2644,6 +2928,7 @@ document.addEventListener("DOMContentLoaded", () => {
       scope.querySelectorAll(".sidebar-btn").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       document.getElementById(btn.dataset.panel)?.classList.add("active");
+      closeMobileDrawer(); // picking a section on mobile should close the drawer
     };
   });
 
@@ -2655,6 +2940,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById(link.dataset.target)?.classList.add("active");
       link.classList.add("active");
       nav.classList.remove("show");
+      closeMobileDrawer(); // switching tabs (e.g. Dashboard -> Settings) should close any open drawer
     };
   });
 
