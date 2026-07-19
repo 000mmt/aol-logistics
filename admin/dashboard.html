@@ -1,0 +1,1943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SecureVote | Admin Panel</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ===================== */
+/* RESET & BASE */
+/* ===================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  overflow: hidden; /* stops main window scroll */
+  margin: 0;
+  height: 100vh; /* full viewport height */
+}
+
+/* ===================== */
+/* TOP NAV BAR */
+/* ===================== */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+  background: #1e293b;
+  color: white;
+  position: relative;
+  z-index: 1500;
+}
+
+header h1 {
+  font-size: 1.3rem;
+}
+
+nav {
+  display: flex;
+  gap: 20px;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+}
+
+nav a.active {
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.menu-toggle {
+  display: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+
+/* ===================== */
+/* SECTIONS */
+/* ===================== */
+.content-section {
+  display: none;
+}
+
+.content-section.active {
+  display: block;
+}
+
+/* ===================== */
+/* DASHBOARD LAYOUT */
+/* ===================== */
+.dashboard-layout {
+  display: flex;
+  min-height: 80vh;
+}
+
+.dashboard-sidebar {
+  width: 30%;
+  background: #f1f5f9;
+  border-right: 1px solid #e5e7eb;
+  padding: 20px;
+}
+
+.dashboard-sidebar ul {
+  list-style: none;
+}
+
+.sidebar-btn {
+  padding: 12px;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.sidebar-btn.active {
+  background: #1e293b;
+  color: white;
+}
+
+.dashboard-content {
+  width: 70%;
+  flex: 1;
+  padding: 20px;
+  height: 100vh;
+  overflow-y: auto; /* THIS MAKES IT SCROLLABLE */
+}
+
+.panel {
+  display: none;
+}
+
+.panel.active {
+  display: block;
+}
+
+/* ===================== */
+/* SIDEBAR TOGGLE */
+/* ===================== */
+.sidebar-toggle {
+  display: none;
+}
+
+/* ===================== */
+/* OVERLAY (mobile sidebar) */
+/* ===================== */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 1100;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.overlay.show {
+  display: block;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ===================== */
+/* USER CARDS */
+/* ===================== */
+.user-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.user-card {
+  background: #020617;
+  color: #e5e7eb;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  padding: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.user-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+.user-card p {
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+
+.user-card a {
+  color: #facc15;
+  word-break: break-all;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 12px;
+}
+
+.card-header h3 {
+  color: #facc15;
+  font-size: 1.05rem;
+}
+
+.card-header small {
+  color: #9ca3af;
+  font-size: 0.85rem;
+}
+
+.delete-btn {
+  background: #7f1d1d;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.delete-btn:hover {
+  background: #991b1b;
+}
+
+/* =========================
+   MODAL + OVERLAY
+   ========================= */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+  z-index: 2000;
+}
+
+.modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  background: #0f172a;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 2001;
+  color: #e5e7eb;
+}
+
+.modal-container.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* The form itself must also be a flex column, or modal-body's
+   flex:1 + overflow-y:auto has nothing to size against and the
+   modal just grows to fit all content instead of scrolling. */
+.modal-container form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0; /* allows the flex child to shrink below content size */
+  overflow: hidden;
+}
+
+/* Header */
+.modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #1e293b;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  color: #facc15;
+  font-size: 1.2rem;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 26px;
+  color: #9ca3af;
+  cursor: pointer;
+}
+
+/* Body (scrollable) */
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0; /* required for overflow-y:auto to work inside a flex column */
+}
+
+.modal-body h3 {
+  margin-top: 16px;
+  margin-bottom: 8px;
+  color: #facc15;
+  font-size: 0.95rem;
+}
+
+.modal-body h3:first-child {
+  margin-top: 0;
+}
+
+.modal-body input,
+.modal-body select,
+.modal-body textarea {
+  width: 100%;
+  max-width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  border: 1px solid #1e293b;
+  background: #111827;
+  color: #e5e7eb;
+}
+
+.modal-body textarea {
+  resize: vertical; /* block horizontal drag-resize, which was pushing it past the modal edge */
+  min-height: 70px;
+}
+
+/* Footer */
+.modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #1e293b;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* Buttons */
+.btn-cancel {
+  background: #1e293b;
+  color: #e5e7eb;
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-submit {
+  background: #facc15;
+  color: #000;
+  padding: 10px 18px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+/* tracking list */
+.tracking-card {
+  background: #1f2937;
+  color: #f9fafb;
+  padding: 16px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+}
+
+.tracking-card h3 {
+  margin-bottom: 8px;
+}
+
+.tracking-card p {
+  margin: 4px 0;
+}
+
+.tracking-card button {
+  margin-top: 8px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #3b82f6;
+  color: white;
+}
+
+/* =========================
+   SETTINGS PANEL COMPONENTS
+   ========================= */
+.settings-card {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  color: #e5e7eb;
+}
+
+.settings-card h3 {
+  color: #facc15;
+  font-size: 1rem;
+  margin-bottom: 12px;
+}
+
+.settings-card input[type="password"],
+.settings-card input[type="text"],
+.settings-card input:not([type]) {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  border: 1px solid #1e293b;
+  background: #111827;
+  color: #e5e7eb;
+}
+
+.form-msg {
+  font-size: 0.85rem;
+  margin-top: 6px;
+}
+.form-msg.success { color: #4ade80; }
+.form-msg.error { color: #f87171; }
+
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.badge-ok { background: #14532d; color: #4ade80; }
+.badge-off { background: #374151; color: #d1d5db; }
+.badge-error { background: #7f1d1d; color: #fca5a5; }
+
+.radio-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+}
+
+.toggle-row {
+  display: block;
+  margin-bottom: 10px;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.stat-box {
+  background: #111827;
+  border-radius: 8px;
+  padding: 14px;
+  text-align: center;
+}
+
+.stat-box .stat-num {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #facc15;
+}
+
+.stat-box .stat-label {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin-top: 4px;
+}
+
+.scan-item {
+  padding: 6px 0;
+  font-size: 0.9rem;
+}
+.scan-item.ok { color: #4ade80; }
+.scan-item.fail { color: #f87171; }
+
+.danger-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  background: #1c0d0d;
+  border: 1px solid #7f1d1d;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+}
+
+.danger-card h3 {
+  color: #fca5a5;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.danger-card p {
+  color: #9ca3af;
+  font-size: 0.8rem;
+}
+
+.danger-btn {
+  background: #7f1d1d;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 0.85rem;
+}
+.danger-btn:hover { background: #991b1b; }
+
+/* =========================
+   MOBILE FULLSCREEN
+   ========================= */
+@media (max-width: 768px) {
+  .modal-container {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
+    top: 0;
+    left: 0;
+    transform: none;
+  }
+
+  .modal-container.show {
+    transform: none;
+  }
+}
+
+/* Prevent background scroll */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* ===================== */
+/* FOOTER */
+/* ===================== */
+footer {
+  text-align: center;
+  padding: 15px;
+  background: #f1f5f9;
+  font-size: 0.9rem;
+}
+
+/* ===================== */
+/* MOBILE VIEW */
+/* ===================== */
+@media (max-width: 768px) {
+
+  .menu-toggle {
+    display: block;
+  }
+
+  nav {
+    display: none;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    background: #1e293b;
+    flex-direction: column;
+    padding: 15px 0;
+    z-index: 1400;
+  }
+
+  nav.show {
+    display: flex;
+  }
+
+  .sidebar-toggle {
+    display: block;
+    z-index: 1300;
+    background: #f1f5f9;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  .dashboard-layout {
+    position: relative;
+  }
+
+  .dashboard-sidebar {
+    position: fixed;
+    top: 110px;
+    left: -100%;
+    width: 80%;
+    height: calc(100vh - 110px);
+    z-index: 1200;
+    transition: left 0.3s ease;
+    border-right: none;
+  }
+
+  .dashboard-sidebar.show {
+    left: 0;
+  }
+
+  .dashboard-content {
+    width: 100%;
+    padding: 20px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Admin Panel</h1>
+  <div class="menu-toggle" aria-label="Open navigation">☰</div>
+  <nav>
+    <a href="#" data-target="dashboard" class="active">Dashboard</a>
+    <a href="#" data-target="messages">Messages</a>
+    <a href="#" data-target="settings">Settings</a>
+    <a href="logout.html">Logout</a>
+  </nav>
+</header>
+
+<div class="sidebar-toggle" aria-label="Open menu">☰ Menu</div>
+<div class="overlay"></div>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="content-section active">
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar">
+      <ul>
+        <li class="sidebar-btn active" data-panel="dash-details">Details</li>
+        <li class="sidebar-btn" data-panel="dash-tracking">Tracking</li>
+        <li class="sidebar-btn" data-panel="dash-email">Email</li>
+      </ul>
+    </aside>
+
+    <main class="dashboard-content">
+       <div id="dash-details" class="panel active">
+         <h2>Dashboard Overview</h2>
+
+          <!-- USERS CARD CONTAINER -->
+         <div id="userList" class="user-grid"></div>
+       </div>
+
+       <div id="dash-tracking" class="panel">
+         <h2>Tracking</h2>
+
+         <!-- Users tracking list -->
+         <div id="trackingList">
+           <p style="color:#9ca3af;">Loading tracking info...</p>
+         </div>
+       </div>
+
+      <div id="dash-email" class="panel">
+        <h2>Email</h2>
+        <p>Email logs appear here.</p>
+      </div>
+    </main>
+  </div>
+</section>
+
+<!-- MESSAGES -->
+<section id="messages" class="content-section">
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar">
+      <ul>
+        <li class="sidebar-btn active" data-panel="msg-inbox">Inbox</li>
+        <li class="sidebar-btn" data-panel="msg-sent">Sent</li>
+      </ul>
+    </aside>
+    <main class="dashboard-content">
+      <div id="msg-inbox" class="panel active"><h2>Inbox</h2></div>
+      <div id="msg-sent" class="panel"><h2>Sent</h2></div>
+    </main>
+  </div>
+</section>
+
+<!-- SETTINGS -->
+<section id="settings" class="content-section">
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar">
+      <ul>
+        <li class="sidebar-btn active" data-panel="set-profile">Profile</li>
+        <li class="sidebar-btn" data-panel="set-security">Security</li>
+        <li class="sidebar-btn" data-panel="set-sessions">Sessions &amp; 2FA</li>
+        <li class="sidebar-btn" data-panel="set-data">Data &amp; Backup</li>
+        <li class="sidebar-btn" data-panel="set-integrations">Integrations</li>
+        <li class="sidebar-btn" data-panel="set-preferences">Preferences</li>
+        <li class="sidebar-btn" data-panel="set-danger">Danger Zone</li>
+      </ul>
+    </aside>
+
+    <main class="dashboard-content">
+
+      <!-- PROFILE -->
+      <div id="set-profile" class="panel active">
+        <h2>Profile</h2>
+        <div class="settings-card">
+          <p><b>Admin Email:</b> <span id="profileEmail">Loading...</span></p>
+          <p><b>Account Created:</b> <span id="profileCreated">Loading...</span></p>
+          <p style="margin-top:10px; color:#9ca3af; font-size:0.85rem;">
+            Name and avatar are managed through your Supabase Auth user profile.
+          </p>
+        </div>
+      </div>
+
+      <!-- SECURITY -->
+      <div id="set-security" class="panel">
+        <h2>Security</h2>
+
+        <div class="settings-card">
+          <h3>Change Admin Password</h3>
+          <form id="passwordForm">
+            <input type="password" name="current_password" placeholder="Current Password" required />
+            <input type="password" name="new_password" placeholder="New Password" minlength="8" required />
+            <input type="password" name="confirm_password" placeholder="Confirm New Password" minlength="8" required />
+            <button type="submit" class="btn-submit" style="margin-top:8px;">Update Password</button>
+            <p id="passwordMsg" class="form-msg"></p>
+          </form>
+        </div>
+
+        <div class="settings-card">
+          <h3>Login Activity</h3>
+          <p style="color:#9ca3af; font-size:0.85rem; margin-bottom:10px;">
+            Showing the most recent recorded sign-ins to this admin panel.
+          </p>
+          <div id="loginActivityList"><p style="color:#9ca3af;">Loading...</p></div>
+        </div>
+
+        <div class="settings-card">
+          <h3>Security Scan</h3>
+          <div id="securityScanList"><p style="color:#9ca3af;">Running checks...</p></div>
+          <p id="securityScanTime" style="color:#9ca3af; font-size:0.8rem; margin-top:10px;"></p>
+          <button id="rerunScanBtn" class="btn-cancel" type="button" style="margin-top:6px;">Re-run Scan</button>
+        </div>
+      </div>
+
+      <!-- SESSIONS & 2FA -->
+      <div id="set-sessions" class="panel">
+        <h2>Sessions &amp; Two-Factor Authentication</h2>
+
+        <div class="settings-card">
+          <h3>Active Session</h3>
+          <p>✓ Current Session <span id="sessionEmail" style="color:#9ca3af;"></span></p>
+          <button id="logoutCurrentBtn" class="btn-cancel" type="button" style="margin-top:10px;">Logout This Session</button>
+          <button id="logoutAllBtn" class="btn-cancel" type="button" style="margin-top:10px; margin-left:8px;">Logout Every Device</button>
+          <p style="color:#9ca3af; font-size:0.8rem; margin-top:8px;">
+            "Logout Every Device" requires a small server-side function (it needs Supabase's service-role key, which must never be placed in browser code). See note below the button when clicked.
+          </p>
+        </div>
+
+        <div class="settings-card">
+          <h3>Two-Factor Authentication</h3>
+          <p>Status: <span id="mfaStatus" class="badge badge-off">OFF</span></p>
+          <div id="mfaEnrollArea" style="margin-top:12px; display:none;">
+            <img id="mfaQr" style="background:#fff; padding:8px; border-radius:6px; max-width:200px;" />
+            <p style="font-size:0.8rem; color:#9ca3af; margin:8px 0;">Scan with Google Authenticator, then enter the 6-digit code below.</p>
+            <input id="mfaCodeInput" placeholder="6-digit code" maxlength="6" />
+            <button id="mfaVerifyBtn" class="btn-submit" type="button" style="margin-top:6px;">Verify &amp; Enable</button>
+          </div>
+          <button id="mfaToggleBtn" class="btn-cancel" type="button" style="margin-top:10px;">Enable 2FA</button>
+        </div>
+
+        <div class="settings-card">
+          <h3>Auto Logout After Inactivity</h3>
+          <div class="radio-group" id="autoLogoutOptions">
+            <label><input type="radio" name="autoLogout" value="5"> 5 Minutes</label>
+            <label><input type="radio" name="autoLogout" value="10"> 10 Minutes</label>
+            <label><input type="radio" name="autoLogout" value="30" checked> 30 Minutes</label>
+            <label><input type="radio" name="autoLogout" value="0"> Never</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- DATA & BACKUP -->
+      <div id="set-data" class="panel">
+        <h2>Data &amp; Backup</h2>
+
+        <div class="settings-card">
+          <h3>Database Statistics</h3>
+          <div class="stat-grid" id="statGrid">
+            <p style="color:#9ca3af;">Loading...</p>
+          </div>
+        </div>
+
+        <div class="settings-card">
+          <h3>Backup Database</h3>
+          <button id="exportCsvBtn" class="btn-cancel" type="button">Export CSV</button>
+          <button id="exportJsonBtn" class="btn-cancel" type="button" style="margin-left:8px;">Export JSON</button>
+        </div>
+
+        <div class="settings-card">
+          <h3>Restore Database</h3>
+          <p style="color:#9ca3af; font-size:0.85rem; margin-bottom:8px;">
+            Restores from a JSON export produced above. Existing rows with matching IDs will be overwritten.
+          </p>
+          <input type="file" id="restoreFileInput" accept="application/json" />
+          <button id="restoreBtn" class="btn-cancel" type="button" style="margin-top:8px;">Restore</button>
+        </div>
+
+        <div class="settings-card">
+          <h3>Clear Logs</h3>
+          <button class="btn-cancel clear-log-btn" type="button" data-table="email_logs">Clear Email Logs</button>
+          <button class="btn-cancel clear-log-btn" type="button" data-table="tracking_updates" style="margin-left:8px;">Clear Tracking Logs</button>
+          <button class="btn-cancel clear-log-btn" type="button" data-table="login_activity" style="margin-left:8px;">Clear Activity Logs</button>
+        </div>
+      </div>
+
+      <!-- INTEGRATIONS -->
+      <div id="set-integrations" class="panel">
+        <h2>Integrations</h2>
+
+        <div class="settings-card">
+          <h3>API Configuration</h3>
+          <p><b>Supabase URL:</b> <span id="apiUrl"></span></p>
+          <p><b>Status:</b> <span id="apiStatus" class="badge badge-off">Checking...</span></p>
+          <p><b>Last Sync:</b> <span id="apiLastSync">-</span></p>
+          <button id="testConnectionBtn" class="btn-cancel" type="button" style="margin-top:8px;">Test Connection</button>
+        </div>
+
+        <div class="settings-card">
+          <h3>Email Configuration</h3>
+          <p><b>EmailJS Service:</b> <span id="emailServiceStatus" class="badge badge-off">Checking...</span></p>
+          <p><b>Service ID:</b> <span id="emailServiceId"></span></p>
+          <p><b>Template ID:</b> <span id="emailTemplateId"></span></p>
+          <button id="sendTestEmailBtn" class="btn-cancel" type="button" style="margin-top:8px;">Send Test Email</button>
+          <a href="https://dashboard.emailjs.com/admin" target="_blank" rel="noopener" class="btn-cancel" style="display:inline-block; margin-top:8px; margin-left:8px; text-decoration:none;">Manage in EmailJS →</a>
+        </div>
+      </div>
+
+      <!-- PREFERENCES -->
+      <div id="set-preferences" class="panel">
+        <h2>Preferences</h2>
+
+        <div class="settings-card">
+          <h3>Notifications</h3>
+          <label class="toggle-row"><input type="checkbox" id="notifyEmail" checked> Email Notifications</label>
+          <label class="toggle-row"><input type="checkbox" id="notifyShipment" checked> Shipment Notifications</label>
+          <label class="toggle-row"><input type="checkbox" id="notifyLogin" checked> Login Alerts</label>
+          <label class="toggle-row"><input type="checkbox" id="notifyTracking" checked> Tracking Alerts</label>
+          <button id="savePrefsBtn" class="btn-submit" type="button" style="margin-top:10px;">Save Preferences</button>
+        </div>
+
+        <div class="settings-card">
+          <h3>Theme</h3>
+          <div class="radio-group" id="themeOptions">
+            <label><input type="radio" name="theme" value="dark" checked> Dark Mode</label>
+            <label><input type="radio" name="theme" value="light"> Light Mode</label>
+            <label><input type="radio" name="theme" value="system"> System</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- DANGER ZONE -->
+      <div id="set-danger" class="panel">
+        <h2 style="color:#ef4444;">Danger Zone</h2>
+        <p style="color:#9ca3af; margin-bottom:16px; font-size:0.85rem;">
+          These actions are irreversible. Each requires typing DELETE to confirm.
+        </p>
+
+        <div class="danger-card">
+          <div>
+            <h3>Delete All Shipments</h3>
+            <p>Permanently deletes every row in user_info (and related tracking history).</p>
+          </div>
+          <button class="danger-btn" type="button" data-action="delete-shipments">Delete All Shipments</button>
+        </div>
+
+        <div class="danger-card">
+          <div>
+            <h3>Delete Tracking History</h3>
+            <p>Permanently deletes every row in tracking_updates only.</p>
+          </div>
+          <button class="danger-btn" type="button" data-action="delete-tracking">Delete Tracking History</button>
+        </div>
+
+        <div class="danger-card">
+          <div>
+            <h3>Reset Database</h3>
+            <p>Deletes shipments, tracking history, login activity, and email logs.</p>
+          </div>
+          <button class="danger-btn" type="button" data-action="reset-database">Reset Database</button>
+        </div>
+
+        <div class="danger-card">
+          <div>
+            <h3>Delete Admin Account</h3>
+            <p>Requires a server-side function using the service-role key — cannot be done safely from the browser. See note in chat for how to set this up.</p>
+          </div>
+          <button class="danger-btn" type="button" disabled style="opacity:0.5; cursor:not-allowed;">Delete Admin Account</button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</section>
+
+<!-- Overlay -->
+<div id="modalOverlay" class="modal-overlay"></div>
+
+<!-- EDIT SHIPMENT MODAL -->
+<div id="modalContainer" class="modal-container">
+  <div class="modal-header">
+    <h2 id="modalTitle">Edit Shipment</h2>
+    <button id="modalCloseBtn" class="modal-close" type="button">&times;</button>
+  </div>
+
+  <form id="editForm">
+    <div class="modal-body">
+      <!-- TRACKING -->
+      <h3>Tracking</h3>
+      <input type="text" name="tracking_no" readonly />
+
+      <select name="status">
+        <option value="">-- Status --</option>
+        <option>Order Placed</option>
+        <option>Preparing Shipment</option>
+        <option>Shipped</option>
+        <option>Delivered</option>
+      </select>
+
+      <!-- SENDER -->
+      <h3>Sender</h3>
+      <input name="sender_name" placeholder="Sender Name" />
+      <input name="sender_address" placeholder="Sender Address" />
+      <input name="sender_ref_no" placeholder="Sender Ref No" />
+
+      <!-- CUSTOMER -->
+      <h3>Customer</h3>
+      <input name="customer_name" placeholder="Customer Name" />
+      <input name="email" placeholder="Email" />
+      <input name="phone" placeholder="Phone" />
+
+      <!-- LOCATION -->
+      <h3>Route</h3>
+      <input name="origin" placeholder="Origin" />
+      <input name="destination" placeholder="Destination" />
+
+      <!-- PACKAGE -->
+      <h3>Package</h3>
+      <input name="weight" placeholder="Weight" />
+      <textarea name="description" placeholder="Description"></textarea>
+
+      <!-- RECEIVER -->
+      <h3>Receiver</h3>
+      <input name="receiver_name" placeholder="Receiver Name" />
+      <input name="receiver_address" placeholder="Receiver Address" />
+      <input name="receiver_country" placeholder="Receiver Country" />
+      <input name="receiver_contact" placeholder="Receiver Contact" />
+      <input name="receiver_phone" placeholder="Receiver Phone" />
+
+      <!-- DELIVERY -->
+      <h3>Delivery Info</h3>
+      <input name="delivery_code" placeholder="Delivery Code" />
+      <input name="delivery_method" placeholder="Delivery Method" />
+
+      <!-- FEES -->
+      <h3>Fees</h3>
+      <input name="reg_fee" placeholder="Registration Fee" />
+      <input name="delivery_fee" placeholder="Delivery Fee" />
+      <input name="insurance_fee" placeholder="Insurance Fee" />
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" id="modalCancelBtn" type="button">Cancel</button>
+      <button type="submit" class="btn-submit" id="modalSubmitBtn">Submit</button>
+    </div>
+  </form>
+</div>
+
+<!-- TRACKING MODAL -->
+<div id="trackingModal" class="modal-container">
+  <div class="modal-header">
+    <h2>Update Tracking</h2>
+    <button id="closeTrackingModal" class="modal-close" type="button">&times;</button>
+  </div>
+
+  <form id="trackingForm">
+    <div class="modal-body">
+      <input type="hidden" id="trackingShipmentId" />
+
+      <h3>Status</h3>
+      <select id="trackingStatus">
+        <option>Order Placed</option>
+        <option>Preparing Shipment</option>
+        <option>Shipped</option>
+        <option>Delivered</option>
+      </select>
+
+      <h3>Location</h3>
+      <input id="trackingLocation" placeholder="Current location" />
+
+      <h3>Note</h3>
+      <textarea id="trackingNote" placeholder="Optional note"></textarea>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" id="cancelTracking">Cancel</button>
+      <button type="submit" class="btn-submit">Save Update</button>
+    </div>
+  </form>
+</div>
+
+<!-- Footer -->
+<footer>
+  <p data-key="footerText">© 2025 AOL Logistics. All rights reserved.</p>
+</footer>
+
+<!-- EmailJS SDK (REQUIRED) -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<!-- Supabase SDK (REQUIRED) -->
+<script type="module">
+/* =====================
+   SUPABASE CONFIG
+===================== */
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const SUPABASE_URL = "https://rtgvylkbndrmwntaqkfx.supabase.co";
+const SUPABASE_KEY = "sb_publishable_SFI-gjeDtTrOGpLp1_BTtg_hXy6wPSB";
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* =====================
+   EMAILJS CONFIG
+===================== */
+// Get this from EmailJS → Account → API Keys ("Public Key")
+const EMAILJS_PUBLIC_KEY = "PlzHImKJLSGxIfYy0";
+const EMAILJS_SERVICE_ID = "service_wznyhjn";
+// Create the template using email-template.html (provided separately),
+// then paste the Template ID it gives you here.
+const EMAILJS_TEMPLATE_ID = "template_i9gwyek";
+
+emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
+/* =====================
+   HELPERS
+===================== */
+function escapeHtml(str = "") {
+  return String(str).replace(/[&<>"']/g, m =>
+    ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" }[m])
+  );
+}
+
+/* =====================
+   LOAD USERS (dashboard cards)
+===================== */
+let cachedUsersWithTracking = [];
+let lastSyncAt = null;
+
+async function loadUsers() {
+  const container = document.getElementById("userList");
+  if (!container) return;
+
+  container.innerHTML = `<p style="color:#9ca3af;">Loading...</p>`;
+
+  const { data: users, error } = await supabase
+    .from("user_info")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) return container.innerHTML = `<p style="color:#ef4444;">${escapeHtml(error.message)}</p>`;
+  if (!users?.length) {
+    cachedUsersWithTracking = [];
+    return container.innerHTML = `<p style="color:#9ca3af;">No records found.</p>`;
+  }
+
+  const usersWithTracking = await Promise.all(
+    users.map(async user => {
+      const { data } = await supabase
+        .from("tracking_updates")
+        .select("*")
+        .eq("shipment_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(1);
+      return { ...user, latestUpdate: data?.[0] || null };
+    })
+  );
+
+  cachedUsersWithTracking = usersWithTracking;
+  lastSyncAt = new Date();
+
+  container.innerHTML = usersWithTracking.map(user => `
+    <div class="user-card" data-id="${user.id}" data-tracking="${escapeHtml(user.tracking_no || "")}">
+      <div class="card-header">
+        <h3>${escapeHtml(user.receiver_name || "N/A")}
+          <small>(${escapeHtml(user.tracking_no || "N/A")})</small>
+        </h3>
+        <button class="delete-btn" data-id="${user.id}" type="button">Delete</button>
+      </div>
+      <p><b>Email:</b> ${escapeHtml(user.email || "N/A")}</p>
+      <p><b>Status:</b> ${escapeHtml(user.latestUpdate?.status || "Pending")}</p>
+      <p><b>Location:</b> ${escapeHtml(user.latestUpdate?.location || "N/A")}</p>
+    </div>
+  `).join("");
+}
+
+/* =====================
+   LOAD TRACKING PANEL
+===================== */
+async function loadTrackingPanel() {
+  const container = document.getElementById("trackingList");
+  if (!container) return;
+
+  container.innerHTML = `<p style="color:#9ca3af;">Loading tracking info...</p>`;
+
+  const { data: users, error } = await supabase
+    .from("user_info")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) return container.innerHTML = `<p style="color:#ef4444;">${escapeHtml(error.message)}</p>`;
+  if (!users?.length) return container.innerHTML = `<p style="color:#9ca3af;">No records found.</p>`;
+
+  const usersWithTracking = await Promise.all(
+    users.map(async user => {
+      const { data } = await supabase
+        .from("tracking_updates")
+        .select("*")
+        .eq("shipment_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(1);
+      return { ...user, latestUpdate: data?.[0] || null };
+    })
+  );
+
+  container.innerHTML = usersWithTracking.map(user => {
+    const last = user.latestUpdate || {};
+    return `
+      <div class="tracking-card" data-id="${user.id}">
+        <h3>${escapeHtml(user.receiver_name || "N/A")} (${escapeHtml(user.tracking_no || "N/A")})</h3>
+        <p><b>Status:</b> ${escapeHtml(last.status || "Pending")}</p>
+        <p><b>Location:</b> ${escapeHtml(last.location || "-")}</p>
+        <button class="openTrackingBtn" data-id="${user.id}" type="button">Edit Tracking</button>
+      </div>
+    `;
+  }).join("");
+}
+
+/* =====================
+   MODAL OPEN / CLOSE (shared by both modals)
+===================== */
+const editModal = document.getElementById("modalContainer");
+const trackingModal = document.getElementById("trackingModal");
+const modalOverlay = document.getElementById("modalOverlay");
+
+function openModal(modalEl) {
+  modalEl.classList.add("show");
+  modalOverlay.classList.add("show");
+  document.body.classList.add("modal-open");
+}
+
+function closeModal() {
+  editModal.classList.remove("show");
+  trackingModal.classList.remove("show");
+  modalOverlay.classList.remove("show");
+  document.body.classList.remove("modal-open");
+}
+
+document.getElementById("modalCloseBtn").onclick = closeModal;
+document.getElementById("modalCancelBtn").onclick = closeModal;
+document.getElementById("closeTrackingModal").onclick = closeModal;
+document.getElementById("cancelTracking").onclick = closeModal;
+modalOverlay.onclick = closeModal;
+
+/* =====================
+   CARD CLICKS (edit / tracking / delete)
+===================== */
+document.addEventListener("click", async e => {
+  // Delete button
+  const deleteBtn = e.target.closest(".delete-btn");
+  if (deleteBtn) {
+    e.stopPropagation();
+    const id = deleteBtn.dataset.id;
+    if (!confirm("Delete this shipment record? This cannot be undone.")) return;
+    const { error } = await supabase.from("user_info").delete().eq("id", id);
+    if (error) return alert("Failed to delete: " + error.message);
+    loadUsers();
+    loadTrackingPanel();
+    return;
+  }
+
+  // Open tracking modal
+  const trackBtn = e.target.closest(".openTrackingBtn");
+  if (trackBtn) {
+    e.stopPropagation();
+    document.getElementById("trackingForm").reset();
+    document.getElementById("trackingShipmentId").value = trackBtn.dataset.id;
+    openModal(trackingModal);
+    return;
+  }
+
+  // Open edit shipment modal (dashboard card click)
+  const card = e.target.closest(".user-card");
+  if (card) {
+    const id = card.dataset.id;
+    const { data, error } = await supabase.from("user_info").select("*").eq("id", id).single();
+    if (error || !data) return alert("Failed to load record");
+
+    const form = document.getElementById("editForm");
+    form.reset();
+    Object.keys(data).forEach(key => {
+      const field = form.querySelector(`[name="${key}"]`);
+      if (field) field.value = data[key] ?? "";
+    });
+    form.dataset.editId = id;
+    openModal(editModal);
+  }
+});
+
+/* =====================
+   SAVE EDITED SHIPMENT
+===================== */
+document.getElementById("editForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const form = e.target;
+  const id = form.dataset.editId;
+  if (!id) return alert("No record selected");
+
+  const formData = new FormData(form);
+  const updates = {};
+  formData.forEach((value, key) => { updates[key] = value; });
+  delete updates.tracking_no; // read-only, never overwrite
+
+  const { error } = await supabase.from("user_info").update(updates).eq("id", id);
+  if (error) return alert("Failed to save: " + error.message);
+
+  closeModal();
+  loadUsers();
+  loadTrackingPanel();
+});
+
+/* =====================
+   EMAIL NOTIFICATION
+===================== */
+async function sendTrackingEmail(shipment, update) {
+  if (!shipment.email) return; // nothing to send to
+
+  const templateParams = {
+    to_name: shipment.customer_name || shipment.receiver_name || "Customer",
+    to_email: shipment.email,
+    tracking_no: shipment.tracking_no || "N/A",
+    status: update.status || "Pending",
+    location: update.location || "Not specified",
+    note: update.note || "",
+    origin: shipment.origin || "",
+    destination: shipment.destination || ""
+  };
+
+  try {
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+    await logEmail(shipment.id, shipment.email, "sent", null);
+  } catch (err) {
+    // Don't block the workflow on an email failure — the tracking
+    // update itself already saved successfully.
+    console.error("EmailJS send failed:", err);
+    await logEmail(shipment.id, shipment.email, "failed", err?.text || err?.message || "Unknown error");
+    alert("Tracking saved, but the notification email failed to send.");
+  }
+}
+
+// Requires an `email_logs` table — see the SQL provided separately.
+// Fails silently if the table doesn't exist yet, so it never blocks email sending.
+async function logEmail(shipmentId, toEmail, status, errorText) {
+  try {
+    await supabase.from("email_logs").insert([{
+      shipment_id: shipmentId,
+      to_email: toEmail,
+      status,
+      error_text: errorText,
+      created_at: new Date().toISOString()
+    }]);
+  } catch (e) {
+    console.warn("email_logs insert skipped (table may not exist yet):", e);
+  }
+}
+
+/* =====================
+   SAVE TRACKING UPDATE
+===================== */
+document.getElementById("trackingForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const shipmentId = document.getElementById("trackingShipmentId").value;
+  if (!shipmentId) return alert("Missing shipment ID");
+
+  const status = document.getElementById("trackingStatus").value;
+  const location = document.getElementById("trackingLocation").value;
+  const note = document.getElementById("trackingNote").value;
+
+  const { error } = await supabase.from("tracking_updates").insert([{
+    shipment_id: shipmentId,
+    status,
+    location,
+    note,
+    created_at: new Date().toISOString()
+  }]);
+
+  if (error) return alert("Failed to save tracking: " + error.message);
+
+  // Fetch the shipment so we have the customer's name/email for the notification
+  const { data: shipment, error: shipmentError } = await supabase
+    .from("user_info")
+    .select("*")
+    .eq("id", shipmentId)
+    .single();
+
+  if (!shipmentError && shipment) {
+    sendTrackingEmail(shipment, { status, location, note });
+  }
+
+  closeModal();
+  loadTrackingPanel();
+  loadUsers();
+});
+
+/* =====================
+   SETTINGS: PROFILE
+===================== */
+async function loadProfile() {
+  const { data: { user } } = await supabase.auth.getUser();
+  const emailEl = document.getElementById("profileEmail");
+  const createdEl = document.getElementById("profileCreated");
+  if (!user) {
+    emailEl.textContent = "Not signed in via Supabase Auth";
+    createdEl.textContent = "-";
+    return;
+  }
+  emailEl.textContent = user.email || "-";
+  createdEl.textContent = user.created_at ? new Date(user.created_at).toLocaleString() : "-";
+  document.getElementById("sessionEmail").textContent = user.email ? `(${user.email})` : "";
+}
+
+/* =====================
+   SETTINGS: CHANGE PASSWORD
+   Verifies the current password by re-authenticating, then updates it.
+   Requires the admin to be signed in via Supabase Auth email/password.
+===================== */
+document.getElementById("passwordForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const msg = document.getElementById("passwordMsg");
+  msg.textContent = "";
+  msg.className = "form-msg";
+
+  const form = e.target;
+  const current = form.current_password.value;
+  const next = form.new_password.value;
+  const confirm = form.confirm_password.value;
+
+  if (next !== confirm) {
+    msg.textContent = "New password and confirmation don't match.";
+    msg.className = "form-msg error";
+    return;
+  }
+  if (next.length < 8) {
+    msg.textContent = "New password must be at least 8 characters.";
+    msg.className = "form-msg error";
+    return;
+  }
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    msg.textContent = "You must be signed in via Supabase Auth to change your password.";
+    msg.className = "form-msg error";
+    return;
+  }
+
+  // Re-authenticate with the current password to verify it before changing anything
+  const { error: reauthError } = await supabase.auth.signInWithPassword({
+    email: user.email,
+    password: current
+  });
+  if (reauthError) {
+    msg.textContent = "Current password is incorrect.";
+    msg.className = "form-msg error";
+    return;
+  }
+
+  const { error: updateError } = await supabase.auth.updateUser({ password: next });
+  if (updateError) {
+    msg.textContent = "Failed to update password: " + updateError.message;
+    msg.className = "form-msg error";
+    return;
+  }
+
+  msg.textContent = "Password updated successfully.";
+  msg.className = "form-msg success";
+  form.reset();
+});
+
+/* =====================
+   SETTINGS: LOGIN ACTIVITY
+   Requires a `login_activity` table (SQL provided separately).
+   Records a snapshot for the *current* session on load, and lists past entries.
+   For full accuracy, call recordLoginActivity() from your actual login page too.
+===================== */
+async function recordLoginActivity() {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    // Free IP/geo lookup — safe to call from the browser, no key required.
+    let ip = "unknown", country = "unknown";
+    try {
+      const res = await fetch("https://ipapi.co/json/");
+      const geo = await res.json();
+      ip = geo.ip || "unknown";
+      country = geo.country_name || "unknown";
+    } catch (_) { /* geo lookup is best-effort only */ }
+
+    await supabase.from("login_activity").insert([{
+      user_email: user.email,
+      ip_address: ip,
+      country,
+      browser: navigator.userAgent,
+      created_at: new Date().toISOString()
+    }]);
+  } catch (e) {
+    console.warn("login_activity insert skipped (table may not exist yet):", e);
+  }
+}
+
+async function loadLoginActivity() {
+  const container = document.getElementById("loginActivityList");
+  try {
+    const { data, error } = await supabase
+      .from("login_activity")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(5);
+
+    if (error) throw error;
+    if (!data?.length) {
+      container.innerHTML = `<p style="color:#9ca3af;">No login activity recorded yet.</p>`;
+      return;
+    }
+
+    container.innerHTML = data.map(row => `
+      <div class="tracking-card">
+        <p><b>${escapeHtml(new Date(row.created_at).toLocaleString())}</b></p>
+        <p>IP Address: ${escapeHtml(row.ip_address || "unknown")}</p>
+        <p>Browser: ${escapeHtml((row.browser || "").split(") ")[0] + ")" || "unknown")}</p>
+        <p>Country: ${escapeHtml(row.country || "unknown")}</p>
+      </div>
+    `).join("");
+  } catch (e) {
+    container.innerHTML = `<p style="color:#9ca3af;">Login activity needs a login_activity table — see the SQL provided in chat.</p>`;
+  }
+}
+
+/* =====================
+   SETTINGS: SECURITY SCAN
+===================== */
+async function runSecurityScan() {
+  const list = document.getElementById("securityScanList");
+  const checks = [];
+
+  checks.push({
+    label: "HTTPS Enabled",
+    ok: location.protocol === "https:" || location.hostname === "localhost"
+  });
+
+  let dbOk = false;
+  try {
+    const { error } = await supabase.from("user_info").select("id").limit(1);
+    dbOk = !error;
+  } catch (_) {}
+  checks.push({ label: "Database Connected", ok: dbOk });
+
+  checks.push({
+    label: "Email Service Configured",
+    ok: EMAILJS_PUBLIC_KEY !== "YOUR_EMAILJS_PUBLIC_KEY" && EMAILJS_TEMPLATE_ID !== "YOUR_EMAILJS_TEMPLATE_ID"
+  });
+
+  checks.push({
+    label: "Anon Key Scoped by RLS (verify manually)",
+    ok: null // can't be verified from the browser — flagged, not claimed
+  });
+
+  list.innerHTML = checks.map(c => {
+    if (c.ok === null) {
+      return `<div class="scan-item">⚠ ${escapeHtml(c.label)} — check your Supabase RLS policies directly</div>`;
+    }
+    return `<div class="scan-item ${c.ok ? "ok" : "fail"}">${c.ok ? "✔" : "✘"} ${escapeHtml(c.label)}</div>`;
+  }).join("");
+
+  document.getElementById("securityScanTime").textContent = "Last scan: " + new Date().toLocaleString();
+}
+
+/* =====================
+   SETTINGS: SESSIONS
+===================== */
+document.getElementById("logoutCurrentBtn").onclick = async () => {
+  await supabase.auth.signOut();
+  window.location.href = "logout.html";
+};
+
+document.getElementById("logoutAllBtn").onclick = () => {
+  alert(
+    "Logging out every device requires Supabase's admin API (service-role key), " +
+    "which can only run safely on a server — never in browser code. " +
+    "Set this up as a Supabase Edge Function that calls supabase.auth.admin.signOut() " +
+    "for the user, then have this button call that function instead."
+  );
+};
+
+/* =====================
+   SETTINGS: 2FA (Supabase Auth MFA — genuinely functional)
+===================== */
+async function refreshMfaStatus() {
+  const { data, error } = await supabase.auth.mfa.listFactors();
+  const statusEl = document.getElementById("mfaStatus");
+  const toggleBtn = document.getElementById("mfaToggleBtn");
+  if (error || !data) return;
+
+  const verified = data.totp?.find(f => f.status === "verified");
+  if (verified) {
+    statusEl.textContent = "ON";
+    statusEl.className = "badge badge-ok";
+    toggleBtn.textContent = "Disable 2FA";
+    toggleBtn.dataset.factorId = verified.id;
+  } else {
+    statusEl.textContent = "OFF";
+    statusEl.className = "badge badge-off";
+    toggleBtn.textContent = "Enable 2FA";
+    delete toggleBtn.dataset.factorId;
+  }
+}
+
+document.getElementById("mfaToggleBtn").onclick = async e => {
+  const btn = e.target;
+  if (btn.dataset.factorId) {
+    // Disable
+    const { error } = await supabase.auth.mfa.unenroll({ factorId: btn.dataset.factorId });
+    if (error) return alert("Failed to disable 2FA: " + error.message);
+    await refreshMfaStatus();
+    return;
+  }
+
+  // Enroll
+  const { data, error } = await supabase.auth.mfa.enroll({ factorType: "totp" });
+  if (error) return alert("Failed to start 2FA enrollment: " + error.message);
+
+  document.getElementById("mfaQr").src = data.totp.qr_code;
+  document.getElementById("mfaEnrollArea").style.display = "block";
+  document.getElementById("mfaEnrollArea").dataset.factorId = data.id;
+};
+
+document.getElementById("mfaVerifyBtn").onclick = async () => {
+  const factorId = document.getElementById("mfaEnrollArea").dataset.factorId;
+  const code = document.getElementById("mfaCodeInput").value.trim();
+  if (!code) return alert("Enter the 6-digit code from your authenticator app.");
+
+  const { data: challenge, error: challengeError } = await supabase.auth.mfa.challenge({ factorId });
+  if (challengeError) return alert("Failed to create challenge: " + challengeError.message);
+
+  const { error: verifyError } = await supabase.auth.mfa.verify({
+    factorId, challengeId: challenge.id, code
+  });
+  if (verifyError) return alert("Incorrect code — try again.");
+
+  document.getElementById("mfaEnrollArea").style.display = "none";
+  document.getElementById("mfaCodeInput").value = "";
+  alert("Two-factor authentication enabled.");
+  await refreshMfaStatus();
+};
+
+/* =====================
+   SETTINGS: AUTO LOGOUT
+===================== */
+let autoLogoutTimer = null;
+function armAutoLogout(minutes) {
+  clearTimeout(autoLogoutTimer);
+  if (!minutes || minutes === "0") return;
+  autoLogoutTimer = setTimeout(async () => {
+    await supabase.auth.signOut();
+    window.location.href = "logout.html";
+  }, minutes * 60 * 1000);
+}
+
+function initAutoLogout() {
+  const radios = document.querySelectorAll('input[name="autoLogout"]');
+  const selected = document.querySelector('input[name="autoLogout"]:checked');
+  armAutoLogout(selected?.value);
+
+  radios.forEach(r => r.addEventListener("change", e => armAutoLogout(e.target.value)));
+  ["mousemove", "keydown", "click", "scroll"].forEach(evt =>
+    document.addEventListener(evt, () => {
+      const current = document.querySelector('input[name="autoLogout"]:checked');
+      armAutoLogout(current?.value);
+    }, { passive: true })
+  );
+}
+
+/* =====================
+   SETTINGS: DATABASE STATISTICS
+===================== */
+async function loadStats() {
+  const grid = document.getElementById("statGrid");
+  if (!cachedUsersWithTracking.length) await loadUsers();
+
+  const total = cachedUsersWithTracking.length;
+  const counts = { Delivered: 0, Shipped: 0, "Preparing Shipment": 0, "Order Placed": 0, Pending: 0 };
+  cachedUsersWithTracking.forEach(u => {
+    const status = u.latestUpdate?.status || "Pending";
+    counts[status] = (counts[status] || 0) + 1;
+  });
+
+  const boxes = [
+    { label: "Total Shipments", value: total },
+    { label: "Delivered", value: counts["Delivered"] || 0 },
+    { label: "Shipped", value: counts["Shipped"] || 0 },
+    { label: "Pending", value: counts["Pending"] || 0 }
+  ];
+
+  grid.innerHTML = boxes.map(b => `
+    <div class="stat-box">
+      <div class="stat-num">${b.value}</div>
+      <div class="stat-label">${escapeHtml(b.label)}</div>
+    </div>
+  `).join("");
+}
+
+/* =====================
+   SETTINGS: BACKUP / RESTORE
+===================== */
+function downloadFile(filename, content, mime) {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function toCsv(rows) {
+  if (!rows.length) return "";
+  const headers = Object.keys(rows[0]);
+  const escape = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const lines = [headers.join(",")];
+  rows.forEach(r => lines.push(headers.map(h => escape(r[h])).join(",")));
+  return lines.join("\n");
+}
+
+document.getElementById("exportCsvBtn").onclick = async () => {
+  const { data, error } = await supabase.from("user_info").select("*");
+  if (error) return alert("Export failed: " + error.message);
+  downloadFile(`shipments-backup-${Date.now()}.csv`, toCsv(data), "text/csv");
+};
+
+document.getElementById("exportJsonBtn").onclick = async () => {
+  const { data: shipments, error: e1 } = await supabase.from("user_info").select("*");
+  const { data: tracking, error: e2 } = await supabase.from("tracking_updates").select("*");
+  if (e1 || e2) return alert("Export failed: " + (e1?.message || e2?.message));
+  downloadFile(
+    `full-backup-${Date.now()}.json`,
+    JSON.stringify({ user_info: shipments, tracking_updates: tracking }, null, 2),
+    "application/json"
+  );
+};
+
+document.getElementById("restoreBtn").onclick = async () => {
+  const fileInput = document.getElementById("restoreFileInput");
+  const file = fileInput.files[0];
+  if (!file) return alert("Choose a JSON backup file first.");
+  if (!confirm("This will overwrite any existing rows with matching IDs. Continue?")) return;
+
+  try {
+    const text = await file.text();
+    const parsed = JSON.parse(text);
+
+    if (parsed.user_info?.length) {
+      const { error } = await supabase.from("user_info").upsert(parsed.user_info);
+      if (error) throw error;
+    }
+    if (parsed.tracking_updates?.length) {
+      const { error } = await supabase.from("tracking_updates").upsert(parsed.tracking_updates);
+      if (error) throw error;
+    }
+
+    alert("Restore complete.");
+    loadUsers();
+    loadTrackingPanel();
+    loadStats();
+  } catch (err) {
+    alert("Restore failed: " + err.message);
+  }
+};
+
+/* =====================
+   SETTINGS: CLEAR LOGS
+===================== */
+document.querySelectorAll(".clear-log-btn").forEach(btn => {
+  btn.onclick = async () => {
+    const table = btn.dataset.table;
+    if (!confirm(`Type OK to confirm: permanently clear all rows in "${table}"?`)) return;
+    // neq on a never-matching value deletes every row while still using a WHERE clause
+    const { error } = await supabase.from(table).delete().neq("id", "00000000-0000-0000-0000-000000000000");
+    if (error) return alert(`Failed to clear ${table}: ${error.message}`);
+    alert(`${table} cleared.`);
+    loadTrackingPanel();
+    loadStats();
+  };
+});
+
+/* =====================
+   SETTINGS: API CONFIGURATION
+===================== */
+async function loadApiStatus() {
+  document.getElementById("apiUrl").textContent = SUPABASE_URL;
+  await testConnection();
+}
+
+async function testConnection() {
+  const statusEl = document.getElementById("apiStatus");
+  statusEl.textContent = "Checking...";
+  statusEl.className = "badge badge-off";
+
+  const start = performance.now();
+  const { error } = await supabase.from("user_info").select("id").limit(1);
+  const ms = Math.round(performance.now() - start);
+
+  if (error) {
+    statusEl.textContent = "Error";
+    statusEl.className = "badge badge-error";
+  } else {
+    statusEl.textContent = `Connected (${ms}ms)`;
+    statusEl.className = "badge badge-ok";
+  }
+
+  document.getElementById("apiLastSync").textContent = lastSyncAt
+    ? lastSyncAt.toLocaleString()
+    : "Not synced yet";
+}
+
+document.getElementById("testConnectionBtn").onclick = testConnection;
+
+/* =====================
+   SETTINGS: EMAIL CONFIGURATION
+===================== */
+function loadEmailStatus() {
+  const configured = EMAILJS_PUBLIC_KEY !== "YOUR_EMAILJS_PUBLIC_KEY" &&
+                      EMAILJS_TEMPLATE_ID !== "YOUR_EMAILJS_TEMPLATE_ID";
+  const statusEl = document.getElementById("emailServiceStatus");
+  statusEl.textContent = configured ? "Configured" : "Not configured";
+  statusEl.className = configured ? "badge badge-ok" : "badge badge-error";
+  document.getElementById("emailServiceId").textContent = EMAILJS_SERVICE_ID;
+  document.getElementById("emailTemplateId").textContent =
+    EMAILJS_TEMPLATE_ID === "YOUR_EMAILJS_TEMPLATE_ID" ? "Not set" : EMAILJS_TEMPLATE_ID;
+}
+
+document.getElementById("sendTestEmailBtn").onclick = async () => {
+  const to = prompt("Send a test notification to which email address?");
+  if (!to) return;
+  try {
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      to_name: "Test Recipient",
+      to_email: to,
+      tracking_no: "TEST-0000",
+      status: "Test Status",
+      location: "Test Location",
+      note: "This is a test email from the SecureVote admin panel.",
+      origin: "Origin City",
+      destination: "Destination City"
+    });
+    alert("Test email sent.");
+  } catch (err) {
+    alert("Test email failed: " + (err?.text || err?.message || "Unknown error"));
+  }
+};
+
+/* =====================
+   SETTINGS: PREFERENCES (Notifications + Theme)
+   Persisted to a single-row `admin_settings` table (SQL provided separately).
+===================== */
+async function loadPreferences() {
+  try {
+    const { data, error } = await supabase.from("admin_settings").select("*").limit(1).single();
+    if (error || !data) return; // fall back to the HTML defaults already checked
+    document.getElementById("notifyEmail").checked = !!data.notify_email;
+    document.getElementById("notifyShipment").checked = !!data.notify_shipment;
+    document.getElementById("notifyLogin").checked = !!data.notify_login;
+    document.getElementById("notifyTracking").checked = !!data.notify_tracking;
+    if (data.theme) {
+      const themeRadio = document.querySelector(`input[name="theme"][value="${data.theme}"]`);
+      if (themeRadio) themeRadio.checked = true;
+      applyTheme(data.theme);
+    }
+    if (data.auto_logout_minutes !== null && data.auto_logout_minutes !== undefined) {
+      const radio = document.querySelector(`input[name="autoLogout"][value="${data.auto_logout_minutes}"]`);
+      if (radio) radio.checked = true;
+    }
+  } catch (e) {
+    console.warn("admin_settings load skipped (table may not exist yet):", e);
+  }
+}
+
+document.getElementById("savePrefsBtn").onclick = async () => {
+  const prefs = {
+    notify_email: document.getElementById("notifyEmail").checked,
+    notify_shipment: document.getElementById("notifyShipment").checked,
+    notify_login: document.getElementById("notifyLogin").checked,
+    notify_tracking: document.getElementById("notifyTracking").checked,
+    theme: document.querySelector('input[name="theme"]:checked')?.value || "dark",
+    auto_logout_minutes: Number(document.querySelector('input[name="autoLogout"]:checked')?.value || 30)
+  };
+
+  try {
+    const { data: existing } = await supabase.from("admin_settings").select("id").limit(1).single();
+    if (existing) {
+      await supabase.from("admin_settings").update(prefs).eq("id", existing.id);
+    } else {
+      await supabase.from("admin_settings").insert([prefs]);
+    }
+    alert("Preferences saved.");
+  } catch (e) {
+    alert("Could not save preferences — has the admin_settings table been created? See the SQL provided in chat.");
+  }
+};
+
+function applyTheme(theme) {
+  const resolved = theme === "system"
+    ? (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark")
+    : theme;
+  document.body.dataset.theme = resolved;
+  // Hook for future light-mode CSS variables — currently the panel is dark-themed throughout.
+}
+
+document.querySelectorAll('input[name="theme"]').forEach(r => {
+  r.addEventListener("change", e => applyTheme(e.target.value));
+});
+
+/* =====================
+   SETTINGS: DANGER ZONE
+===================== */
+document.querySelectorAll("[data-action]").forEach(btn => {
+  btn.onclick = async () => {
+    const action = btn.dataset.action;
+    const typed = prompt(`This is irreversible. Type DELETE to confirm "${btn.previousElementSibling ? btn.parentElement.querySelector("h3").textContent : action}".`);
+    if (typed !== "DELETE") return;
+
+    try {
+      if (action === "delete-shipments") {
+        await supabase.from("tracking_updates").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+        await supabase.from("user_info").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+      } else if (action === "delete-tracking") {
+        await supabase.from("tracking_updates").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+      } else if (action === "reset-database") {
+        await supabase.from("tracking_updates").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+        await supabase.from("user_info").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+        await supabase.from("login_activity").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+        await supabase.from("email_logs").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+      }
+      alert("Done.");
+      loadUsers();
+      loadTrackingPanel();
+      loadStats();
+    } catch (err) {
+      alert("Action failed: " + err.message);
+    }
+  };
+});
+
+/* =====================
+   SETTINGS: INIT
+===================== */
+async function initSettings() {
+  loadProfile();
+  loadEmailStatus();
+  loadApiStatus();
+  loadStats();
+  runSecurityScan();
+  recordLoginActivity().then(loadLoginActivity);
+  refreshMfaStatus();
+  initAutoLogout();
+  loadPreferences();
+
+  document.getElementById("rerunScanBtn").onclick = runSecurityScan;
+}
+
+/* =====================
+   NAV & SIDEBAR
+===================== */
+document.addEventListener("DOMContentLoaded", () => {
+  const menuToggle = document.querySelector(".menu-toggle");
+  const nav = document.querySelector("nav");
+  const sidebarToggle = document.querySelector(".sidebar-toggle");
+  const overlay = document.querySelector(".overlay");
+
+  if (menuToggle) menuToggle.onclick = () => nav.classList.toggle("show");
+
+  if (sidebarToggle && overlay) {
+    sidebarToggle.onclick = () => {
+      document.querySelector(".dashboard-sidebar").classList.toggle("show");
+      overlay.classList.toggle("show");
+    };
+  }
+
+  if (overlay) {
+    overlay.onclick = () => {
+      const sidebar = document.querySelector(".dashboard-sidebar");
+      if (sidebar.classList.contains("show")) {
+        sidebar.classList.remove("show");
+        overlay.classList.remove("show");
+      }
+    };
+  }
+
+  document.querySelectorAll(".sidebar-btn").forEach(btn => {
+    btn.onclick = () => {
+      const scope = btn.closest(".dashboard-layout");
+      scope.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+      scope.querySelectorAll(".sidebar-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById(btn.dataset.panel)?.classList.add("active");
+    };
+  });
+
+  document.querySelectorAll("nav a[data-target]").forEach(link => {
+    link.onclick = e => {
+      e.preventDefault();
+      document.querySelectorAll(".content-section").forEach(sec => sec.classList.remove("active"));
+      document.querySelectorAll("nav a[data-target]").forEach(l => l.classList.remove("active"));
+      document.getElementById(link.dataset.target)?.classList.add("active");
+      link.classList.add("active");
+      nav.classList.remove("show");
+    };
+  });
+
+  loadUsers();
+  loadTrackingPanel();
+  initSettings();
+});
+</script>
+
+</body>
+</html>
