@@ -3189,9 +3189,20 @@ async function initSettings() {
 }
 
 /* =====================
-   NAV & SIDEBAR
+   NAV & SIDEBAR + APP INIT
+   NOTE: this used to be wrapped in a `DOMContentLoaded` listener.
+   That was the bug: this whole module has a top-level `await`
+   above (the admin auth check), which pauses script execution
+   until the Supabase session/admin lookup resolves. By the time
+   execution resumed here, `DOMContentLoaded` had already fired —
+   so the listener was registered too late and NEVER ran, meaning
+   loadUsers()/loadTrackingPanel()/initSettings()/etc. never fired
+   and every panel was stuck on its skeleton loader after sign-in.
+   Since this script tag sits at the very end of <body>, the DOM
+   is already fully parsed and available by the time we get here,
+   so we can just call the init logic directly — no event needed.
 ===================== */
-document.addEventListener("DOMContentLoaded", () => {
+function initApp() {
   const menuToggle = document.querySelector(".menu-toggle");
   const nav = document.querySelector("nav");
   const sidebarToggle = document.querySelector(".sidebar-toggle");
@@ -3259,7 +3270,9 @@ document.addEventListener("DOMContentLoaded", () => {
   loadEmailLogs();
   initSettings();
   seedActivityLog().then(initRealtime);
-});
+}
+
+initApp();
 </script>
 
 </body>
