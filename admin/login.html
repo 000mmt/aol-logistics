@@ -30,11 +30,21 @@
   </div>
 
   <script>
+  /* Wrapped in an IIFE so `supabase`, `form`, etc. live in their own function
+     scope instead of the page's shared global scope. This is what fixes the
+     "Identifier 'supabase' has already been declared" error — if this script
+     block (or the SDK tag) ever ends up on the page more than once, the two
+     copies can no longer collide with each other. If you still see that
+     error after this change, check your actual served login.html for a
+     duplicate <script src=".../supabase-js@2"> or duplicate inline script
+     block (common if a build step or template include is inserting one). */
+  (function () {
     const SUPABASE_URL = "https://rtgvylkbndrmwntaqkfx.supabase.co";
     const SUPABASE_KEY = "sb_publishable_SFI-gjeDtTrOGpLp1_BTtg_hXy6wPSB"; // Use environment variables in production
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Change this if your admin panel file has a different name.
+    // Both login.html and the dashboard live in the same /admin folder,
+    // so a plain relative filename is correct here.
     const DASHBOARD_URL = "dashboard.html";
 
     const form = document.getElementById("adminLoginForm");
@@ -104,6 +114,7 @@
       await recordLoginActivity(data.user?.email || email);
       setTimeout(() => window.location.href = DASHBOARD_URL, 1200);
     });
+  })();
   </script>
 </body>
 </html>
